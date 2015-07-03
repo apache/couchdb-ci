@@ -1,2 +1,16 @@
 ---
-# currently there are no common tasks for Ubuntu servers ¯\_(ツ)_/¯
+  # TODO These packages are required to build Couch. Maybe a ubuntu-build-slave
+  # role would make more sense in the long run. Jenkins master does not need
+  # this packages once we use a master slave setup.
+  - name: install packages required to build CouchDB
+    apt: name={{item}} state=present
+    with_items:
+    - build-essential
+    - erlang-base-hipe
+    - erlang-dev
+    - erlang-manpages
+    - erlang-eunit
+    - erlang-nox
+    - libicu-dev
+    - libmozjs185-dev
+    - libcurl4-openssl-dev

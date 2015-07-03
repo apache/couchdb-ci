@@ -17,6 +17,29 @@
       state: present
       update_cache: yes # run apt-get update before apt-get install jenkins
 
+  - name: create build job folder
+    file:
+      path: /var/lib/jenkins/jobs/build-couchdb/builds
+      owner: jenkins
+      group: jenkins
+      state: directory
+
+  - name: create build job config
+    template:
+      src: jobs/build-couchdb.xml
+      dest: /var/lib/jenkins/jobs/build-couchdb/config.xml
+      owner: jenkins
+      group: jenkins
+    notify: restart jenkins service
+
+  - name: create nextBuildNumber file
+    copy:
+      dest: /var/lib/jenkins/jobs/build-couchdb/nextBuildNumber
+      content: "1"
+      force: no
+      owner: jenkins
+      group: jenkins
+
   - name: start jenkins service
     service:
       name: jenkins
@@ -37,7 +60,7 @@
     template:
       src: nginx/jenkins
       dest: /etc/nginx/sites-available/jenkins
-    notify: restart jenkins service
+    notify: restart nginx service
 
   - name: enable jenkins site
     file:

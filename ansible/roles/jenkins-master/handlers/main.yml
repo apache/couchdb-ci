@@ -3,3 +3,8 @@
     service:
       name: jenkins
       state: restarted
+
+  - name: restart nginx service
+    service:
+      name: nginx
+      state: restarted
