@@ -1,0 +1,18 @@
+---
+# Apply common configuration to all hosts
+- hosts: all
+  remote_user: root
+  roles:
+  - common
+
+# Apply common configuration for all Ubuntu systems
+- hosts: ubuntu
+  remote_user: root
+  roles:
+  - ubuntu
+
+# Configure and deploy database servers.
+- hosts: jenkins-master
+  remote_user: root
+  roles:
+  - jenkins-master
