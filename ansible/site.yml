@@ -11,7 +11,7 @@
   roles:
   - ubuntu
 
-# Configure and deploy database servers.
+# Configure and deploy Jenkins master
 - hosts: jenkins-master
   remote_user: root
   roles:

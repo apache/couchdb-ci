@@ -1,2 +1,46 @@
 ---
-# currently there are no tasks for Jenkins master ¯\_(ツ)_/¯
+  - name: add apt-key for jenkins apt repo
+    apt_key:
+      url: https://jenkins-ci.org/debian/jenkins-ci.org.key
+      state: present
+
+  - name: add jenkins apt repo
+    lineinfile:
+      dest: /etc/apt/sources.list.d/jenkins.list
+      line: "deb http://pkg.jenkins-ci.org/debian binary/"
+      state: present
+      create: true
+
+  - name: install jenkins
+    apt:
+      name: jenkins
+      state: present
+      update_cache: yes # run apt-get update before apt-get install jenkins
+
+  - name: start jenkins service
+    service:
+      name: jenkins
+      state: started
+
+  - name: install nginx
+    apt:
+      name: nginx
+      state: present
+
+  - name: remove default nginx site
+    file: name={{ item }} state=absent
+    with_items:
+    - /etc/nginx/sites-available/default
+    - /etc/nginx/sites-enabled/default
+
+  - name: copy nginx config
+    template:
+      src: nginx/jenkins
+      dest: /etc/nginx/sites-available/jenkins
+    notify: restart jenkins service
+
+  - name: enable jenkins site
+    file:
+      src: /etc/nginx/sites-available/jenkins
+      dest: /etc/nginx/sites-enabled/jenkins
+      state: link

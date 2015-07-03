@@ -1,11 +1,2 @@
 ---
-  - name: install some basic apt packages
-    apt: name={{item}} state=present
-    with_items:
-    - binutils
-    - bzip2
-    - curl
-    - sudo
-    - unzip
-    - vim # you'll want a decent editor on the box, don't you?
-    - wget
+# currently there are no common tasks for Ubuntu servers ¯\_(ツ)_/¯
