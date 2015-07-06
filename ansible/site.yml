@@ -17,10 +17,8 @@
   roles:
   - jenkins-worker
 
-# Apply common configuration for all Ubuntu systems
-# TODO Currently this only contains packages needed on the workers, so rename
-# this role to ubuntu-worker
-- hosts: ubuntu
+# Apply common configuration for all Ubuntu worker
+- hosts: ubuntu-workers
   remote_user: root
   roles:
-  - ubuntu
+  - ubuntu-worker

@@ -7,9 +7,7 @@
     name: openjdk-7-jdk
     state: present
 
-# TODO These packages are required to build Couch. Maybe a ubuntu-build-worker
-# role would make more sense in the long run. Jenkins master does not need
-# this packages once we use a master-worker setup.
+# Install packages required to build CouchDB via apt-get
 - name: install packages required to build CouchDB
   apt: name={{item}} state=present
   with_items:
