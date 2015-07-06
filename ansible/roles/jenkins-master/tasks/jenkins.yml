@@ -1,0 +1,92 @@
+---
+- name: add apt-key for jenkins apt repo
+  apt_key:
+    url: https://jenkins-ci.org/debian/jenkins-ci.org.key
+    state: present
+
+- name: add jenkins apt repo
+  lineinfile:
+    dest: /etc/apt/sources.list.d/jenkins.list
+    line: "deb http://pkg.jenkins-ci.org/debian binary/"
+    state: present
+    create: true
+
+- name: install jenkins
+  apt:
+    name: jenkins
+    state: present
+    update_cache: yes # run apt-get update before apt-get install jenkins
+  # jenkins also installs a JDK 7 as its dependency
+
+- name: make private key dir
+  file:
+    path: /var/lib/jenkins/.ssh
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0700
+
+# If this step fails, you are probably missing the private key for
+# master-worker communication. Please put the key into
+# ansible/roles/jenkins-master/files/keys/couchdb-ci-rsa before proceeding.
+# ---
+# TODO This should be improved! See http://stackoverflow.com/a/29399036, maybe we can use ansible vault.
+# ---
+- name: copy private key
+  copy:
+    src: keys/couchdb-ci-rsa
+    dest: /var/lib/jenkins/.ssh/id_rsa
+    owner: jenkins
+    group: jenkins
+    mode: 0600
+
+- name: create build job folder
+  file:
+    path: /var/lib/jenkins/jobs/build-couchdb/builds
+    owner: jenkins
+    group: jenkins
+    state: directory
+
+- name: create build job config
+  template:
+    src: jenkins/jobs/build-couchdb.xml
+    dest: /var/lib/jenkins/jobs/build-couchdb/config.xml
+    owner: jenkins
+    group: jenkins
+  notify: restart jenkins service
+
+- name: create nextBuildNumber file
+  copy:
+    dest: /var/lib/jenkins/jobs/build-couchdb/nextBuildNumber
+    content: "1"
+    force: no
+    owner: jenkins
+    group: jenkins
+
+- name: create credentials config for master-worker communication
+  template:
+    src: jenkins/credentials.xml
+    dest: /var/lib/jenkins/credentials.xml
+    owner: jenkins
+    group: jenkins
+  notify: restart jenkins service
+
+- name: create Ubuntu 14.04 worker folder
+  file:
+    path: /var/lib/jenkins/nodes/ubuntu1404
+    owner: jenkins
+    group: jenkins
+    state: directory
+
+- name: create Ubuntu 14.04 worker node config
+  template:
+    src: jenkins/nodes/ubuntu1404/config.xml
+    dest: /var/lib/jenkins/nodes/ubuntu1404/config.xml
+    owner: jenkins
+    group: jenkins
+  notify: restart jenkins service
+
+- name: start jenkins service
+  service:
+    name: jenkins
+    state: started

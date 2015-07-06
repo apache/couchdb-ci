@@ -1,24 +1,24 @@
 ---
-  # even though we do not need Java to build CouchDB, a Jenkins worker still
-  # needs an installed JDK or the Jenkins master yells at you when attempting to
-  # connect
-  - name: install jdk
-    apt:
-      name: openjdk-7-jdk
-      state: present
+# even though we do not need Java to build CouchDB, a Jenkins worker still
+# needs an installed JDK or the Jenkins master yells at you when attempting to
+# connect
+- name: install jdk
+  apt:
+    name: openjdk-7-jdk
+    state: present
 
-  # TODO These packages are required to build Couch. Maybe a ubuntu-build-worker
-  # role would make more sense in the long run. Jenkins master does not need
-  # this packages once we use a master-worker setup.
-  - name: install packages required to build CouchDB
-    apt: name={{item}} state=present
-    with_items:
-    - build-essential
-    - erlang-base-hipe
-    - erlang-dev
-    - erlang-manpages
-    - erlang-eunit
-    - erlang-nox
-    - libicu-dev
-    - libmozjs185-dev
-    - libcurl4-openssl-dev
+# TODO These packages are required to build Couch. Maybe a ubuntu-build-worker
+# role would make more sense in the long run. Jenkins master does not need
+# this packages once we use a master-worker setup.
+- name: install packages required to build CouchDB
+  apt: name={{item}} state=present
+  with_items:
+  - build-essential
+  - erlang-base-hipe
+  - erlang-dev
+  - erlang-manpages
+  - erlang-eunit
+  - erlang-nox
+  - libicu-dev
+  - libmozjs185-dev
+  - libcurl4-openssl-dev
