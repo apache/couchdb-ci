@@ -5,14 +5,22 @@
   roles:
   - common
 
-# Apply common configuration for all Ubuntu systems
-- hosts: ubuntu
-  remote_user: root
-  roles:
-  - ubuntu
-
 # Configure and deploy Jenkins master
 - hosts: jenkins-master
   remote_user: root
   roles:
   - jenkins-master
+
+# Configure and deploy Jenkins workers
+- hosts: jenkins-workers
+  remote_user: root
+  roles:
+  - jenkins-worker
+
+# Apply common configuration for all Ubuntu systems
+# TODO Currently this only contains packages needed on the workers, so rename
+# this role to ubuntu-worker
+- hosts: ubuntu
+  remote_user: root
+  roles:
+  - ubuntu
