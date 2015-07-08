@@ -2,14 +2,14 @@
 - name: create jenkins group
   group:
     name: jenkins
-    gid: 112 # same gid as jenkins group on master
+    gid: "{{ jenkins_group_id }}" # same gid as jenkins group on master
     state: present
     system: yes
 
 - name: create jenkins user
   user:
     name: jenkins
-    uid: 106 # same uid as jenkins user on master
+    uid: "{{ jenkins_user_id }}" # same uid as jenkins user on master
     state: present
     system: yes
     group: jenkins
