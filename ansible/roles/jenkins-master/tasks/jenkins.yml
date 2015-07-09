@@ -26,13 +26,7 @@
     group: jenkins
     mode: 0700
 
-# If this step fails, you are probably missing the private key for
-# master-worker communication. Please put the key into
-# ansible/roles/jenkins-master/files/keys/couchdb-ci-rsa before proceeding.
-# ---
-# TODO This should be improved! See http://stackoverflow.com/a/29399036, maybe we can use ansible vault.
-# ---
-- name: copy private key
+- name: copy private key to Jenkins master
   copy:
     src: keys/couchdb-ci-rsa
     dest: /var/lib/jenkins/.ssh/id_rsa

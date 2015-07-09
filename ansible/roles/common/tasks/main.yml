@@ -1,2 +1,11 @@
 ---
-# currently there are no common tasks ¯\_(ツ)_/¯
+# generate a new key pair if none is present
+- name: generate new key pair for master-worker communication
+  shell: ./generate-keypair.sh
+  args:
+    creates: roles/jenkins-master/files/keys/couchdb-ci-rsa
+  run_once: true
+  delegate_to: localhost
+  register: keygen_out
+
+- debug: msg="{{ keygen_out.stdout }}"
