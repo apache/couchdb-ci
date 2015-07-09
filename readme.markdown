@@ -13,7 +13,6 @@ Current state:
 - [x] install and configure nginx
 - [x] create CouchDB build job in Jenkins via Ansible
 - [x] switch to master-worker Jenkins setup
-- [ ] use Ansible vault for key management?
 - [ ] use ntp server for master and workers
 - [ ] actually fetch CouchDB from VCS
 - [ ] optional: switch to Jenkins Job DSL plug-in for defining jobs?
