@@ -13,7 +13,7 @@ Current state:
 - [x] install and configure nginx
 - [x] create CouchDB build job in Jenkins via Ansible
 - [x] switch to master-worker Jenkins setup
-- [ ] use ntp server for master and workers
+- [x] use ntp server for master and workers
 - [ ] actually fetch CouchDB from VCS
 - [ ] optional: switch to Jenkins Job DSL plug-in for defining jobs?
 - [ ] all apt-get commands should pin a specific version, in the base box definition as well as in Ansible. How?

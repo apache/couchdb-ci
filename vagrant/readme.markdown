@@ -12,6 +12,11 @@ When Vagrant is installed you need to install an additional plug-in:
 vagrant plugin install vagrant-hosts
 ```
 
+plus an additional Ansible role
+```bash
+[sudo] ansible-galaxy install geerlingguy.ntp
+```
+
 Also, you might need to run
 ```bash
 VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0

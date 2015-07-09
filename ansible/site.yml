@@ -4,6 +4,7 @@
   remote_user: root
   roles:
   - common
+  - geerlingguy.ntp
 
 # Configure and deploy Jenkins master
 - hosts: jenkins-master
