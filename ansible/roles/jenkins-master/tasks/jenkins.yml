@@ -36,22 +36,22 @@
 
 - name: create build job folder
   file:
-    path: /var/lib/jenkins/jobs/build-couchdb/builds
+    path: /var/lib/jenkins/jobs/couchdb-build-1.6.x-ubuntu/builds
     owner: jenkins
     group: jenkins
     state: directory
 
 - name: create build job config
   template:
-    src: jenkins/jobs/build-couchdb.xml
-    dest: /var/lib/jenkins/jobs/build-couchdb/config.xml
+    src: jenkins/jobs/couchdb-build-1.6.x-ubuntu.xml
+    dest: /var/lib/jenkins/jobs/couchdb-build-1.6.x-ubuntu/config.xml
     owner: jenkins
     group: jenkins
   notify: restart jenkins service
 
 - name: create nextBuildNumber file
   copy:
-    dest: /var/lib/jenkins/jobs/build-couchdb/nextBuildNumber
+    dest: /var/lib/jenkins/jobs/couchdb-build-1.6.x-ubuntu/nextBuildNumber
     content: "1"
     force: no
     owner: jenkins
