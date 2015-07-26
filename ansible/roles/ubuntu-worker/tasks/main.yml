@@ -6,6 +6,7 @@
   apt:
     name: openjdk-7-jdk
     state: present
+    update_cache: yes
 
 # Install packages required to build CouchDB via apt-get
 - name: install packages required to build CouchDB
