@@ -37,7 +37,7 @@ Vagrant.configure(2) do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "../ansible/site.yml"
+    ansible.playbook = "ansible/site.yml"
     ansible.groups = {
       "jenkins-master" => ["couchdb-jenkins-master"],
       "jenkins-workers" => ["couchdb-ubuntu-14.04-worker"],
