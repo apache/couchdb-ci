@@ -1,0 +1,13 @@
+2.0-developer-preview
+Apache-CouchDB-Matrix-Mac-OS-X-10-7-5-1.6.x
+Apache-CouchDB-Matrix-Mac-OS-X-10-7-5-master
+Apache-CouchDB-Matrix-Mac-OS-X-10-8-2-1.6.x
+Apache-CouchDB-Matrix-Mac-OS-X-10-8.2-master
+Apache-CouchDB-Matrix-Ubuntu-Server-64-1.6.x
+Apache-CouchDB-Windows
+Fauxton
+Rebuild%20Docs%201.3.x
+Rebuild%20Docs%201.4.x
+Rebuild%20Docs%201.5.x
+Rebuild%20Docs%201.6.x
+Rebuild%20Docs%20master
