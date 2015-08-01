@@ -18,14 +18,21 @@ Current state:
 - [x] create CouchDB build job in Jenkins via Ansible
 - [x] switch to master-worker Jenkins setup
 - [x] use ntp server for master and workers
+- [ ] Use SCM sync plug-in to manage job configs
+    * http://stackoverflow.com/questions/27138043/jenkins-scm-sync-configuration-plugin-in-docker-wont-talk-to-github
+    * https://cburgmer.wordpress.com/2013/01/02/tracking-configuration-changes-in-jenkins/
+- [ ] enable auth for Jenkins
 - [ ] actually fetch CouchDB from VCS
-- [ ] optional: switch to Jenkins Job DSL plug-in for defining jobs?
 - [ ] all apt-get commands should pin a specific version, in the base box definition as well as in Ansible. How?
 - [ ] create an additional Ubuntu worker with an older Erlang version
 - [ ] create another base box (different linux distro) for a third worker
 - [ ] talk to Infra people
 
 *Remark: Throughout this repository we use the terms "master"/"worker" for the Jenkins build machines, whereas the Jenkins documentation uses the terms "master"/"slave".*
+
+## SCM Sync Plug-in/Jenkins Public SSH Key
+
+The SCM Sync Jenkins plug-in is used to manage the Jenkins configuration and also the job configurations. To be able to do this, the public key that Jenkins uses needs to be uploaded as a deploy key at the associated repository (currently https://github.com/basti1302/couchdb-ci-jenkins-config/settings/keys). Unfortunately, this key might change. More specifically: The Ansible scripts will regenerate a key pair at runtime automatically if they don't find an existing key pair from a previous run.
 
 Vagrant Configuration for Testing the CouchDB CI Setup Locally
 --------------------------------------------------------------

@@ -8,6 +8,12 @@
     state: present
     update_cache: yes
 
+# Install auxiliary packages (not required to build CouchDB)
+- name: install auxiliary packages
+  apt: name={{item}} state=present
+  with_items:
+  - git
+
 # Install packages required to build CouchDB via apt-get
 - name: install packages required to build CouchDB
   apt: name={{item}} state=present

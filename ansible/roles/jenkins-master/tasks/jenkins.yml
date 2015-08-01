@@ -34,6 +34,24 @@
     group: jenkins
     mode: 0600
 
+- name: create plugins folder
+  file:
+    path: /var/lib/jenkins/plugins
+    owner: jenkins
+    group: jenkins
+    state: directory
+
+- name: install plug-ins
+  copy:
+    src: jenkins/plugins/{{ item }}.jpi
+    dest: /var/lib/jenkins/plugins/{{ item }}.jpi
+    owner: jenkins
+    group: jenkins
+  with_items:
+  - scm-sync-configuration
+  notify: restart jenkins service
+
+  # TODO This can be removed, SCM sync plug-in will handle job configs
 - name: create build job folder
   file:
     path: /var/lib/jenkins/jobs/couchdb-build-1.6.x-ubuntu/builds
@@ -41,6 +59,7 @@
     group: jenkins
     state: directory
 
+  # TODO This can be removed, SCM sync plug-in will handle job configs
 - name: create build job config
   template:
     src: jenkins/jobs/couchdb-build-1.6.x-ubuntu.xml
@@ -49,6 +68,7 @@
     group: jenkins
   notify: restart jenkins service
 
+  # TODO This can be removed, SCM sync plug-in will handle job configs
 - name: create nextBuildNumber file
   copy:
     dest: /var/lib/jenkins/jobs/couchdb-build-1.6.x-ubuntu/nextBuildNumber
