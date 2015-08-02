@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-pushd `dirname $0` &> /dev/null
+pushd `dirname $0` > /dev/null
 
 if [[ ! -f jenkins-api-token ]]; then
   echo Please create a file named jenkins-api-token and put your Jenkins API token in this file.
@@ -21,15 +21,15 @@ rm -f root.tmp.xml
 ###############################################################################
 # Job configs
 ###############################################################################
-mkdir -p job
+mkdir -p jobs
 
 while IFS='' read -r jobname || [[ -n $jobname ]]; do
   echo "scraping job: $jobname"
-  curl --show-error "http://basti1302:$JENKINS_API_TOKEN@ci.couchdb.org:8888/job/$jobname/config.xml" > "job/$jobname.config.xml"
+  curl --show-error "http://basti1302:$JENKINS_API_TOKEN@ci.couchdb.org:8888/jobs/$jobname/config.xml" > "jobs/$jobname.config.xml"
 done < jobnames.txt
 
 # rename jobs to a sane naming pattern
 ./rename.sh
 
-pop &> /dev/null
+pop > /dev/null
 
