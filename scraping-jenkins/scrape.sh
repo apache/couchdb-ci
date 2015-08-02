@@ -26,7 +26,7 @@ mkdir -p jobs
 while IFS='' read -r jobname || [[ -n $jobname ]]; do
   echo "scraping job: $jobname"
   mkdir -p "jobs/$jobname"
-  curl --show-error "http://basti1302:$JENKINS_API_TOKEN@ci.couchdb.org:8888/jobs/$jobname/config.xml" > "jobs/$jobname/config.xml"
+  curl --show-error "http://basti1302:$JENKINS_API_TOKEN@ci.couchdb.org:8888/job/$jobname/config.xml" > "jobs/$jobname/config.xml"
 done < jobnames.txt
 
 # rename jobs to a sane naming pattern
