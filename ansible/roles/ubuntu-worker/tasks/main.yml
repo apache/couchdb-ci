@@ -1,29 +1,3 @@
----
-# even though we do not need Java to build CouchDB, a Jenkins worker still
-# needs an installed JDK or the Jenkins master yells at you when attempting to
-# connect
-- name: install jdk
-  apt:
-    name: openjdk-7-jdk
-    state: present
-    update_cache: yes
-
-# Install auxiliary packages (not required to build CouchDB)
-- name: install auxiliary packages
-  apt: name={{item}} state=present
-  with_items:
-  - git
-
-# Install packages required to build CouchDB via apt-get
-- name: install packages required to build CouchDB
-  apt: name={{item}} state=present
-  with_items:
-  - build-essential
-  - erlang-base-hipe
-  - erlang-dev
-  - erlang-manpages
-  - erlang-eunit
-  - erlang-nox
-  - libicu-dev
-  - libmozjs185-dev
-  - libcurl4-openssl-dev
+- include: dependencies.yml
+- include: rebar.yml
+- include: couchdb.yml

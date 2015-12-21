@@ -1,0 +1,37 @@
+- name: create rebar group
+  group:
+    name: rebar
+    state: present
+
+- name: create rebar user
+  user:
+    name: rebar
+    createhome: yes
+    group: rebar
+    state: present
+
+- name: download rebar
+  get_url:
+    url: https://github.com/rebar/rebar/archive/{{ rebar_version }}.tar.gz
+    dest: /home/rebar/
+
+- name: unpack rebar
+  unarchive:
+    dest: /home/rebar
+    creates: /home/rebar/rebar-{{ rebar_version }}/bootstrap
+    group: rebar
+    owner: rebar
+    src: /home/rebar/rebar-{{ rebar_version }}.tar.gz
+
+- name: bootstrap rebar
+  command: ./bootstrap
+  args:
+    chdir: /home/rebar/rebar-{{ rebar_version }}
+    creates: /home/rebar/rebar-{{ rebar_version }}/rebar
+
+- name: copy rebar executable
+  command: cp /home/rebar/rebar-{{ rebar_version }}/rebar /usr/local/bin/
+  args:
+    creates: /usr/local/bin/rebar
+
+

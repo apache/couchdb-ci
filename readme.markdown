@@ -3,43 +3,79 @@ CouchDB CI Setup
 
 Mission statement: Create a new continuous integration infrastructure for the CouchDB project.
 
-For the background and goals, see this [thread](https://www.mail-archive.com/dev%40couchdb.apache.org/msg43591.html) on the couchdb-dev mailing list.
+For the background and goals, see
 
-This is the repository for the automated creation of the CouchDB CI infrastructure. Well, at least it will be when it has grown up. This might take a while, though. Right now, it's just a bunch of Ansible scripts, a Vagrantfile and a Veewee definition.
-
-See the readme files in folder `baseboxes` (for docs on building the base boxes) and the section about Vagrant below (for docs on how to spin up the setup locally).
-
-Fair warning: This is very much work in progress.
-
-Current state:
-
-- [x] install bare Jenkins master with Ansible
-- [x] install and configure nginx
-- [x] create CouchDB build job in Jenkins via Ansible
-- [x] switch to master-worker Jenkins setup
-- [x] use ntp server for master and workers
-- [ ] Use SCM sync plug-in to manage job configs
-    * http://stackoverflow.com/questions/27138043/jenkins-scm-sync-configuration-plugin-in-docker-wont-talk-to-github
-    * https://cburgmer.wordpress.com/2013/01/02/tracking-configuration-changes-in-jenkins/
-- [ ] enable auth for Jenkins
-- [ ] actually fetch CouchDB from VCS
-- [ ] all apt-get commands should pin a specific version, in the base box definition as well as in Ansible. How?
-- [ ] create an additional Ubuntu worker with an older Erlang version
-- [ ] create another base box (different linux distro) for a third worker
-- [ ] talk to Infra people
+* this [thread](https://www.mail-archive.com/dev%40couchdb.apache.org/msg43591.html) on the couchdb-dev mailing list and
+* this [ASF Infra ticket](https://issues.apache.org/jira/browse/INFRA-10126).
 
 *Remark: Throughout this repository we use the terms "master"/"worker" for the Jenkins build machines, whereas the Jenkins documentation uses the terms "master"/"slave".*
 
-## SCM Sync Plug-in/Jenkins Public SSH Key
+The main purpose of this repository is to provide a number of Docker containers that the ASF infrastructure team can use in their Jenkins setups and which are capable of building CouchDB. The idea is to provide containers for a number of different operating systems and Erlang versions to make sure CouchDB builds and runs on all supported setups.
 
-The SCM Sync Jenkins plug-in is used to manage the Jenkins configuration and also the job configurations. To be able to do this, the public key that Jenkins uses needs to be uploaded as a deploy key at the associated repository (currently https://github.com/basti1302/couchdb-ci-jenkins-config/settings/keys). Unfortunately, this key might change. More specifically: The Ansible scripts will regenerate a key pair at runtime automatically if they don't find an existing key pair from a previous run.
+The current (rough) plan for the build matrix is this:
 
-Vagrant Configuration for Testing the CouchDB CI Setup Locally
---------------------------------------------------------------
+**OS/Erlang**       | **R14B04** | **R16B03-1** | **17.5** | **18.x**
+--------------------|------------|--------------|----------|---------
+**Ubuntu 14.04**    | ?          | -            | -        | WIP
+**Ubuntu latest ?** | ?          | -            | -        | -
+**Debian 7**        | ?          | -            | -        | -
+**Debian 8**        | ?          | -            | -        | -
+**OS X latest**     | ?          | -            | -        | -
+**Free BSD**        | ?          | -            | -        | -
+**Windows**         | ?          | -            | -        | -
 
-The project's root folder contains a Vagrantfile with a multi machine Vagrant configuration for the machines used in the CouchDB CI setup.
+### Open questions
+
+* AFAIK Erlang 14 support will be dropped soon-ish, so I'm not sure if it is worth the effort to do anything for that.
+* Which 18.x Erlang version is to be used? I heard someone saying 18.0 once, but that was before 18.1 and 18.2 were available, so I guess it makes more sense to always use the latest 18.x to see if changes in Erlang 18 breaks CouchDB.
+* There is no CentOS/RHEL there, shouldn't it be added?
+* Do we run a CouchDB build on all combinations on each commit? This would probably be too much for the ASF Infra build systems. Do we build them once a day? We need to find a good balance between early feedback and resource consumption here.
+* Do we even want to build the master branch or some other branch/tag? I guess the master branch would be most interesting for now, but not entirely sure. Also, it might make sense to make the branch/tag parameterizable so we could also use this to create releases from a specific tag etc.
+* What exactly do we do in each Jenkins build? Just build CouchDB? Also build docs? Start CouchDB? Run some test suite?
+* The build is currently triggered as the CMD in the Dockerfile via the script build-ci.sh. Is that okay? If we need more steps (beyond simply building CouchDB) we would need to add it to build-ci.sh.
+
+### TODOs
+
+- [ ] Check with ASF infra how to integrate our Docker containers into their build infrastructure.
+- [ ] Set up first CouchDB build on <https://builds.apache.org/>.
+- [ ] All apt-get commands should pin a specific version in Ansible. We are doing this for Erlang, we should do it for the other deps too.
+- [ ] Create more containers - other Erlang versions, other OSes.
+
+Docker
+------
+
+The docker containers are provisioned via Ansible. That is, the dockerfiles usually only kicks of the Ansible scripts and the actual setup is then done in Ansible. Part of the reason is that the initial idea was to just provision build workers to virtual machines instead of containers. I kept Ansible around to do the heavy lifting because the Ansible syntax is more expressive and flexible than plain vanilla Dockerfiles. The idea is that this will make things a bit easier once we create multiple containers for the build matrix. Also, you could still use the Ansible files to create a Vagrant VM instead of a Docker container.
+
+### Building the Containers
+
+Right now, this repo can produce exactly one container, based on Ubuntu 14.04 LTS and Erlang 18.2. The plan is to provide more containers soon.
+
+The Docker containers need the root directory of this repository as their build context (because they need the Ansible files). The Dockerfiles are located in `docker/<name>/Dockerfile`. Thus, to build a container, you need to do something like this:
+
+```
+docker build -f docker/ubuntu-worker/Dockerfile -t couchdb-build-ubuntu-14.04-erlang-18.2 .
+```
+
+There is also a script called `build-container.sh` for your convenience :)
+
+### Running the CouchDB build on a Container
+
+Just start the container with
+
+```
+docker run couchdb-build-ubuntu-14.04-erlang-18.2
+```
+
+This will start the container which will then immediately start the CouchDB build. (The build script is the container's CMD entrypoing.)
+
+Vagrant
+-------
+
+Note: This section on creating the build machines on Vagrant might outdated. Either we bring it up to date to have both possibilities (Docker & Vagrant) or we remove it completely and just go with Docker.
 
 ### Prerequesites
+
+See the readme files in folder `baseboxes` for docs on building the base boxes.
 
 You need to have [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
 
@@ -50,7 +86,7 @@ vagrant plugin install vagrant-hosts
 
 plus an additional Ansible role
 ```bash
-[sudo] ansible-galaxy install geerlingguy.ntp
+[sudo] ansible-galaxy install nodesource.node
 ```
 
 Also, you might need to run

@@ -1,0 +1,42 @@
+- name: create couchdb group
+  group:
+    name: couchdb
+    state: present
+
+- name: create couchdb user
+  user:
+    name: couchdb
+    createhome: yes
+    group: couchdb
+    state: present
+
+- name: install grunt-cli
+  npm:
+    name: grunt-cli
+    global: yes
+    state: present
+
+- name: get CouchDB sources from git
+  git:
+    repo: git://git.apache.org/couchdb.git
+    dest: /usr/src/couchdb
+    accept_hostkey: yes
+    force: yes
+    # which branch/tag do we actually want to build? I'd say master.
+    # version: developer-preview-2.0
+
+- name: copy build script
+  copy:
+    src: build-ci.sh
+    dest: /home/couchdb/build-ci.sh
+    owner: couchdb
+    group: couchdb
+    mode: 0755
+
+- name: set permissions on couchdb build
+  file:
+    path: /usr/src/couchdb
+    state: directory
+    owner: couchdb
+    group: couchdb
+    recurse: yes

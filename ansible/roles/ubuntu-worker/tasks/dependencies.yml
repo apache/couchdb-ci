@@ -1,0 +1,59 @@
+- name: import the Erlang Solutions key into apt
+  apt_key:
+    url: http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+    state: present
+    # validate_certs: no
+
+- name: add Erlang Solutions deb repository
+  apt_repository:
+    repo: 'deb http://packages.erlang-solutions.com/ubuntu trusty contrib'
+    state: present
+
+# apt-get update
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: install auxiliary packages
+  apt: name={{item}} state=present
+  with_items:
+  - apt-transport-https
+  - curl
+  - git
+  - pkg-config
+  - python
+
+# required for make couch
+- name: install packages required to build CouchDB
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - build-essential
+  - ca-certificates
+  - erlang-dev=1:18.2
+  - erlang-nox=1:18.2
+  - erlang=1:18.2
+  - libcurl4-openssl-dev
+  - libicu-dev
+  - libmozjs185-dev
+
+# required for make docs
+- name: install packages required to build CouchDB
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - help2man
+  - python-sphinx
+  - texlive-latex-base
+  - texlive-latex-recommended
+  - texlive-latex-extra
+  - texlive-fonts-recommended
+  - texinfo
+
+# More packages found in klaemo's Dockerfile... not sure if required, apparently not?
+# - erlang-base-hipe
+# - erlang-dialyzer
+# - erlang-eunit
+# - erlang-manpages
+# - libnspr4
+# - libnspr4-0d
+# - libnspr4-dev
+# - openssl
