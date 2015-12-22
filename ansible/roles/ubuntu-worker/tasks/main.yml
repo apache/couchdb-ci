@@ -16,5 +16,4 @@
 #   under the License.
 
 - include: dependencies.yml
-- include: rebar.yml
 - include: couchdb.yml
