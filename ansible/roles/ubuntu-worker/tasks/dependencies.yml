@@ -53,6 +53,14 @@
   - libicu-dev
   - libmozjs185-dev
 
+# required for make check and make dialyze
+- name: install packages required to build CouchDB
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - erlang-eunit
+  - erlang-dialyzer
+  - shunit2
+
 # required for make docs
 - name: install packages required to build CouchDB
   apt: name={{item}} state=present install_recommends=no
@@ -66,9 +74,6 @@
   - texinfo
 
 # More packages found in klaemo's Dockerfile... not sure if required, apparently not?
-# - erlang-base-hipe
-# - erlang-dialyzer
-# - erlang-eunit
 # - erlang-manpages
 # - libnspr4
 # - libnspr4-0d

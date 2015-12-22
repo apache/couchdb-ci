@@ -17,10 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-set -e
-
-cd /usr/src/couchdb
-git reset --hard
-git pull
-./configure --with-curl
-make all check dist
+docker run couchdb-build-ubuntu-14.04-erlang-18.2
