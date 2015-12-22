@@ -14,20 +14,18 @@ The main purpose of this repository is to provide a number of Docker containers 
 
 The current (rough) plan for the build matrix is this:
 
-**OS/Erlang**       | **R14B04** | **R16B03-1** | **17.5** | **18.x**
---------------------|------------|--------------|----------|---------
-**Ubuntu 14.04**    | ?          | -            | -        | WIP
-**Ubuntu latest ?** | ?          | -            | -        | -
-**Debian 7**        | ?          | -            | -        | -
-**Debian 8**        | ?          | -            | -        | -
-**OS X latest**     | ?          | -            | -        | -
-**Free BSD**        | ?          | -            | -        | -
-**Windows**         | ?          | -            | -        | -
+**OS/Erlang**       | **R16B03-1** | **17.5** | **18.x**
+--------------------|--------------|----------|---------
+**Ubuntu 14.04**    | -            | -        | WIP
+**Ubuntu latest ?** | -            | -        | -
+**Debian 7**        | -            | -        | -
+**Debian 8**        | -            | -        | -
+**OS X latest**     | -            | -        | -
+**Free BSD**        | -            | -        | -
+**Windows**         | -            | -        | -
 
 ### Open questions
 
-* AFAIK Erlang 14 support will be dropped soon-ish, so I'm not sure if it is worth the effort to do anything for that.
-* Which 18.x Erlang version is to be used? I heard someone saying 18.0 once, but that was before 18.1 and 18.2 were available, so I guess it makes more sense to always use the latest 18.x to see if changes in Erlang 18 breaks CouchDB.
 * There is no CentOS/RHEL there, shouldn't it be added?
 * Do we run a CouchDB build on all combinations on each commit? This would probably be too much for the ASF Infra build systems. Do we build them once a day? We need to find a good balance between early feedback and resource consumption here.
 * Do we even want to build the master branch or some other branch/tag? I guess the master branch would be most interesting for now, but not entirely sure. Also, it might make sense to make the branch/tag parameterizable so we could also use this to create releases from a specific tag etc.
