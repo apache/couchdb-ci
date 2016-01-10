@@ -36,11 +36,30 @@
 - name: get CouchDB sources from git
   git:
     repo: git://git.apache.org/couchdb.git
-    dest: /usr/src/couchdb
+    dest: /usr/src/couchdb-checkout
     accept_hostkey: yes
     force: yes
     # which branch/tag do we actually want to build? I'd say master.
     # version: developer-preview-2.0
+
+- name: set permissions on couchdb build
+  file:
+    path: /usr/src/couchdb-checkout
+    state: directory
+    owner: couchdb
+    group: couchdb
+    recurse: yes
+
+# 1) `make dist` will be run in /usr/src/couchdb-checkout (this is directly
+#     pulled from git
+# 2) the resulting tarball will be extracted to /usr/src/couchdb, where
+#    `make all check` is run.
+- name: create directory for make check all
+  file:
+    path: /usr/src/couchdb
+    state: directory
+    owner: couchdb
+    group: couchdb
 
 - name: copy build script
   copy:
@@ -49,11 +68,3 @@
     owner: couchdb
     group: couchdb
     mode: 0755
-
-- name: set permissions on couchdb build
-  file:
-    path: /usr/src/couchdb
-    state: directory
-    owner: couchdb
-    group: couchdb
-    recurse: yes

@@ -19,8 +19,18 @@
 
 set -e
 
-cd /usr/src/couchdb
+# create a distribution tarball from the current git master branch
+cd /usr/src/couchdb-checkout
 git reset --hard
 git pull
 ./configure --with-curl
-make all check dist
+make dist
+
+# use the created tarball to build CouchDB and run tests
+cp apache-couchdb-*.tar.gz /usr/src/couchdb
+
+cd /usr/src/couchdb
+tar -xf apache-couchdb-*.tar.gz
+cd apache-couchdb-*
+./configure --with-curl
+make all check
