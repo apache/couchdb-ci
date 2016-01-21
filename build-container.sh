@@ -17,4 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker build -f docker/ubuntu-worker/Dockerfile -t couchdb-build-ubuntu-14.04-erlang-18.2 .
+docker build -f docker/ubuntu-worker/Dockerfile -t basti1302/couchdb-build-ubuntu-14.04-erlang-18.2 .
