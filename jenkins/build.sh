@@ -54,6 +54,10 @@ case $ERLANG in
     echo "Using Erlang 18.2"
     DOCKER_IMAGE=$DOCKER_IMAGE"erlang-18.2"
     ;;
+  default*)
+    echo "Using Erlang 18.2"
+    DOCKER_IMAGE=$DOCKER_IMAGE"erlang-default"
+    ;;
   *)
     echo "Unknown Erlang version $ERLANG"
     exit 1

@@ -13,25 +13,18 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
+#   under the License.
 
-# NOTE: All docker files need to be run from ../../, that is
-# docker build -f /docker/ubuntu-worker/Dockerfile
+- name: install default Erlang version
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - erlang-dev
+  - erlang-nox
+  - erlang
 
-# Base Image: Plain Vanilla Ubuntu 14.04 with Ansible installed
-FROM williamyeh/ansible:ubuntu14.04
-
-# Add ansible directory and cd to it
-ADD ./ansible /ansible
-WORKDIR /ansible
-
-# Install Node.js role
-RUN ansible-galaxy install nodesource.node
-
-# Run Ansible to provision container
-RUN ansible-playbook site.yml \
-  --connection=local \
-  --inventory-file=./docker-inventories/ubuntu-worker
-
-USER couchdb
-
-CMD ["/home/couchdb/build-ci.sh"]
+# required for make check and make dialyze
+- name: install packages required to build CouchDB
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - erlang-eunit
+  - erlang-dialyzer

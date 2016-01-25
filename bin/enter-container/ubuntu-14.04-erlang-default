@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,18 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- hosts: ubuntu-14.04-erlang-18
-  remote_user: root
-  roles:
-  - nodesource.node
-  - ubuntu-1404
-  - erlang-18
-  - common
-
-- hosts: ubuntu-14.04-erlang-default
-  remote_user: root
-  roles:
-  - nodesource.node
-  - ubuntu-1404
-  - erlang-default
-  - common
+docker run -it basti1302/couchdb-build-ubuntu-14.04-erlang-default bash

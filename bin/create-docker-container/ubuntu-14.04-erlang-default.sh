@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,18 +17,12 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- hosts: ubuntu-14.04-erlang-18
-  remote_user: root
-  roles:
-  - nodesource.node
-  - ubuntu-1404
-  - erlang-18
-  - common
+set -e
 
-- hosts: ubuntu-14.04-erlang-default
-  remote_user: root
-  roles:
-  - nodesource.node
-  - ubuntu-1404
-  - erlang-default
-  - common
+# The Docker containers need the root directory of this repository as their
+# build context (because they need the Ansible files).
+pushd `dirname $0`/../.. > /dev/null
+
+docker build -f docker/ubuntu-14.04-erlang-default/Dockerfile -t basti1302/couchdb-build-ubuntu-14.04-erlang-default .
+
+popd > /dev/null

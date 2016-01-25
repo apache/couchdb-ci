@@ -15,15 +15,32 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-# Alternative ansible hosts file (aka inventory) for running Ansible on
-# localhost. This is used when running Ansible inside Docker instead of
-# using it as a Vagrant provisioner. The purpose of this is to set the Ansible
-# role.
-#
-# This makes Ansible run role ubuntu-worker on localhost.
-# Use ansible-playbook with options
-# --inventory-file=docker-inventories/ubuntu-worker and
-# additionally --connection=local to avoid using an ssh connection.
+- name: import the Erlang Solutions key into apt
+  apt_key:
+    url: http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+    state: present
+    # validate_certs: no
 
-[ubuntu-workers]
-localhost
+- name: add Erlang Solutions deb repository
+  apt_repository:
+    repo: 'deb http://packages.erlang-solutions.com/ubuntu trusty contrib'
+    state: present
+
+# apt-get update
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: install Erlang 18.x
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - erlang-dev=1:18.2
+  - erlang-nox=1:18.2
+  - erlang=1:18.2
+
+# required for make check and make dialyze
+- name: install packages required to build CouchDB
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - erlang-eunit=1:18.2
+  - erlang-dialyzer=1:18.2

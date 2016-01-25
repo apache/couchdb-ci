@@ -13,7 +13,25 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
-#   under the License.
 
-- include: dependencies.yml
-- include: couchdb.yml
+# NOTE: All docker files need to be run from ../../, that is
+# docker build -f /docker/<container>/Dockerfile
+
+# Base Image: Plain Vanilla Ubuntu 14.04 with Ansible installed
+FROM williamyeh/ansible:ubuntu14.04
+
+# Add ansible directory and cd to it
+ADD ./ansible /ansible
+WORKDIR /ansible
+
+# Install Node.js role
+RUN ansible-galaxy install nodesource.node
+
+# Run Ansible to provision container
+RUN ansible-playbook site.yml \
+  --connection=local \
+  --inventory-file=./docker-inventories/ubuntu-14.04-erlang-default
+
+USER couchdb
+
+CMD ["/home/couchdb/build-ci.sh"]
