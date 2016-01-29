@@ -18,15 +18,35 @@
 - hosts: ubuntu-14.04-erlang-18
   remote_user: root
   roles:
-  - nodesource.node
   - ubuntu-1404
+  - nodesource.node
+  - debian-based
   - erlang-18
   - common
 
 - hosts: ubuntu-14.04-erlang-default
   remote_user: root
   roles:
-  - nodesource.node
   - ubuntu-1404
+  - nodesource.node
+  - debian-based
+  - erlang-default
+  - common
+
+- hosts: debian-8-erlang-18
+  remote_user: root
+  roles:
+  - debian-8
+  - nodesource.node
+  - debian-based
+  - erlang-18
+  - common
+
+- hosts: debian-8-erlang-default
+  remote_user: root
+  roles:
+  - debian-8
+  - nodesource.node
+  - debian-based
   - erlang-default
   - common

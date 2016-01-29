@@ -43,6 +43,10 @@ case $OS in
     echo "Using Ubuntu 14.04"
     DOCKER_IMAGE=$DOCKER_IMAGE"ubuntu-14.04-"
     ;;
+  debian-8*)
+    echo "Using Debian 8"
+    DOCKER_IMAGE=$DOCKER_IMAGE"debian-8-"
+    ;;
   *)
     echo "Unknown OS $OS"
     exit 1

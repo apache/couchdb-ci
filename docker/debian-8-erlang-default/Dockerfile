@@ -13,34 +13,25 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
-#   under the License.
 
-- name: import the Erlang Solutions key into apt
-  apt_key:
-    url: "{{ erlang_solutions_key_url }}"
-    state: present
-    # validate_certs: no
+# NOTE: All docker files need to be run from ../../, that is
+# docker build -f /docker/<container>/Dockerfile
 
-- name: add Erlang Solutions deb repository
-  apt_repository:
-    repo: "{{ erlang_solutions_apt_repo_url }}"
-    state: present
+# Base Image: Plain Vanilla Debian with Ansible installed
+FROM williamyeh/ansible:master-debian8-onbuild
 
-# apt-get update
-- name: update apt cache
-  apt:
-    update_cache: yes
+# Add ansible directory and cd to it
+ADD ./ansible /ansible
+WORKDIR /ansible
 
-- name: install Erlang 18.x
-  apt: name={{item}} state=present install_recommends=no
-  with_items:
-  - erlang-dev=1:18.2
-  - erlang-nox=1:18.2
-  - erlang=1:18.2
+# Install Node.js role
+RUN ansible-galaxy install nodesource.node
 
-# required for make check and make dialyze
-- name: install packages required to build CouchDB
-  apt: name={{item}} state=present install_recommends=no
-  with_items:
-  - erlang-eunit=1:18.2
-  - erlang-dialyzer=1:18.2
+# Run Ansible to provision container
+RUN ansible-playbook site.yml \
+  --connection=local \
+  --inventory-file=./docker-inventories/debian-8-erlang-default
+
+USER couchdb
+
+CMD ["/home/couchdb/build-ci.sh"]

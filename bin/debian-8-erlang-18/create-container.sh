@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,32 +17,12 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- name: import the Erlang Solutions key into apt
-  apt_key:
-    url: "{{ erlang_solutions_key_url }}"
-    state: present
-    # validate_certs: no
+set -e
 
-- name: add Erlang Solutions deb repository
-  apt_repository:
-    repo: "{{ erlang_solutions_apt_repo_url }}"
-    state: present
+# The Docker containers need the root directory of this repository as their
+# build context (because they need the Ansible files).
+pushd `dirname $0`/../.. > /dev/null
 
-# apt-get update
-- name: update apt cache
-  apt:
-    update_cache: yes
+docker build -f docker/debian-8-erlang-18/Dockerfile -t basti1302/couchdb-build-debian-8-erlang-18.2 .
 
-- name: install Erlang 18.x
-  apt: name={{item}} state=present install_recommends=no
-  with_items:
-  - erlang-dev=1:18.2
-  - erlang-nox=1:18.2
-  - erlang=1:18.2
-
-# required for make check and make dialyze
-- name: install packages required to build CouchDB
-  apt: name={{item}} state=present install_recommends=no
-  with_items:
-  - erlang-eunit=1:18.2
-  - erlang-dialyzer=1:18.2
+popd > /dev/null

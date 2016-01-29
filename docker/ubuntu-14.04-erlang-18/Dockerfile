@@ -18,7 +18,7 @@
 # docker build -f /docker/<container>/Dockerfile
 
 # Base Image: Plain Vanilla Ubuntu 14.04 with Ansible installed
-FROM williamyeh/ansible:ubuntu14.04
+FROM williamyeh/ansible:ubuntu14.04-onbuild
 
 # Add ansible directory and cd to it
 ADD ./ansible /ansible
