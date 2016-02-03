@@ -18,7 +18,7 @@
 # docker build -f /docker/<container>/Dockerfile
 
 # Base Image: Plain Vanilla Debian with Ansible installed
-FROM williamyeh/ansible:master-debian8-onbuild
+FROM williamyeh/ansible:debian8-onbuild
 
 # Add ansible directory and cd to it
 ADD ./ansible /ansible
