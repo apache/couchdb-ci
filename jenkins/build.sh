@@ -39,13 +39,17 @@ rm -f $DOCKERFILE # Just in case a stale one exists.
 DOCKER_IMAGE="basti1302/couchdb-build-"
 
 case $OS in
-  ubuntu-14.04*)
-    echo "Using Ubuntu 14.04"
-    DOCKER_IMAGE=$DOCKER_IMAGE"ubuntu-14.04-"
+  centos-7*)
+    echo "Using CentOS 7"
+    DOCKER_IMAGE=$DOCKER_IMAGE"centos-7-"
     ;;
   debian-8*)
     echo "Using Debian 8"
     DOCKER_IMAGE=$DOCKER_IMAGE"debian-8-"
+    ;;
+  ubuntu-14.04*)
+    echo "Using Ubuntu 14.04"
+    DOCKER_IMAGE=$DOCKER_IMAGE"ubuntu-14.04-"
     ;;
   *)
     echo "Unknown OS $OS"
@@ -54,13 +58,13 @@ case $OS in
 esac
 
 case $ERLANG in
-  18.2*)
-    echo "Using Erlang 18.2"
-    DOCKER_IMAGE=$DOCKER_IMAGE"erlang-18.2"
-    ;;
   default*)
     echo "Using Erlang 18.2"
     DOCKER_IMAGE=$DOCKER_IMAGE"erlang-default"
+    ;;
+  18.2*)
+    echo "Using Erlang 18.2"
+    DOCKER_IMAGE=$DOCKER_IMAGE"erlang-18.2"
     ;;
   *)
     echo "Unknown Erlang version $ERLANG"
@@ -70,9 +74,4 @@ esac
 
 docker pull $DOCKER_IMAGE
 
-# Set a trap to delete the image on exit.
-# trap "docker rmi $TAG" EXIT
-
-#--privileged ?
-#--rm ?
 docker run $DOCKER_IMAGE

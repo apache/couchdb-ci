@@ -1,4 +1,5 @@
 # Licensed to the Apache Software Foundation (ASF) under one
+# Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
@@ -13,26 +14,7 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
+#   under the License.
 
-# NOTE: All docker files need to be run from ../../, that is
-# docker build -f /docker/<container>/Dockerfile
-
-# Base Image: Plain Vanilla Debian with Ansible installed
-FROM williamyeh/ansible:debian8-onbuild
-
-# Add ansible directory and cd to it
-ADD ./ansible /ansible
-WORKDIR /ansible
-
-# Install Ansible roles
-RUN ansible-galaxy install geerlingguy.repo-epel
-RUN ansible-galaxy install nodesource.node
-
-# Run Ansible to provision container
-RUN ansible-playbook site.yml \
-  --connection=local \
-  --inventory-file=./docker-inventories/debian-8-erlang-18
-
-USER couchdb
-
-CMD ["/home/couchdb/build-ci.sh"]
+[centos-7-erlang-18]
+localhost

@@ -24,7 +24,8 @@ FROM williamyeh/ansible:debian8-onbuild
 ADD ./ansible /ansible
 WORKDIR /ansible
 
-# Install Node.js role
+# Install Ansible roles
+RUN ansible-galaxy install geerlingguy.repo-epel
 RUN ansible-galaxy install nodesource.node
 
 # Run Ansible to provision container

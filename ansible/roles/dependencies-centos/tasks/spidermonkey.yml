@@ -1,0 +1,55 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing,
+#   software distributed under the License is distributed on an
+#   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#   KIND, either express or implied.  See the License for the
+#   specific language governing permissions and limitations
+#   under the License.
+
+- name: download Spidermonkey 1.8.5
+  get_url:
+    url: "http://ftp.mozilla.org/pub/mozilla.org/js/js185-1.0.0.tar.gz"
+    dest: /tmp/js185-1.0.0.tar.gz
+- name: unpack Spidermonkey 1.8.5
+  unarchive:
+    src: /tmp/js185-1.0.0.tar.gz
+    dest: /opt
+    copy: no
+- name: configure Spidermonkey 1.8.5
+  command: ./configure
+  args:
+    chdir: /opt/js-1.8.5/js/src
+- name: make Spidermonkey 1.8.5
+  command: make
+  args:
+    chdir: /opt/js-1.8.5/js/src
+- name: make install Spidermonkey 1.8.5
+  command: make install
+  args:
+    chdir: /opt/js-1.8.5/js/src
+
+# This prevents
+# error while loading shared libraries:
+# libmozjs185.so.1.0: cannot open shared object file
+# during CouchDB make later.
+- name: set LD_LIBRARY_PATH (otherwise libmozjs185.so.1.0 is not found)
+  copy:
+    content: "export LD_LIBRARY_PATH=/usr/local/lib"
+    dest: /etc/profile.d/library_path.sh
+
+# add symbolic link (otherwise CouchDB make complains about not being able to
+# find jsapi.h)
+- name: link /usr/include/js to /usr/local/include/js
+  file:
+    path: /usr/include/js
+    src: /usr/local/include/js
+    state: link

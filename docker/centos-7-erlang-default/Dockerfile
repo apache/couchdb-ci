@@ -17,8 +17,8 @@
 # NOTE: All docker files need to be run from ../../, that is
 # docker build -f /docker/<container>/Dockerfile
 
-# Base Image: Plain Vanilla Debian with Ansible installed
-FROM williamyeh/ansible:debian8-onbuild
+# Base Image: Plain Vanilla CentOS with Ansible installed
+FROM williamyeh/ansible:centos7-onbuild
 
 # Add ansible directory and cd to it
 ADD ./ansible /ansible
@@ -31,8 +31,8 @@ RUN ansible-galaxy install nodesource.node
 # Run Ansible to provision container
 RUN ansible-playbook site.yml \
   --connection=local \
-  --inventory-file=./docker-inventories/debian-8-erlang-18
+  --inventory-file=./docker-inventories/centos-7-erlang-default
 
-USER couchdb
+# USER couchdb
 
 CMD ["/home/couchdb/build-ci.sh"]

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -13,26 +15,14 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
+#   under the License.
 
-# NOTE: All docker files need to be run from ../../, that is
-# docker build -f /docker/<container>/Dockerfile
+set -e
 
-# Base Image: Plain Vanilla Debian with Ansible installed
-FROM williamyeh/ansible:debian8-onbuild
+# The Docker containers need the root directory of this repository as their
+# build context (because they need the Ansible files).
+pushd `dirname $0`/../.. > /dev/null
 
-# Add ansible directory and cd to it
-ADD ./ansible /ansible
-WORKDIR /ansible
+docker build -f docker/centos-7-erlang-18/Dockerfile -t basti1302/couchdb-build-centos-7-erlang-18.2 .
 
-# Install Ansible roles
-RUN ansible-galaxy install geerlingguy.repo-epel
-RUN ansible-galaxy install nodesource.node
-
-# Run Ansible to provision container
-RUN ansible-playbook site.yml \
-  --connection=local \
-  --inventory-file=./docker-inventories/debian-8-erlang-18
-
-USER couchdb
-
-CMD ["/home/couchdb/build-ci.sh"]
+popd > /dev/null
