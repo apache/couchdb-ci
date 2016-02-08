@@ -18,14 +18,4 @@
 - name: install default Erlang version
   yum: name={{item}} state=present
   with_items:
-  - erlang-asn1
-  - erlang-erts
-  - erlang-os_mon
-  - erlang-xmerl
-
-# required for make check and make dialyze
-- name: install packages required to build CouchDB
-  yum: name={{item}} state=present
-  with_items:
-  - erlang-eunit
-  - erlang-dialyzer
+  - erlang

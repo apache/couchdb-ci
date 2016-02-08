@@ -33,6 +33,6 @@ RUN ansible-playbook site.yml \
   --connection=local \
   --inventory-file=./docker-inventories/centos-7-erlang-default
 
-# USER couchdb
+USER couchdb
 
 CMD ["/home/couchdb/build-ci.sh"]
