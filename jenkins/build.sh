@@ -43,7 +43,7 @@ case $OS in
   centos-7*)
     echo "Using CentOS 7"
     DOCKER_IMAGE=$DOCKER_IMAGE"centos-7-"
-    DOCKER_OPTIONS="-e LD_LIBRARY_PATH='/usr/local/lib'"
+    DOCKER_OPTIONS="-e LD_LIBRARY_PATH=/usr/local/lib"
     ;;
   debian-8*)
     echo "Using Debian 8"
