@@ -17,4 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker run basti1302/couchdb-build-centos-7-erlang-default
+docker run -e LD_LIBRARY_PATH='/usr/local/lib' basti1302/couchdb-build-centos-7-erlang-default
