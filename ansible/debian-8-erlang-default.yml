@@ -15,54 +15,11 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- hosts: centos-7-erlang-default
-  remote_user: root
-  roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
-  - erlang-default-centos
-  - common
-
-- hosts: centos-7-erlang-18
-  remote_user: root
-  roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
-  - erlang-18-centos
-  - common
-
-- hosts: debian-8-erlang-default
+- hosts: couchdb-ci-worker
   remote_user: root
   roles:
   - debian-8
   - nodesource.node
   - dependencies-debian
   - erlang-default-debian
-  - common
-
-- hosts: debian-8-erlang-18
-  remote_user: root
-  roles:
-  - debian-8
-  - nodesource.node
-  - dependencies-debian
-  - erlang-18-debian
-  - common
-
-- hosts: ubuntu-14.04-erlang-default
-  remote_user: root
-  roles:
-  - ubuntu-1404
-  - nodesource.node
-  - dependencies-debian
-  - erlang-default-debian
-  - common
-
-- hosts: ubuntu-14.04-erlang-18
-  remote_user: root
-  roles:
-  - ubuntu-1404
-  - nodesource.node
-  - dependencies-debian
-  - erlang-18-debian
   - common

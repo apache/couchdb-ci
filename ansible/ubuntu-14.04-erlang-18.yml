@@ -15,5 +15,11 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-[ubuntu-14.04-erlang-default]
-localhost
+- hosts: couchdb-ci-worker
+  remote_user: root
+  roles:
+  - ubuntu-1404
+  - nodesource.node
+  - dependencies-debian
+  - erlang-18-debian
+  - common

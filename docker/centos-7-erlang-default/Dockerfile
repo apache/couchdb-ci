@@ -26,12 +26,11 @@ WORKDIR /ansible
 
 # Install Ansible roles
 RUN ansible-galaxy install geerlingguy.repo-epel
-RUN ansible-galaxy install nodesource.node
 
 # Run Ansible to provision container
-RUN ansible-playbook site.yml \
+RUN ansible-playbook centos-7-erlang-default.yml \
   --connection=local \
-  --inventory-file=./docker-inventories/centos-7-erlang-default
+  --inventory-file=./inventory/couchdb-ci-worker
 
 USER couchdb
 

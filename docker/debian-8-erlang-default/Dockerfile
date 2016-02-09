@@ -25,13 +25,12 @@ ADD ./ansible /ansible
 WORKDIR /ansible
 
 # Install Ansible roles
-RUN ansible-galaxy install geerlingguy.repo-epel
 RUN ansible-galaxy install nodesource.node
 
 # Run Ansible to provision container
-RUN ansible-playbook site.yml \
+RUN ansible-playbook debian-8-erlang-default.yml \
   --connection=local \
-  --inventory-file=./docker-inventories/debian-8-erlang-default
+  --inventory-file=./inventory/couchdb-ci-worker
 
 USER couchdb
 

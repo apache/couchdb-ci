@@ -15,5 +15,5 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-[ubuntu-14.04-erlang-18]
+[couchdb-ci-worker]
 localhost
