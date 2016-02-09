@@ -17,4 +17,8 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker run basti1302/couchdb-build-ubuntu-14.04-erlang-18.2
+set -e
+pushd $( dirname "$0" )/../..
+pwd
+OS=ubuntu-14.04 ERLANG=18.2 jenkins/build.sh
+popd

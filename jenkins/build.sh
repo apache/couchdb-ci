@@ -34,8 +34,6 @@ set -xe
 COUCHDB_CI_DIRECTORY=$( cd "$( dirname "$0" )/.." && pwd )
 cd "$COUCHDB_CI_DIRECTORY"
 
-rm -f $DOCKERFILE # Just in case a stale one exists.
-
 DOCKER_IMAGE="basti1302/couchdb-build-"
 DOCKER_OPTIONS=""
 
