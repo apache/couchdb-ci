@@ -13,12 +13,17 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
-#   under the License.
 
-- name: install default Erlang version
-  yum: name={{item}} state=present
-  with_items:
-  - erlang
+# NOTE: All docker files need to be run from ../../, that is
+# docker build -f /docker/<container>/Dockerfile
 
-- name: clean up yum cache
-  command: yum clean all
+FROM basti1302/couchdb-build-centos-7-base:latest
+
+# Run Ansible to provision container with CentOS' default Erlang
+RUN ansible-playbook centos-7-erlang-default.yml \
+  --connection=local \
+  --inventory-file=./inventory/couchdb-ci-worker
+
+USER couchdb
+
+CMD ["/home/couchdb/build-ci.sh"]

@@ -19,7 +19,4 @@
   remote_user: root
   roles:
   - debian-8
-  - nodesource.node
-  - dependencies-debian
   - erlang-default-debian
-  - common

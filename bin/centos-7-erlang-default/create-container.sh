@@ -23,6 +23,6 @@ set -e
 # build context (because they need the Ansible files).
 pushd `dirname $0`/../.. > /dev/null
 
-docker build -f docker/centos-7-erlang-default/Dockerfile -t basti1302/couchdb-build-centos-7-erlang-default .
+docker build -f dockerfiles/centos-7-erlang-default -t basti1302/couchdb-build-centos-7-erlang-default .
 
 popd > /dev/null

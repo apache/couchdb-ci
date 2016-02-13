@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,10 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- name: install default Erlang version
-  yum: name={{item}} state=present
-  with_items:
-  - erlang
-
-- name: clean up yum cache
-  command: yum clean all
+docker push basti1302/couchdb-build-centos-7-base

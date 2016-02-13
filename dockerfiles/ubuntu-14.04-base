@@ -13,12 +13,21 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
-#   under the License.
 
-- name: install default Erlang version
-  yum: name={{item}} state=present
-  with_items:
-  - erlang
+# NOTE: All docker files need to be run from ../../, that is
+# docker build -f /docker/<container>/Dockerfile
 
-- name: clean up yum cache
-  command: yum clean all
+# Base Image: Plain Vanilla Ubuntu 14.04 with Ansible installed
+FROM williamyeh/ansible:ubuntu14.04-onbuild
+
+# Add ansible directory and cd to it
+ADD ./ansible /ansible
+WORKDIR /ansible
+
+# Install Ansible roles
+RUN ansible-galaxy install nodesource.node
+
+# Run Ansible to provision Ubuntu base container
+RUN ansible-playbook ubuntu-14.04-base.yml \
+  --connection=local \
+  --inventory-file=./inventory/couchdb-ci-worker

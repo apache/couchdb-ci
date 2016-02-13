@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,10 +17,12 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- name: install default Erlang version
-  yum: name={{item}} state=present
-  with_items:
-  - erlang
+set -e
 
-- name: clean up yum cache
-  command: yum clean all
+# The Docker containers need the root directory of this repository as their
+# build context (because they need the Ansible files).
+pushd `dirname $0`/../.. > /dev/null
+
+docker build -f dockerfiles/centos-7-base -t basti1302/couchdb-build-centos-7-base .
+
+popd > /dev/null

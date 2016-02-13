@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -13,25 +15,6 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
+#   under the License.
 
-# NOTE: All docker files need to be run from ../../, that is
-# docker build -f /docker/<container>/Dockerfile
-
-# Base Image: Plain Vanilla Ubuntu 14.04 with Ansible installed
-FROM williamyeh/ansible:ubuntu14.04-onbuild
-
-# Add ansible directory and cd to it
-ADD ./ansible /ansible
-WORKDIR /ansible
-
-# Install Ansible roles
-RUN ansible-galaxy install nodesource.node
-
-# Run Ansible to provision container
-RUN ansible-playbook ubuntu-14.04-erlang-18.yml \
-  --connection=local \
-  --inventory-file=./inventory/couchdb-ci-worker
-
-USER couchdb
-
-CMD ["/home/couchdb/build-ci.sh"]
+docker run -it basti1302/couchdb-build-debian-8-base bash

@@ -57,22 +57,8 @@
 - name: install up to date version of sphinx via pip
   shell: pip install sphinx==1.3.4
 
-- name: copy TeX Live installer
-  copy:
-    src: install-tl-unx.tar.gz
-    dest: /tmp/install-tl-unx.tar.gz
-- name: copy TeX Live installer profile
-  copy:
-    src: texlive.profile
-    dest: /tmp/texlive.profile
-- name: unpack TeX Live installer
-  unarchive:
-    src: /tmp/install-tl-unx.tar.gz
-    dest: /tmp
-    copy: no
-- name: install TeX Live via net installer
-  command: /tmp/install-tl-20160206/install-tl --profile=/tmp/texlive.profile
-  args:
-    chdir: /tmp/install-tl-20160206
-- name: install additional TeX packages
-  command: tlmgr install capt-of framed multirow needspace threeparttable titlesec upquote wrapfig
+# download and install TeX Live
+- include: latex.yml
+
+- name: clean up yum cache
+  command: yum clean all

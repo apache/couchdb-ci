@@ -13,25 +13,11 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
+#   under the License.
 
-# NOTE: All docker files need to be run from ../../, that is
-# docker build -f /docker/<container>/Dockerfile
-
-# Base Image: Plain Vanilla CentOS with Ansible installed
-FROM williamyeh/ansible:centos7-onbuild
-
-# Add ansible directory and cd to it
-ADD ./ansible /ansible
-WORKDIR /ansible
-
-# Install Ansible roles
-RUN ansible-galaxy install geerlingguy.repo-epel
-
-# Run Ansible to provision container
-RUN ansible-playbook centos-7-erlang-18.yml \
-  --connection=local \
-  --inventory-file=./inventory/couchdb-ci-worker
-
-USER couchdb
-
-CMD ["/home/couchdb/build-ci.sh"]
+- hosts: couchdb-ci-worker
+  remote_user: root
+  roles:
+  - geerlingguy.repo-epel
+  - dependencies-centos
+  - common

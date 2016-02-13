@@ -18,7 +18,4 @@
 - hosts: couchdb-ci-worker
   remote_user: root
   roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
   - erlang-18-centos
-  - common

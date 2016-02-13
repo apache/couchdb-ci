@@ -15,10 +15,10 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- name: install default Erlang version
-  yum: name={{item}} state=present
-  with_items:
-  - erlang
-
-- name: clean up yum cache
-  command: yum clean all
+- hosts: couchdb-ci-worker
+  remote_user: root
+  roles:
+  - debian-8
+  - nodesource.node
+  - dependencies-debian
+  - common

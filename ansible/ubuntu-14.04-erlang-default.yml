@@ -19,7 +19,4 @@
   remote_user: root
   roles:
   - ubuntu-1404
-  - nodesource.node
-  - dependencies-debian
   - erlang-default-debian
-  - common
