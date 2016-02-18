@@ -1,0 +1,24 @@
+{
+  "name": "auto-download-jenkins-logs",
+  "version": "1.0.0",
+  "description": "Automatically downloads Jenkins logs",
+  "main": "index.js",
+  "bin": {
+    "auto-download-jenkins-logs": "./bin/auto-download-jenkins-logs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git-wip-us.apache.org/repos/asf/couchdb.git"
+  },
+  "author": "The Apache CouchDB contributors",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "jsonfile": "^2.2.3",
+    "mkdirp": "^0.5.1",
+    "request": "^2.69.0",
+    "xml2js": "^0.4.16"
+  },
+  "devDependencies": {
+    "is-string": "^1.0.4"
+  }
+}
