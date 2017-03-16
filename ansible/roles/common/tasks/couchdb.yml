@@ -35,7 +35,7 @@
 
 - name: get CouchDB sources from git
   git:
-    repo: git://git.apache.org/couchdb.git
+    repo: https://gitbox.apache.org/repos/asf/couchdb.git
     dest: /usr/src/couchdb-checkout
     accept_hostkey: yes
     force: yes

@@ -92,7 +92,7 @@ Links to the build logs:
 ## Regular Expressions
 When one of these regular expression has a match in the build log, I assume this build failure falls into this category.
 
-* `/fatal: unable to access 'https:\/\/git-wip-us.apache.org/`
+* `/fatal: unable to access 'https:\/\/gitbox.apache.org/`
 * `/fatal: read error: Connection reset by peer/`
 
 ## Builds
