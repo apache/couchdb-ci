@@ -34,7 +34,7 @@ set -xe
 COUCHDB_CI_DIRECTORY=$( cd "$( dirname "$0" )/.." && pwd )
 cd "$COUCHDB_CI_DIRECTORY"
 
-DOCKER_IMAGE="basti1302/couchdb-build-"
+DOCKER_IMAGE="couchdbdev/couchdb-build-"
 DOCKER_OPTIONS=""
 
 case $OS in

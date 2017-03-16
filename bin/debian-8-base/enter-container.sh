@@ -17,4 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker run -it basti1302/couchdb-build-debian-8-base bash
+docker run -it couchdbdev/couchdb-build-debian-8-base bash

@@ -17,4 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker push basti1302/couchdb-build-centos-7-erlang-default
+docker push couchdbdev/couchdb-build-centos-7-erlang-default

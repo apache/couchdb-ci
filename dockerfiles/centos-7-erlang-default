@@ -17,7 +17,7 @@
 # NOTE: All docker files need to be run from ../../, that is
 # docker build -f /docker/<container>/Dockerfile
 
-FROM basti1302/couchdb-build-centos-7-base:latest
+FROM couchdbdev/couchdb-build-centos-7-base:latest
 
 # Run Ansible to provision container with CentOS' default Erlang
 RUN ansible-playbook centos-7-erlang-default.yml \
