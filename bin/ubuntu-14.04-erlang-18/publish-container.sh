@@ -17,4 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker push couchdbdev/couchdb-build-ubuntu-14.04-erlang-18.2
+docker push couchdbdev/ubuntu-14.04-erlang-18.2

@@ -17,4 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker push couchdbdev/couchdb-build-debian-8-erlang-default
+docker push couchdbdev/debian-8-erlang-default

@@ -17,7 +17,7 @@
 # NOTE: All docker files need to be run from ../../, that is
 # docker build -f /docker/<container>/Dockerfile
 
-FROM couchdbdev/couchdb-build-ubuntu-14.04-base:latest
+FROM couchdbdev/ubuntu-14.04-base:latest
 
 # Run Ansible to provision container with Erlang 18.2
 RUN ansible-playbook ubuntu-14.04-erlang-18.yml \

@@ -23,6 +23,6 @@ set -e
 # build context (because they need the Ansible files).
 pushd `dirname $0`/../.. > /dev/null
 
-docker build -f dockerfiles/debian-8-base -t couchdbdev/couchdb-build-debian-8-base .
+docker build -f dockerfiles/debian-8-base -t couchdbdev/debian-8-base .
 
 popd > /dev/null
