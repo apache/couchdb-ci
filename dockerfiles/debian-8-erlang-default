@@ -19,6 +19,11 @@
 
 FROM couchdbdev/debian-8-base:latest
 
+# Re-add ansible directory to pick up latest changes
+# This avoids having to cascade rebuild all images when changing
+# a role that only affects a child container
+ADD ./ansible /ansible
+
 # Run Ansible to provision container with Debian's default Erlang
 RUN ansible-playbook debian-8-erlang-default.yml \
   --connection=local \

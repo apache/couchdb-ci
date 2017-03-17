@@ -1,0 +1,66 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing,
+#   software distributed under the License is distributed on an
+#   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#   KIND, either express or implied.  See the License for the
+#   specific language governing permissions and limitations
+#   under the License.
+
+- name: import the Erlang Solutions key into apt
+  apt_key:
+    url: "{{ erlang_solutions_key_url }}"
+    state: present
+    # validate_certs: no
+
+- name: add Erlang Solutions deb repository
+  apt_repository:
+    repo: "{{ erlang_solutions_apt_repo_url }}"
+    state: present
+
+# apt-get update
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: install Erlang 18.2
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - erlang-dev=1:18.2
+  - erlang-nox=1:18.2
+  - erlang-base=1:18.2
+  - erlang-asn1=1:18.2
+  - erlang-corba=1:18.2
+  - erlang-crypto=1:18.2
+  - erlang-diameter=1:18.2
+  - erlang-edoc=1:18.2
+  - erlang-eldap=1:18.2
+  - erlang-erl-docgen=1:18.2
+  - erlang-eunit=1:18.2
+  - erlang-ic=1:18.2
+  - erlang-inets=1:18.2
+  - erlang-inviso=1:18.2
+  - erlang-mnesia=1:18.2
+  - erlang-odbc=1:18.2
+  - erlang-os-mon=1:18.2
+  - erlang-parsetools=1:18.2
+  - erlang-percept=1:18.2
+  - erlang-public-key=1:18.2
+  - erlang-runtime-tools=1:18.2
+  - erlang-snmp=1:18.2
+  - erlang-ssh=1:18.2
+  - erlang-ssl=1:18.2
+  - erlang-syntax-tools=1:18.2
+  - erlang-tools=1:18.2
+  - erlang-webtool=1:18.2
+  - erlang-xmerl=1:18.2
+  - erlang-eunit=1:18.2
+  - erlang-dialyzer=1:18.2

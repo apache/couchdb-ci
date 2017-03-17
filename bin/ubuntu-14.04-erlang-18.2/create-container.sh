@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,8 +17,12 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- hosts: couchdb-ci-worker
-  remote_user: root
-  roles:
-  - debian-8
-  - erlang-18-debian
+set -e
+
+# The Docker containers need the root directory of this repository as their
+# build context (because they need the Ansible files).
+pushd `dirname $0`/../.. > /dev/null
+
+docker build -f dockerfiles/ubuntu-14.04-erlang-18.2 -t couchdbdev/ubuntu-14.04-erlang-18.2 .
+
+popd > /dev/null

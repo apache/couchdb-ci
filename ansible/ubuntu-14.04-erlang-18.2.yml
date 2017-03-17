@@ -15,9 +15,8 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- name: download and install Erlang 18
-  yum:
-    name: "https://packages.erlang-solutions.com/erlang/esl-erlang/FLAVOUR_1_general/esl-erlang_18.2-1~centos~6_amd64.rpm"
-
-- name: clean up yum cache
-  command: yum clean all
+- hosts: couchdb-ci-worker
+  remote_user: root
+  roles:
+  - ubuntu-1404
+  - erlang-18.2-debian

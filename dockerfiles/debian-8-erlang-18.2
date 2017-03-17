@@ -17,10 +17,15 @@
 # NOTE: All docker files need to be run from ../../, that is
 # docker build -f /docker/<container>/Dockerfile
 
-FROM couchdbdev/centos-7-base:latest
+FROM couchdbdev/debian-8-base:latest
+
+# Re-add ansible directory to pick up latest changes
+# This avoids having to cascade rebuild all images when changing
+# a role that only affects a child container
+ADD ./ansible /ansible
 
 # Run Ansible to provision container with Erlang 18.2
-RUN ansible-playbook centos-7-erlang-18.yml \
+RUN ansible-playbook debian-8-erlang-18.2.yml \
   --connection=local \
   --inventory-file=./inventory/couchdb-ci-worker
 

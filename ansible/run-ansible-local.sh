@@ -40,7 +40,7 @@ fi
 ANSIBLE_FORCE_COLOR=1 ANSIBLE_NOCOWS=1 \
   ansible-playbook \
   --connection=local \
-  --inventory-file=./docker-inventories/ubuntu-14.04-erlang-18 \
+  --inventory-file=./docker-inventories/ubuntu-14.04-erlang-18.2 \
   --sudo \
   $TAG \
   site.yml

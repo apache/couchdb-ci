@@ -19,6 +19,11 @@
 
 FROM couchdbdev/ubuntu-14.04-base:latest
 
+# Re-add ansible directory to pick up latest changes
+# This avoids having to cascade rebuild all images when changing
+# a role that only affects a child container
+ADD ./ansible /ansible
+
 # Run Ansible to provision container with Ubuntu's default Erlang
 RUN ansible-playbook ubuntu-14.04-erlang-default.yml \
   --connection=local \
