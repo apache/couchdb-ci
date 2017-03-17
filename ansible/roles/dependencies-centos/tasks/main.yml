@@ -55,7 +55,7 @@
   - perl-Digest-MD5 # for texlive installer
 
 - name: install up to date version of sphinx via pip
-  shell: pip install sphinx==1.3.4
+  shell: pip install sphinx==1.5.3
 
 # download and install TeX Live
 - include: latex.yml
