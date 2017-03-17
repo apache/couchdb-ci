@@ -59,7 +59,7 @@ esac
 
 case $ERLANG in
   default*)
-    echo "Using Erlang 18.2"
+    echo "Using OS default Erlang"
     DOCKER_IMAGE=$DOCKER_IMAGE"erlang-default"
     ;;
   18.2*)
