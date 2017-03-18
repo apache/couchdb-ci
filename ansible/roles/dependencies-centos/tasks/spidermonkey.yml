@@ -25,7 +25,7 @@
     dest: /opt
     copy: no
 - name: configure Spidermonkey 1.8.5
-  command: ./configure
+  command: ./configure --prefix=/usr
   args:
     chdir: /opt/js-1.8.5/js/src
 - name: make Spidermonkey 1.8.5
@@ -36,20 +36,3 @@
   command: make install
   args:
     chdir: /opt/js-1.8.5/js/src
-
-# This prevents
-# error while loading shared libraries:
-# libmozjs185.so.1.0: cannot open shared object file
-# during CouchDB make later.
-- name: set LD_LIBRARY_PATH (otherwise libmozjs185.so.1.0 is not found)
-  copy:
-    content: "export LD_LIBRARY_PATH=/usr/local/lib"
-    dest: /etc/profile.d/library_path.sh
-
-# add symbolic link (otherwise CouchDB make complains about not being able to
-# find jsapi.h)
-- name: link /usr/include/js to /usr/local/include/js
-  file:
-    path: /usr/include/js
-    src: /usr/local/include/js
-    state: link

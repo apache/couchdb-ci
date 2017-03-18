@@ -28,6 +28,7 @@
   - git
   - pkg-config
   - python
+  - python-pip
 
 # dependencies for make couch, except erlang
 - name: install packages required to build CouchDB
@@ -50,9 +51,12 @@
   apt: name={{item}} state=present install_recommends=no
   with_items:
   - help2man
-  - python-sphinx
   - texlive-latex-base
   - texlive-latex-recommended
   - texlive-latex-extra
   - texlive-fonts-recommended
   - texinfo
+
+# also required for make docs
+- name: install up to date version of sphinx via pip
+  shell: pip install sphinx==1.5.3
