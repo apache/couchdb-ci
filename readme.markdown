@@ -1,65 +1,74 @@
-CouchDB CI Setup
-================
+# CouchDB Continuous Integration (CI) support repo
 
-Mission statement: Create a new continuous integration infrastructure for the CouchDB project.
+The main purpose of this repository is to provide a number of Docker containers, Ansible roles/tasks and other configuration functionality so that the ASF Jenkins CI server (https://builds.apache.org/) is capable of building (and eventually packaging) CouchDB for a number of platforms. It intends to cover a range of both operating systems (Linux, macOS, BSD, Windows) and Erlang versions (OS default, 18.x, 19.x, etc.)
 
-For the background and goals, see
+The current configuration builds CouchDB, Fauxton, its documentation, and runs the Erlang and JS test suites for each combination of OS and Erlang revision.
 
+## Background 
+
+See: 
 * this [thread](https://www.mail-archive.com/dev%40couchdb.apache.org/msg43591.html) on the couchdb-dev mailing list and
 * this [ASF Infra ticket](https://issues.apache.org/jira/browse/INFRA-10126).
+for the origins of this work.
 
-*Remark: Throughout this repository we use the terms "master"/"worker" for the Jenkins build machines, whereas the Jenkins documentation uses the terms "master"/"slave".*
+## Supported Configurations (updated 2017-03-19)
 
-The main purpose of this repository is to provide a number of Docker containers that the ASF infrastructure team can use in their Jenkins setups and which are capable of building CouchDB. The idea is to provide containers for a number of different operating systems and Erlang versions to make sure CouchDB builds and runs on all supported setups.
-
-The current (rough) plan for the build matrix is this:
-
-**OS/Erlang**       | **default ** | **17.5** | **18.x**
---------------------|--------------|----------|---------
-**Ubuntu 14.04**    | ✔ (16B03-1)  | -        | ✔
-**Ubuntu latest ?** | -            | -        | -
-**Debian 7**        | -            | -        | -
-**Debian 8**        | -            | -        | -
-**CentOS 6**        | -            | -        | -
-**CentOS 7**        | -            | -        | -
-**OS X latest**     | -            | -        | -
-**Free BSD**        | -            | -        | -
-**Windows**         | -            | -        | -
-
-### Open questions
-
-* Do we run a CouchDB build on all combinations on each commit? This would probably be too much for the ASF Infra build systems. Do we build them once a day? We need to find a good balance between early feedback and resource consumption here.
-* Do we even want to build the master branch or some other branch/tag? I guess the master branch would be most interesting for now, but not entirely sure. Also, it might make sense to make the branch/tag parameterizable so we could also use this to create releases from a specific tag etc.
-* What exactly do we do in each Jenkins build? Just build CouchDB? Also build docs? Start CouchDB? Run some test suite?
-* The build is currently triggered as the CMD in the Dockerfile via the script build-ci.sh. Is that okay? If we need more steps (beyond simply building CouchDB) we would need to add it to build-ci.sh.
-
-### TODOs
-
-- [ ] Check with ASF infra how to integrate our Docker containers into their build infrastructure.
-- [ ] Set up first CouchDB build on <https://builds.apache.org/>.
-- [ ] All apt-get commands should pin a specific version in Ansible. We are doing this for Erlang, we should do it for the other deps too.
-- [ ] Create more containers - other Erlang versions, other OSes.
-
-Docker
-------
-
-The docker containers are provisioned via Ansible. That is, the dockerfiles usually only kicks of the Ansible scripts and the actual setup is then done in Ansible. Part of the reason is that the initial idea was to just provision build workers to virtual machines instead of containers. I kept Ansible around to do the heavy lifting because the Ansible syntax is more expressive and flexible than plain vanilla Dockerfiles. The idea is that this will make things a bit easier once we create multiple containers for the build matrix. Also, you could still use the Ansible files to create a Vagrant VM instead of a Docker container. Last but not least, we plan to target operating systems on which Docker is not an option (FreeBDS, Windows, MacOS), so the final CI setup will use Docker for some points in the matrix but not all.
-
-### Building the Containers
-
-For each container that this repository can produce there is a shell script in the bin/create-docker-container directory. To build a container, execute the corresponding script.
+**OS/Erlang**       | **default ** | **18.2**
+--------------------|--------------|----------
+**Ubuntu 14.04**    | ✔ (16B03-1)  | ✔
+**Ubuntu 16.04**    | -            | -
+**Debian 7**        | -            | -
+**Debian 8**        | ✔ (17.3)     | ✔
+**Debian 9**        | -            | -
+**CentOS 6**        | -            | -
+**CentOS 7**        | ✔ (16B03-1)  | ✔
+**macOS 10.12**     | -            | -
+**FreeBSD**         | -            | -
+**Windows**         | -            | -
 
 
-### Running the CouchDB build on a Container
+## Open questions and TODOs
+* Right now we run a CouchDB build on all combinations on each commit, but perhaps we don't need to run Jenkins this often. (We also have Travis CI for a single OS and a few Erlang revisions.) Should we just build them once a day?
+* Right now we only build on the master branch. Travis CI handles PRs. ASF hasn't set up a Jenkins/Gitbox bridge yet, but if they do we can consider having Jenkins build PRs as well.
+* Ideally, we'd also like to build convenience packages for some of these platforms on a regular basis, i.e. nightly - especially the platforms where building the software is harder (Windows).
+* Currently, when changes occur to the base images (bugfixes, new OS/Erlang combinations added, etc.) new images are built manually using the scripts in `bin/`. TODO: automate this process in a way that avoids forcibly rebuilding every VM/Erlang combination with every checkin.
 
-To run a CouchDB build in a particular container (after it has been build), use the corresponding script in `bin/run-build-in-container/`. This will start the container which will then immediately start the CouchDB build. (The build script is the container's CMD entrypoint.)
+---
+
+# Docker
+
+For those OSes that support Docker, we run builds inside of Docker containers. The Dockerfiles typically use Ansible to handle all of their configuration and setup. This allows us to reuse the Ansible tasks for those OSes not supported by Docker for native apps (such as macOS and FreeBSD) where we must use VMs or bare hardware. The ASF has Windows Jenkins clients as an alternative to running Jenkins on Windows; a decision has not yet been reached here.
+
+## Building a container
+
+Run the `bin/<image-name>/create-container.sh` script.
+
+## Interactively working in a built container
+
+Run the `bin/<image-name>/enter-container.sh` script.
+
+## Running the CouchDB build in a locally built (but not published) container
+
+After using the `create-container.sh` script, run the command `docker run -it couchdbdev/<imagename>`. The build should immediately start.
+
+## Publishing a container
+
+1.  You need a Docker Cloud account with access to the `couchdbdev` organization. Ask the CouchDB PMC for assistance with this.
+2. `export DOCKER_ID_USER="username"`
+3. `docker login` and enter your password.
+4.  Run the `bin/<image-name>/publish-container.sh` script.
+
+## Running the CouchDB build in a published container
+
+To pull down the latest image and run the CouchDB build in the container, run the `bin/<image-name>/run-build-in-container.sh` script. This does not work with `-base` images, which lack the full toolchain necessary to build CouchDB.
+
 
 Vagrant
 -------
 
 Note: This section on creating the build machines on Vagrant might be outdated. Either we bring it up to date to have both possibilities (Docker & Vagrant) or we remove it completely and just go with Docker for now.
 
-### Prerequesites
+### Prerequisites
 
 See the readme files in folder `baseboxes` for docs on building the base boxes.
 
