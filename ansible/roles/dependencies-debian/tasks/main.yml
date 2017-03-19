@@ -51,11 +51,6 @@
   apt: name={{item}} state=present install_recommends=no
   with_items:
   - help2man
-  - texlive-latex-base
-  - texlive-latex-recommended
-  - texlive-latex-extra
-  - texlive-fonts-recommended
-  - texinfo
 
 # also required for make docs
 - name: install up to date version of sphinx via pip

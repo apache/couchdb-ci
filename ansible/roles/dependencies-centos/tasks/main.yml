@@ -50,15 +50,10 @@
   yum: name={{item}} state=present
   with_items:
   - help2man
-  - texinfo
   - python-pip
-  - perl-Digest-MD5 # for texlive installer
 
 - name: install up to date version of sphinx via pip
   shell: pip install sphinx==1.5.3
-
-# download and install TeX Live
-- include: latex.yml
 
 - name: clean up yum cache
   command: yum clean all
