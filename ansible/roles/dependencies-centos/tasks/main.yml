@@ -34,9 +34,18 @@
   - libicu-devel
   - libtool
 
-- name: install nodejs 4.x
+- name: download nodejs 6.x repo setup script
+  get_url:
+    url: https://rpm.nodesource.com/setup_6.x
+    dest: /tmp/setup_6.x
+    mode: 0755
+
+- name: setup nodejs 6.x repo
+  command: /tmp/setup_6.x
+
+- name: install nodejs and npm
   yum:
-    name: "https://rpm.nodesource.com/pub_4.x/el/7/x86_64/nodejs-4.2.6-1nodesource.el7.centos.x86_64.rpm"
+    name: nodejs
     state: present
 
 # download, compile and install Spidermonkey

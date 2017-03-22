@@ -19,6 +19,6 @@
   remote_user: root
   roles:
   - debian-8
-  - nodesource.node
+  - { role: nodesource.node, nodejs_version: '6.x' }
   - dependencies-debian
   - common
