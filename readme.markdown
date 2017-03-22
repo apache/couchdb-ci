@@ -11,12 +11,12 @@ See:
 * this [ASF Infra ticket](https://issues.apache.org/jira/browse/INFRA-10126).
 for the origins of this work.
 
-## Supported Configurations (updated 2017-03-19)
+## Supported Configurations (updated 2017-03-22)
 
 **OS/Erlang**       | **default ** | **18.2**
 --------------------|--------------|----------
 **Ubuntu 14.04**    | ✔ (16B03-1)  | ✔
-**Ubuntu 16.04**    | -            | -
+**Ubuntu 16.04**    | ✔ (18.3)     | ✔
 **Debian 7**        | -            | -
 **Debian 8**        | ✔ (17.3)     | ✔
 **Debian 9**        | -            | -
