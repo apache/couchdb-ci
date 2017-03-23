@@ -62,9 +62,9 @@ case $ERLANG in
     echo "Using OS default Erlang"
     DOCKER_IMAGE=$DOCKER_IMAGE"erlang-default"
     ;;
-  18.2*)
-    echo "Using Erlang 18.2"
-    DOCKER_IMAGE=$DOCKER_IMAGE"erlang-18.2"
+  18.3*)
+    echo "Using Erlang 18.3"
+    DOCKER_IMAGE=$DOCKER_IMAGE"erlang-18.3"
     ;;
   *)
     echo "Unknown Erlang version $ERLANG"

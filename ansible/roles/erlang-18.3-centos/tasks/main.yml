@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -17,10 +15,9 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
+- name: download and install Erlang 18.3
+  yum:
+    name: "http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_18.3-1~centos~7_amd64.rpm"
 
-find $SCRIPTPATH/*-base -type d -exec {}/create-container.sh \;
-find $SCRIPTPATH/*erlang* -type d -exec {}/create-container.sh \;
-exec $SCRIPTPATH/cleanup-docker.sh
-
+- name: clean up yum cache
+  command: yum clean all

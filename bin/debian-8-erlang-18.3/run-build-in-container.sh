@@ -17,10 +17,8 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
-
-find $SCRIPTPATH/*-base -type d -exec {}/create-container.sh \;
-find $SCRIPTPATH/*erlang* -type d -exec {}/create-container.sh \;
-exec $SCRIPTPATH/cleanup-docker.sh
-
+set -e
+pushd $( dirname "$0" )/../..
+pwd
+OS=debian-8 ERLANG=18.3 jenkins/build.sh
+popd

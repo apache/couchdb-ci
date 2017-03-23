@@ -13,13 +13,14 @@ for the origins of this work.
 
 ## Supported Configurations (updated 2017-03-22)
 
-**OS/Erlang**       | **default ** | **18.2**
---------------------|--------------|----------
+**OS/Erlang**       | **default ** | **18.3**
+--------------------|--------------|--------------
+**Ubuntu 12.04**    | -            | -
 **Ubuntu 14.04**    | ✔ (16B03-1)  | ✔
 **Ubuntu 16.04**    | ✔ (18.3)     | ✔
 **Debian 7**        | -            | -
 **Debian 8**        | ✔ (17.3)     | ✔
-**Debian 9**        | -            | -
+**Debian 9**        | unreleased   | unreleased
 **CentOS 6**        | -            | -
 **CentOS 7**        | ✔ (16B03-1)  | ✔
 **macOS 10.12**     | -            | -

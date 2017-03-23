@@ -17,10 +17,12 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
+set -e
 
-find $SCRIPTPATH/*-base -type d -exec {}/create-container.sh \;
-find $SCRIPTPATH/*erlang* -type d -exec {}/create-container.sh \;
-exec $SCRIPTPATH/cleanup-docker.sh
+# The Docker containers need the root directory of this repository as their
+# build context (because they need the Ansible files).
+pushd `dirname $0`/../.. > /dev/null
 
+docker build -f dockerfiles/ubuntu-14.04-erlang-18.3 -t couchdbdev/ubuntu-14.04-erlang-18.3 .
+
+popd > /dev/null

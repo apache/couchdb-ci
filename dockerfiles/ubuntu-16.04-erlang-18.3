@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,12 +13,22 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
-#   under the License.
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
+# NOTE: All docker files need to be run from ../../, that is
+# docker build -f /docker/<container>/Dockerfile
 
-find $SCRIPTPATH/*-base -type d -exec {}/create-container.sh \;
-find $SCRIPTPATH/*erlang* -type d -exec {}/create-container.sh \;
-exec $SCRIPTPATH/cleanup-docker.sh
+FROM couchdbdev/ubuntu-16.04-base:latest
 
+# Re-add ansible directory to pick up latest changes
+# This avoids having to cascade rebuild all images when changing
+# a role that only affects a child container
+ADD ./ansible /ansible
+
+# Run Ansible to provision container with Erlang 18.3
+RUN ansible-playbook ubuntu-16.04-erlang-18.3.yml \
+  --connection=local \
+  --inventory-file=./inventory/couchdb-ci-worker
+
+USER couchdb
+
+CMD ["/home/couchdb/build-ci.sh"]

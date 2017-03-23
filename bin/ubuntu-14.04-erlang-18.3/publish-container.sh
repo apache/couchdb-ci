@@ -17,10 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
-
-find $SCRIPTPATH/*-base -type d -exec {}/create-container.sh \;
-find $SCRIPTPATH/*erlang* -type d -exec {}/create-container.sh \;
-exec $SCRIPTPATH/cleanup-docker.sh
-
+docker push couchdbdev/ubuntu-14.04-erlang-18.3
