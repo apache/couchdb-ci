@@ -17,7 +17,7 @@
 
 - hosts: couchdb-ci-worker
   vars:
-    autoconf_archive_package_name: "autoconf-archive"
+    autoconf_archive_package_name: "http://springdale.math.ias.edu/data/puias/computational/6/x86_64/autoconf-archive-2015.02.24-1.sdl6.noarch.rpm"
   remote_user: root
   roles:
   - geerlingguy.repo-epel

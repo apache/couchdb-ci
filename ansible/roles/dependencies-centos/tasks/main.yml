@@ -28,20 +28,23 @@
   yum: name={{item}} state=present
   with_items:
   - autoconf
-  - autoconf-archive
   - automake
   - curl-devel
   - libicu-devel
   - libtool
 
-- name: download nodejs 6.x repo setup script
-  get_url:
-    url: https://rpm.nodesource.com/setup_6.x
-    dest: /tmp/setup_6.x
-    mode: 0755
+# special case since autoconf-archive on CentOS 6 is not in EPEL
+- name: install autoconf-archive
+  yum:
+    name: "{{ autoconf_archive_package_name }}"
 
+- name: download nodejs 6.x repo setup script
+  command: "wget https://rpm.nodesource.com/setup_6.x"
+  args:
+    chdir: /tmp
+    
 - name: setup nodejs 6.x repo
-  command: /tmp/setup_6.x
+  command: /bin/bash /tmp/setup_6.x
 
 - name: install nodejs and npm
   yum:

@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,11 +17,8 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- hosts: couchdb-ci-worker
-  vars:
-    autoconf_archive_package_name: "autoconf-archive"
-  remote_user: root
-  roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
-  - common
+set -e
+pushd $( dirname "$0" )/../..
+pwd
+OS=centos-6 ERLANG=default jenkins/build.sh
+popd

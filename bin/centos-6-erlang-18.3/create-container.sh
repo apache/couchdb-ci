@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -15,11 +17,12 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- hosts: couchdb-ci-worker
-  vars:
-    autoconf_archive_package_name: "autoconf-archive"
-  remote_user: root
-  roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
-  - common
+set -e
+
+# The Docker containers need the root directory of this repository as their
+# build context (because they need the Ansible files).
+pushd `dirname $0`/../.. > /dev/null
+
+docker build -f dockerfiles/centos-6-erlang-18.3 -t couchdbdev/centos-6-erlang-18.3 .
+
+popd > /dev/null

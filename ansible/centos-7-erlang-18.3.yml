@@ -16,6 +16,8 @@
 #   under the License.
 
 - hosts: couchdb-ci-worker
+  vars:
+    erlang_package_name: "http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_18.3-1~centos~7_amd64.rpm"
   remote_user: root
   roles:
-  - erlang-18.3-centos
+  - erlang-esl-centos

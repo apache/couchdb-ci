@@ -13,13 +13,21 @@
 #   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 #   KIND, either express or implied.  See the License for the
 #   specific language governing permissions and limitations
-#   under the License.
 
-- hosts: couchdb-ci-worker
-  vars:
-    autoconf_archive_package_name: "autoconf-archive"
-  remote_user: root
-  roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
-  - common
+# NOTE: All docker files need to be run from ../../, that is
+# docker build -f /docker/<container>/Dockerfile
+
+# Base Image: Plain Vanilla CentOS with Ansible installed
+FROM williamyeh/ansible:centos6-onbuild
+
+# Add ansible directory and cd to it
+ADD ./ansible /ansible
+WORKDIR /ansible
+
+# Install Ansible roles
+RUN ansible-galaxy install geerlingguy.repo-epel
+
+# Run Ansible to provision CentOS base container
+RUN ansible-playbook centos-6-base.yml \
+  --connection=local \
+  --inventory-file=./inventory/couchdb-ci-worker

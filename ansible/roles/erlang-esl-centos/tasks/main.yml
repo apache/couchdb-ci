@@ -15,11 +15,9 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- hosts: couchdb-ci-worker
-  vars:
-    autoconf_archive_package_name: "autoconf-archive"
-  remote_user: root
-  roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
-  - common
+- name: download and install Erlang 18.3
+  yum:
+    name: "{{ erlang_package_name }}"
+
+- name: clean up yum cache
+  command: yum clean all

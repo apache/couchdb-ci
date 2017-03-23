@@ -17,9 +17,7 @@
 
 - hosts: couchdb-ci-worker
   vars:
-    autoconf_archive_package_name: "autoconf-archive"
+    erlang_package_name: "http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_18.3-1~centos~6_amd64.rpm"
   remote_user: root
   roles:
-  - geerlingguy.repo-epel
-  - dependencies-centos
-  - common
+  - erlang-esl-centos
