@@ -17,8 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-set -e
-pushd $( dirname "$0" )/../..
-pwd
-OS=centos-6 ERLANG=default jenkins/build.sh
-popd
+docker run -it couchdbdev/ubuntu-12.04-base bash

@@ -15,17 +15,18 @@ for the origins of this work.
 
 **OS/Erlang**       | **default ** | **18.3**
 --------------------|--------------|--------------
-**Ubuntu 12.04**    | -            | -
+**Ubuntu 12.04**    | ✗ (R14B04)   | ✔
 **Ubuntu 14.04**    | ✔ (16B03-1)  | ✔
 **Ubuntu 16.04**    | ✔ (18.3)     | ✔
-**Debian 7**        | -            | -
 **Debian 8**        | ✔ (17.3)     | ✔
 **Debian 9**        | unreleased   | unreleased
-**CentOS 6**        | -            | -
+**CentOS 6**        | ✗ (R14B04)   | ✔
 **CentOS 7**        | ✔ (16B03-1)  | ✔
 **macOS 10.12**     | -            | -
 **FreeBSD**         | -            | -
 **Windows**         | -            | -
+
+Builds marked with an ✗ are skipped due to the version of Erlang being too old to build CouchDB >= 2.0.0.
 
 
 ## Open questions and TODOs

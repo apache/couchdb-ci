@@ -1,0 +1,33 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing,
+#   software distributed under the License is distributed on an
+#   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#   KIND, either express or implied.  See the License for the
+#   specific language governing permissions and limitations
+
+# NOTE: All docker files need to be run from ../../, that is
+# docker build -f /docker/<container>/Dockerfile
+
+# Base Image: Plain Vanilla Ubuntu 12.04 with Ansible installed
+FROM williamyeh/ansible:ubuntu12.04-onbuild
+
+# Add ansible directory and cd to it
+ADD ./ansible /ansible
+WORKDIR /ansible
+
+# Install Ansible roles
+RUN ansible-galaxy install nodesource.node
+
+# Run Ansible to provision Ubuntu base container
+RUN ansible-playbook ubuntu-12.04-base.yml \
+  --connection=local \
+  --inventory-file=./inventory/couchdb-ci-worker

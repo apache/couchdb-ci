@@ -23,6 +23,6 @@ set -e
 # build context (because they need the Ansible files).
 pushd `dirname $0`/../.. > /dev/null
 
-docker build -f dockerfiles/centos-6-erlang-default -t couchdbdev/centos-6-erlang-default .
+docker build -f dockerfiles/ubuntu-12.04-base -t couchdbdev/ubuntu-12.04-base .
 
 popd > /dev/null

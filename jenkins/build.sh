@@ -38,6 +38,11 @@ DOCKER_IMAGE="couchdbdev/"
 DOCKER_OPTIONS=""
 
 case $OS in
+  centos-6*)
+    echo "Using CentOS 6"
+    DOCKER_IMAGE=$DOCKER_IMAGE"centos-6-"
+    DOCKER_OPTIONS="-e LD_LIBRARY_PATH=/usr/local/lib"
+    ;;
   centos-7*)
     echo "Using CentOS 7"
     DOCKER_IMAGE=$DOCKER_IMAGE"centos-7-"
@@ -47,9 +52,17 @@ case $OS in
     echo "Using Debian 8"
     DOCKER_IMAGE=$DOCKER_IMAGE"debian-8-"
     ;;
+  ubuntu-12.04*)
+    echo "Using Ubuntu 12.04"
+    DOCKER_IMAGE=$DOCKER_IMAGE"ubuntu-12.04-"
+    ;;
   ubuntu-14.04*)
     echo "Using Ubuntu 14.04"
     DOCKER_IMAGE=$DOCKER_IMAGE"ubuntu-14.04-"
+    ;;
+  ubuntu-16.04*)
+    echo "Using Ubuntu 16.04"
+    DOCKER_IMAGE=$DOCKER_IMAGE"ubuntu-16.04-"
     ;;
   *)
     echo "Unknown OS $OS"
@@ -71,6 +84,16 @@ case $ERLANG in
     exit 1
     ;;
 esac
+
+if [ "$OS" = "ubuntu-12.04" -a "$ERLANG" = "default" ]; then
+  echo "Unsupported configuration, skipping build..."
+  exit 0
+fi
+
+if [ "$OS" = "centos-6" -a "$ERLANG" = "default" ]; then
+  echo "Unsupported configuration, skipping build..."
+  exit 0
+fi
 
 docker pull $DOCKER_IMAGE
 

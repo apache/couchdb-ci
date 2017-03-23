@@ -17,4 +17,4 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-docker run -it couchdbdev/centos-6-erlang-default bash
+docker run -it couchdbdev/ubuntu-12.04-erlang-18.3 bash
