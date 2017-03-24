@@ -58,11 +58,38 @@
 - include: shunit.yml
 
 # required for make docs
-- name: install packages required to build CouchDB
-  yum: name={{item}} state=present
-  with_items:
-  - help2man
-  - python-pip
+- name: install packages required to build CouchDB docs
+  yum:
+    name: help2man
+    state: present
+
+- name: install system-wide pip on CentOS >= 7
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version > '6'
+  yum:
+    name: python-pip
+    state: present
+
+# CentOS 6 needs a new python
+- name: install Python 3.4 for CentOS 6
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  yum:
+    name: python34
+    state: present
+
+# Symlink it to override system python
+- name: Symlink /usr/bin/python3.4 to /usr/local/bin/python
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  command: ln -s /usr/bin/python3.4 /usr/local/bin/python
+
+- name: retrieve pip installer for Python 3.4
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  command: "wget https://bootstrap.pypa.io/get-pip.py"
+  args:
+    chdir: /tmp
+
+- name: install pip for Python 3.4
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  command: "/usr/bin/python3.4 /tmp/get-pip.py"
 
 - name: install up to date version of sphinx via pip
   shell: pip install sphinx==1.5.3
