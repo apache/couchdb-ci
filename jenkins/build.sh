@@ -35,18 +35,18 @@ COUCHDB_CI_DIRECTORY=$( cd "$( dirname "$0" )/.." && pwd )
 cd "$COUCHDB_CI_DIRECTORY"
 
 DOCKER_IMAGE="couchdbdev/"
-DOCKER_OPTIONS=""
+DOCKER_OPTIONS="-e $GIT_BRANCH"
 
 case $OS in
   centos-6*)
     echo "Using CentOS 6"
     DOCKER_IMAGE=$DOCKER_IMAGE"centos-6-"
-    DOCKER_OPTIONS="-e LD_LIBRARY_PATH=/usr/local/lib"
+    DOCKER_OPTIONS="$DOCKER_OPTIONS -e LD_LIBRARY_PATH=/usr/local/lib"
     ;;
   centos-7*)
     echo "Using CentOS 7"
     DOCKER_IMAGE=$DOCKER_IMAGE"centos-7-"
-    DOCKER_OPTIONS="-e LD_LIBRARY_PATH=/usr/local/lib"
+    DOCKER_OPTIONS="$DOCKER_OPTIONS -e LD_LIBRARY_PATH=/usr/local/lib"
     ;;
   debian-8*)
     echo "Using Debian 8"

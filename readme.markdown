@@ -31,7 +31,7 @@ Builds marked with an ✗ are skipped due to the version of Erlang being too old
 
 ## Open questions and TODOs
 * Right now we run a CouchDB build on all combinations on each commit, but perhaps we don't need to run Jenkins this often. (We also have Travis CI for a single OS and a few Erlang revisions.) Should we just build them once a day?
-* Right now we only build on the master branch. Travis CI handles PRs. ASF hasn't set up a Jenkins/Gitbox bridge yet, but if they do we can consider having Jenkins build PRs as well.
+* Right now we only trigger Jenkins on the master branch. The images support building from whatever branch $GIT_BRANCH is set to (c.f. Jenkins environment variable.) Travis CI currently handles PRs. ASF hasn't set up a Jenkins/Gitbox bridge yet, but if they do we can consider having Jenkins build PRs as well.
 * Ideally, we'd also like to build convenience packages for some of these platforms on a regular basis, i.e. nightly - especially the platforms where building the software is harder (Windows).
 * Currently, when changes occur to the base images (bugfixes, new OS/Erlang combinations added, etc.) new images are built manually using the scripts in `bin/`. TODO: automate this process in a way that avoids forcibly rebuilding every VM/Erlang combination with every checkin.
 

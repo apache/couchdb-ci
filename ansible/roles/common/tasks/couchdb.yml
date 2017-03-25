@@ -39,8 +39,6 @@
     dest: /usr/src/couchdb-checkout
     accept_hostkey: yes
     force: yes
-    # which branch/tag do we actually want to build? I'd say master.
-    # version: developer-preview-2.0
 
 - name: set permissions on couchdb build
   file:
