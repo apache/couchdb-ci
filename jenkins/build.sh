@@ -35,7 +35,7 @@ COUCHDB_CI_DIRECTORY=$( cd "$( dirname "$0" )/.." && pwd )
 cd "$COUCHDB_CI_DIRECTORY"
 
 DOCKER_IMAGE="couchdbdev/"
-DOCKER_OPTIONS="-e $GIT_BRANCH"
+DOCKER_OPTIONS="-e GIT_BRANCH=$GIT_BRANCH"
 
 case $OS in
   centos-6*)
