@@ -29,6 +29,6 @@ RUN ansible-playbook ubuntu-14.04-erlang-default.yml \
   --connection=local \
   --inventory-file=./inventory/couchdb-ci-worker
 
-USER couchdb
+USER build
 
-CMD ["/home/couchdb/build-ci.sh"]
+CMD ["/home/build/build-ci.sh"]
