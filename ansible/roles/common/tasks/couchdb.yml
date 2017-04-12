@@ -15,16 +15,16 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- name: create couchdb group
+- name: create builder group
   group:
-    name: couchdb
+    name: builder
     state: present
 
-- name: create couchdb user
+- name: create builder user
   user:
-    name: couchdb
+    name: builder
     createhome: yes
-    group: couchdb
+    group: builder
     state: present
 
 - name: install grunt-cli
@@ -44,8 +44,8 @@
   file:
     path: /usr/src/couchdb-checkout
     state: directory
-    owner: couchdb
-    group: couchdb
+    owner: builder
+    group: builder
     recurse: yes
 
 # 1) `make dist` will be run in /usr/src/couchdb-checkout (this is directly
@@ -56,13 +56,13 @@
   file:
     path: /usr/src/couchdb
     state: directory
-    owner: couchdb
-    group: couchdb
+    owner: builder
+    group: builder
 
 - name: copy build script
   copy:
     src: build-ci.sh
-    dest: /home/couchdb/build-ci.sh
-    owner: couchdb
-    group: couchdb
+    dest: /home/builder/build-ci.sh
+    owner: builder
+    group: builder
     mode: 0755
