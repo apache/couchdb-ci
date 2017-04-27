@@ -36,7 +36,7 @@ const reasons = {};
 const regexes = {
   aborted: [ /Build was aborted/ ],
   network: [
-    /fatal: unable to access 'https:\/\/gitbox.apache.org/,
+    /fatal: unable to access 'https:\/\/github.com/,
   /fatal: read error: Connection reset by peer/,
   ],
   docker: [

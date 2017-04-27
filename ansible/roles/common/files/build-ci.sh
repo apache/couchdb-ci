@@ -22,7 +22,7 @@ set -e
 # create a distribution tarball from the requested git branch
 cd /usr/src/couchdb-checkout
 git reset --hard
-git clean -fdx
+git clean -ffdx
 git pull
 git checkout $GIT_BRANCH
 ./configure --with-curl
