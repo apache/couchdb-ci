@@ -39,19 +39,43 @@
   - libcurl4-openssl-dev
   - libicu-dev
   - libmozjs185-dev
-
-# required for make check and make dialyze
-- name: install packages required to build CouchDB
-  apt: name={{item}} state=present install_recommends=no
-  with_items:
   - shunit2
 
 # required for make docs
-- name: install packages required to build CouchDB
+- name: install packages required to build CouchDB docs
   apt: name={{item}} state=present install_recommends=no
   with_items:
   - help2man
+  - python-sphinx
 
-# also required for make docs
+# Fix broken sphinx on ubuntu 12.04 only
+# Hack, but prevents needing a unique debian/ dir for this dist
 - name: install up to date version of sphinx via pip
   shell: pip install sphinx==1.5.3
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "12.04"
+
+# dependencies for Debian/Ubuntu package building
+- name: install packages required to build Debian pkgs
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - curl
+  - debhelper
+  - dh-exec
+  - devscripts
+  - dialog
+  - lintian
+  - libwww-perl
+  - devscripts
+  - quilt
+
+# Hooray deMorgan's theorem
+- name: install dh-systemd package, if available
+  apt: name=dh-systemd state=present install_recommends=no
+  when: ansible_distribution != "Ubuntu" or ansible_distribution_version != "12.04"
+
+# convenience packages for interactive work
+- name: install convenience packages 
+  apt: name={{item}} state=present install_recommends=no
+  with_items:
+  - vim-tiny
+  - screen

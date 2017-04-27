@@ -29,4 +29,5 @@ erlang_solutions_pkg_list:
   - erlang-xmerl
   - erlang-eunit
   - erlang-dialyzer
-
+  - erlang-reltool
+  - erlang-wx
