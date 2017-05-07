@@ -21,4 +21,5 @@
   - ubuntu-1604
   - { role: nodesource.node, nodejs_version: '6.x' }
   - dependencies-debian
+  - lintian-ubuntu
   - common

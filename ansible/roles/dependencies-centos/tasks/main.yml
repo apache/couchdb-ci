@@ -20,6 +20,7 @@
   with_items:
   - "@Development tools"
   - git
+  - sudo
   - wget
   - which
 
@@ -93,6 +94,22 @@
 
 - name: install up to date version of sphinx via pip
   shell: pip install sphinx==1.5.3
+
+- name: dependencies for packages
+  yum: name={{item}} state=present
+  with_items:
+  - createrepo
+  - xfsprogs-devel
+  - rpmdevtools
+
+- name: dependencies for JS packages (CentOS 6 only)
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  yum: name={{item}} state=present
+  with_items:
+  - ncurses-devel
+  - autoconf213
+  - nspr-devel
+  - readline-devel
 
 - name: clean up yum cache
   command: yum clean all

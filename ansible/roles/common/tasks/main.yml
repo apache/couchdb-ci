@@ -16,3 +16,12 @@
 #   under the License.
 
 - include: couchdb.yml
+
+- name: copy build sudoers file
+  copy:
+    src: build.sudoers
+    dest: /etc/sudoers.d/build
+    owner: root
+    group: root
+    mode: 0440
+

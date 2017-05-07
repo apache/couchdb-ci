@@ -29,6 +29,7 @@
   - pkg-config
   - python
   - python-pip
+  - sudo
 
 # dependencies for make couch, except erlang
 - name: install packages required to build CouchDB
