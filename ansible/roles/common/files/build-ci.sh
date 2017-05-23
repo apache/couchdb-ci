@@ -17,7 +17,7 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-set -e
+set +e
 
 # create a distribution tarball from the requested git branch
 cd /usr/src/couchdb-checkout
