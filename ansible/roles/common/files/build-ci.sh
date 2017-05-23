@@ -35,4 +35,9 @@ cd /usr/src/couchdb
 tar -xf apache-couchdb-*.tar.gz
 cd apache-couchdb-*
 ./configure --with-curl
-make all check
+make all
+make check
+if [ $? -ne 0 ]; then
+  /usr/src/couchdb-checkout/build-aux/logfile-uploader.py
+  exit 1
+fi

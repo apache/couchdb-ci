@@ -20,6 +20,10 @@
   apt:
     update_cache: yes
 
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+
 - name: install auxiliary packages
   apt: name={{item}} state=present
   with_items:
