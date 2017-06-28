@@ -34,10 +34,14 @@
   yum: name={{item}} state=present
   with_items:
   - autoconf
+  - autoconf213
   - automake
   - curl-devel
   - libicu-devel
   - libtool
+  - ncurses-devel
+  - nspr-devel
+  - zip
 
 # special case since autoconf-archive on CentOS 6 is not in EPEL
 - name: install autoconf-archive
@@ -56,9 +60,6 @@
   yum:
     name: nodejs
     state: present
-
-# download, compile and install Spidermonkey
-- include: spidermonkey.yml
 
 # download and install shunit2
 - include: shunit.yml
@@ -98,7 +99,7 @@
   command: "/usr/bin/python3.4 /tmp/get-pip.py"
 
 - name: install up to date version of sphinx via pip
-  shell: pip install sphinx==1.5.3
+  shell: pip install docutils==0.13.1 sphinx==1.5.3
 
 - name: dependencies for packages
   yum: name={{item}} state=present

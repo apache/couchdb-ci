@@ -33,7 +33,9 @@
   - pkg-config
   - python
   - python-pip
+  - python-requests
   - sudo
+  - zip
 
 # dependencies for make couch, except erlang
 - name: install packages required to build CouchDB
@@ -43,7 +45,7 @@
   - ca-certificates
   - libcurl4-openssl-dev
   - libicu-dev
-  - libmozjs185-dev
+  - libnspr4-dev
   - shunit2
 
 # required for make docs
@@ -56,7 +58,7 @@
 # Fix broken sphinx on ubuntu 12.04 only
 # Hack, but prevents needing a unique debian/ dir for this dist
 - name: install up to date version of sphinx via pip
-  shell: pip install sphinx==1.5.3
+  shell: pip install docutils==0.13.1 sphinx==1.5.3
   when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "12.04"
 
 # dependencies for Debian/Ubuntu package building
