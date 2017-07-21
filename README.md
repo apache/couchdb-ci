@@ -19,7 +19,7 @@ for the origins of this work.
 **Ubuntu 14.04**    | ✔ (16B03-1)  | ✔
 **Ubuntu 16.04**    | ✔ (18.3)     | ✔
 **Debian 8**        | ✔ (17.3)     | ✔
-**Debian 9**        | unreleased   | unreleased
+**Debian 9**        | -            | -
 **CentOS 6**        | ✗ (R14B04)   | ✔
 **CentOS 7**        | ✔ (16B03-1)  | ✔
 **macOS 10.12**     | -            | -

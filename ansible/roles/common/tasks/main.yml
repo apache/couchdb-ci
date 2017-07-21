@@ -25,3 +25,19 @@
     group: root
     mode: 0440
 
+# uid/gid here came from ASF Infra
+- name: create jenkins group
+  group:
+    name: jenkins
+    gid: 12036
+    state: present
+
+- name: create jenkins user
+  user:
+    name: jenkins
+    comment: "Jenkins user"
+    uid: 10025
+    group: jenkins
+    createhome: yes
+    state: present
+

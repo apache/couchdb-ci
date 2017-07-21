@@ -74,6 +74,7 @@
   - libwww-perl
   - devscripts
   - quilt
+  - equivs
 
 # Hooray deMorgan's theorem
 - name: install dh-systemd package, if available
@@ -86,3 +87,20 @@
   with_items:
   - vim-tiny
   - screen
+
+# install libmozjs185-equivs file
+- name: install libmozjs185-equivs file
+  copy:
+    src: libmozjs185-fake
+    dest: /tmp/libmozjs185-fake
+    owner: root
+    group: root
+    mode: 0755
+
+# build and install fake libmozjs185 packages
+- name: install fake libmozjs185 packages
+  shell: |
+    cd /tmp
+    equivs-build libmozjs185-fake
+    dpkg -i libmozjs185-fake_1.0_all.deb
+    rm libmozjs185*

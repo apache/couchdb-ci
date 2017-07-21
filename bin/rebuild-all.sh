@@ -20,6 +20,9 @@
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 
+( find $SCRIPTPATH/*-base -type d -printf "couchdbdev/%f\n" | xargs docker rmi) >/dev/null 2>&1
+( find $SCRIPTPATH/*erlang* -type d -printf "couchdbdev/%f\n" | xargs docker rmi) >/dev/null 2>&1
+
 find $SCRIPTPATH/*-base -type d -exec {}/create-container.sh \;
 find $SCRIPTPATH/*erlang* -type d -exec {}/create-container.sh \;
 exec $SCRIPTPATH/cleanup-docker.sh

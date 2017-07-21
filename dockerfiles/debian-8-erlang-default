@@ -30,5 +30,3 @@ RUN ansible-playbook debian-8-erlang-default.yml \
   --inventory-file=./inventory/couchdb-ci-worker
 
 USER build
-
-CMD ["/home/build/build-ci.sh"]

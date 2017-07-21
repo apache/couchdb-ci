@@ -1,0 +1,16 @@
+# install fake specfile
+- name: install fake specfile
+  copy:
+    src: js-1.8.5.spec
+    dest: /tmp/js-1.8.5.spec
+    owner: root
+    group: root
+    mode: 0755
+
+# build and install fake js-1.8.5 package
+- name: install fake js-1.8.5 package
+  shell: |
+    cd /tmp
+    rpmbuild -ba js-1.8.5.spec
+    rpm -Uvh /root/rpmbuild/RPMS/noarch/js-1.8.5-7.noarch.rpm
+    rm -rf /root/rpmbuild

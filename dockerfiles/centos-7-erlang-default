@@ -30,5 +30,3 @@ RUN ansible-playbook centos-7-erlang-default.yml \
   --inventory-file=./inventory/couchdb-ci-worker
 
 USER build
-
-CMD ["/home/build/build-ci.sh"]
