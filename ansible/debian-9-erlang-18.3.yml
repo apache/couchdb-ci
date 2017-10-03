@@ -17,8 +17,8 @@
 
 - hosts: couchdb-ci-worker
   vars:
-    erlang_solutions_pkg_ver: "1:18.3-1"
+    erlang_solutions_pkg_ver: "1:18.3.4.5"
   remote_user: root
   roles:
   - debian-9
-  - erlang-esl-debian-pkgs
+  - erlang-esl-debian-omnibus
