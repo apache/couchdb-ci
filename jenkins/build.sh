@@ -52,6 +52,10 @@ case $OS in
     echo "Using Debian 8"
     DOCKER_IMAGE=$DOCKER_IMAGE"debian-8-"
     ;;
+  debian-9*)
+    echo "Using Debian 9"
+    DOCKER_IMAGE=$DOCKER_IMAGE"debian-9-"
+    ;;
   ubuntu-12.04*)
     echo "Using Ubuntu 12.04"
     DOCKER_IMAGE=$DOCKER_IMAGE"ubuntu-12.04-"

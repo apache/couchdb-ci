@@ -19,19 +19,30 @@
   get_url:
     url: "http://ftp.mozilla.org/pub/mozilla.org/js/js185-1.0.0.tar.gz"
     dest: /tmp/js185-1.0.0.tar.gz
+
 - name: unpack Spidermonkey 1.8.5
   unarchive:
     src: /tmp/js185-1.0.0.tar.gz
     dest: /opt
     copy: no
+
+- name: patch source for debian9 build
+  patch:
+    src: "{{ role_path }}/files/fix-811665.patch"
+    basedir: /opt/js-1.8.5/
+    strip: 1
+  when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
 - name: configure Spidermonkey 1.8.5
   command: ./configure --prefix=/usr --with-system-nspr --disable-tests --disable-strip --enable-ctypes --enable-threadsafe --disable-methodjit
   args:
     chdir: /opt/js-1.8.5/js/src
+
 - name: make Spidermonkey 1.8.5
   command: make
   args:
     chdir: /opt/js-1.8.5/js/src
+
 - name: make install Spidermonkey 1.8.5
   command: make install
   args:

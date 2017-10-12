@@ -1,0 +1,2 @@
+erlang_solutions_key_url: http://packages.erlang-solutions.com/debian/erlang_solutions.asc
+erlang_solutions_apt_repo_url: deb http://packages.erlang-solutions.com/debian stretch contrib
