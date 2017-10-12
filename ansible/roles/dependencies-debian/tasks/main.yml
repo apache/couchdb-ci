@@ -61,6 +61,10 @@
   shell: pip install docutils==0.13.1 sphinx==1.5.3
   when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "12.04"
 
+# Install Sphinx RTD theme and Mango test dependencies
+- name: install Sphinx documentation theme and Mango test dependencies
+  shell: pip install sphinx_rtd_theme  nose requests hypothesis
+
 # dependencies for Debian/Ubuntu package building
 - name: install packages required to build Debian pkgs
   apt: name={{item}} state=present install_recommends=no

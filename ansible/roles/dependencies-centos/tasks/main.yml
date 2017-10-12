@@ -98,8 +98,8 @@
   when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
   command: "/usr/bin/python3.4 /tmp/get-pip.py"
 
-- name: install up to date version of sphinx via pip
-  shell: pip install docutils==0.13.1 sphinx==1.5.3
+- name: install up to date version of various packages via pip
+  shell: pip install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme nose requests hypothesis
 
 - name: dependencies for packages
   yum: name={{item}} state=present
