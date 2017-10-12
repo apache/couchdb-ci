@@ -62,7 +62,7 @@
     state: present
 
 # download and install shunit2
-- include: shunit.yml
+- import_tasks: shunit.yml
 
 # required for make docs
 - name: install packages required to build CouchDB docs
