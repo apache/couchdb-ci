@@ -16,9 +16,6 @@ before_script:
   - docker --version
 
 script:
-  - find bin/${OS}-base -type d -exec {}/create-container.sh \;
-  - find bin/${OS}-erlang* -type d -exec {}/create-container.sh \;
-
-after_script:
-  - bin/cleanup-docker.sh
+  - find bin/${OS}-base -type d | xargs -I abc abc/create-container.sh
+  - find bin/${OS}-erlang* -type d | xargs -I abc abc/create-container.sh
 
