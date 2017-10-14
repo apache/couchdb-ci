@@ -1,0 +1,24 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  matrix:
+    - OS=centos-6
+    - OS=centos-7
+    - OS=debian-8
+    - OS=debian-9
+    - OS=ubuntu-14.04
+    - OS=ubuntu-16.04
+
+before_script:
+  - docker --version
+
+script:
+  - find bin/${OS}-base -type d -exec {}/create-container.sh \;
+  - find bin/${OS}-erlang* -type d -exec {}/create-container.sh \;
+
+after_script:
+  - bin/cleanup-docker.sh
+
