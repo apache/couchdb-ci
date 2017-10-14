@@ -15,7 +15,7 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-- import_tasks: couchdb.yml
+- include: couchdb.yml
 
 - name: copy build sudoers file
   copy:
