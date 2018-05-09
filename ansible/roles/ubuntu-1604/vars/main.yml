@@ -1,2 +1,0 @@
-erlang_solutions_key_url: http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
-erlang_solutions_apt_repo_url: deb http://packages.erlang-solutions.com/ubuntu xenial contrib

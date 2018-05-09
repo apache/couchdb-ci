@@ -1,7 +1,0 @@
-# dependencies for making Debian/RPM repositories
-- name: install packages required to build Debian/RPM repositories
-  apt: name={{item}} state=present install_recommends=no
-  with_items:
-  - reprepro
-  - createrepo
-

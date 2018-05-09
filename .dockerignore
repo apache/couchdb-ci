@@ -1,3 +1,4 @@
-# ignore everything except the ansible directory
+# ignore everything except the bin and files directories
 *
-!ansible
+!bin
+!files

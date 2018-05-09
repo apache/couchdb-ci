@@ -1,7 +1,0 @@
-Section: misc
-Priority: optional
-Standards-Version: 3.9.2
-
-Package: libmozjs185-fake
-Provides: libmozjs185-dev, libmozjs185-1.0
-Description: Fake libmozjs185 packages for builds
