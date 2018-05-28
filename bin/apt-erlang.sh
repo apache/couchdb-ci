@@ -55,5 +55,10 @@ else
   apt-get update && apt-get install -y esl-erlang=1:${ERLANGVERSION}
 fi
 
+# dangling symlinks cause make release to fail.
+# so, we remove the manpage symlink
+# see endless complaints about this on GH issues, SO, etc.
+rm /usr/lib/erlang/man
+
 # clean up
 apt-get clean
