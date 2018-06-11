@@ -68,6 +68,7 @@ build-js() {
 }
 
 build-all-js() {
+  rm -rf ${SCRIPTPATH}/js/*
   for plat in $DEBIANS $UBUNTUS $CENTOSES; do
     if [[ $1 != "no-rebuild" ]]; then
       build-base-platform $plat
@@ -166,7 +167,25 @@ build-test-couch() {
   docker run \
       --mount type=bind,src=${SCRIPTPATH},dst=/home/jenkins/couchdb-ci \
       couchdbdev/$1-erlang-${ERLANGVERSION} \
-      /home/jenkins/couchdb-ci/bin/build-test-couchdb.sh
+      /home/jenkins/couchdb-ci/bin/build-test-couchdb.sh $2
+}
+
+build-package() {
+  # $1 is plat, $2 is the optional path to a dist tarball
+  rm -rf ${SCRIPTPATH}/couch/$1
+  mkdir -p ${SCRIPTPATH}/couch/$1
+  chmod 777 ${SCRIPTPATH}/couch/$1
+  if [[ $2 ]]; then
+    cp $2 ${SCRIPTPATH}/${2##*/} || true
+  fi
+  if [[ ! -d ../couchdb-pkg ]]; then
+    git clone https://github.com/apache/couchdb-pkg ../couchdb-pkg
+  fi
+  docker run \
+      --mount type=bind,src=${SCRIPTPATH},dst=/home/jenkins/couchdb-ci \
+      --mount type=bind,src=${SCRIPTPATH}/../couchdb-pkg,dst=/home/jenkins/couchdb-pkg \
+      couchdbdev/$1-erlang-${ERLANGVERSION} \
+      /home/jenkins/couchdb-ci/bin/build-couchdb-pkg.sh ${2##*/}
 }
 
 # TODO help
@@ -258,6 +277,19 @@ case "$1" in
       build-test-couch $plat $*
     done
     ;;
+  couch-pkg)
+    # build CouchDB pkgs for <plat>
+    shift
+    build-package $*
+    ;;
+  couch-pkg-all)
+    # build CouchDB pkgs for all platforms
+    shift
+    rm -rf ${SCRIPTPATH}/couch/*
+    for plat in $DEBIANS $UBUNTUS $CENTOSES; do
+      build-package $plat $*
+    done
+    ;;
   *)
     if [[ $1 ]]; then
       echo "Unknown target $1."
@@ -290,6 +322,9 @@ Recognized commands:
 
   couch <plat>		Builds and tests CouchDB for <plat>.
   couch-all		Builds and tests CouchDB on all platforms.
+
+  couch-pkg <plat>	Builds CouchDB packages for <plat>.
+  couch-pkg-all		Builds CouchDB packages for all platforms.
 EOF
     if [[ $1 ]]; then
       exit 1
