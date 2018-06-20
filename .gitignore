@@ -5,3 +5,4 @@
 couch
 js
 bin/extra
+bin/qemu-ppc64le-static

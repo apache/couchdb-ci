@@ -65,7 +65,7 @@ apt-get install -y apt-transport-https curl git pkg-config python \
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev
 
-# Node.js
+#Node.js
 pushd /tmp
 wget https://deb.nodesource.com/setup_${NODEVERSION}.x
 /bin/bash setup_${NODEVERSION}.x
@@ -113,17 +113,29 @@ apt-get install -y vim-tiny screen
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then
-  # config the CouchDB repo & install the JS packages
-  echo "deb https://apache.bintray.com/couchdb-deb ${VERSION} main" | \
-      sudo tee /etc/apt/sources.list.d/couchdb.list
-  for server in $(shuf -e pgpkeys.mit.edu \
-                          ha.pool.sks-keyservers.net \
-                          hkp://p80.pool.sks-keyservers.net:80 \
-                          pgp.mit.edu) ; do \
-    gpg --keyserver $server --recv-key 379CE192D401AB61 && break || : ;
-  done
-  gpg -a --export 379CE192D401AB61 | apt-key add -
-  apt-get update && apt-get install -y couch-libmozjs185-dev
+  if [[ ${ARCH} == "ppc64le" ]]; then
+    # install the dependencies
+    apt install -y libffi6 libnspr4 libnspr4-dev libffi-dev
+
+    # config the CouchDB repo & install the JS packages
+    curl -H 'X-JFrog-Art-Api:AKCp5Z325Lsp8hX5UgznDy9fU1VqPAeuzsSBKsMhp1y74oHw6WfgKkPkm3FUpe2QkZ4qcEzYT'  https://na.artifactory.swg-devops.com:443/artifactory/sys-powercloud-generic-local/couch-libmozjs185-xenial-ppc64el.deb --output /tmp/couch-libmozjs185-xenial-ppc64el.deb
+    curl -H 'X-JFrog-Art-Api:AKCp5Z325Lsp8hX5UgznDy9fU1VqPAeuzsSBKsMhp1y74oHw6WfgKkPkm3FUpe2QkZ4qcEzYT'  https://na.artifactory.swg-devops.com:443/artifactory/sys-powercloud-generic-local/couch-libmozjs185-dev-xenial-ppc64el.deb --output /tmp/couch-libmozjs185-dev-xenial-ppc64el.deb
+
+    dpkg -i /tmp/couch-libmozjs185-xenial-ppc64el.deb
+    dpkg -i /tmp/couch-libmozjs185-dev-xenial-ppc64el.deb
+  else 
+    # config the CouchDB repo & install the JS packages
+    echo "deb https://apache.bintray.com/couchdb-deb ${VERSION} main" | \
+        sudo tee /etc/apt/sources.list.d/couchdb.list
+    for server in $(shuf -e pgpkeys.mit.edu \
+                            ha.pool.sks-keyservers.net \
+                            hkp://p80.pool.sks-keyservers.net:80 \
+                            pgp.mit.edu) ; do \
+      gpg --keyserver $server --recv-key 379CE192D401AB61 && break || : ;
+    done
+    gpg -a --export 379CE192D401AB61 | apt-key add -
+    apt-get update && apt-get install -y couch-libmozjs185-dev
+  fi
 else
   # install js build-time dependencies only
   # we can't add the CouchDB repo here because the plat may not exist yet
