@@ -84,6 +84,13 @@ case "${OSTYPE}" in
 
 # useful for other platforms below:
 # https://github.com/kerl/kerl/issues/240
+  freebsd*)
+    NODEVERSION=${NODEVERSION} ERLANGVERSION=${ERLANGVERSION} \
+          ${SCRIPTPATH}/pkg-dependencies.sh ${JSINSTALL}
+    if [[ ! ${SKIPERLANG} ]]; then
+      ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/pkg-erlang.sh
+    fi
+    ;;
   bsd*)
     # TODO: detect netbsd vs. freebsd vs. openbsd?
     echo "Detected OS: BSD - UNSUPPORTED"

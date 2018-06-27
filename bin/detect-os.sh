@@ -100,6 +100,11 @@ case "${OSTYPE}" in
     fi
     ;;
 
+  freebsd*)
+    echo "Detected OS: FreeBSD"
+    # use userland version
+    VERSION=$(freebsd-version -u | cut -d '-' -f1)
+    ;;
   *bsd*)
     # TODO: detect netbsd vs. freebsd vs. openbsd?
     echo "Detected OS: BSD - UNSUPPORTED"
