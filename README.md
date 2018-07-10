@@ -52,6 +52,32 @@ ERLANGVERSION=default ./build.sh platform ubuntu-trusty
 
 # Useful things you can do
 
+## Full `build.sh` options
+
+```
+Recognized commands:
+  clean <plat>		Removes all images for <plat>.
+  clean-all		Cleans all images for all platforms.
+  base <plat>		Builds the base (no JS/Erlang) image for <plat>.
+  base-all		Builds all base (no JS/Erlang) images.
+  js			Builds the JS packages for <plat>.
+  js-all		Builds the JS packages for all platforms.
+  js-no-rebuild		Builds the JS packages for <plat> without rebuilding
+                	the base image first.
+  js-all-no-rebuild	Same as above, with the same condition.
+  js-upload <plat>	Uploads the JS packages for <plat> to bintray.
+			Requires BINTRAY_USER and BINTRAY_API_KEY env vars.
+  platform <plat>	Builds the image for <plat> with Erlang & JS support.
+  platform-all		Builds all images with Erlang and JS support.
+  platform-upload	Uploads the couchdbdev/* images to Docker Hub.
+			Requires appropriate credentials.
+  platform-upload-all	Uploads all the couchdbdev/* images to Docker Hub.
+  couch <plat>		Builds and tests CouchDB for <plat>.
+  couch-all		Builds and tests CouchDB on all platforms.
+  couch-pkg <plat>	Builds CouchDB packages for <plat>.
+  couch-pkg-all		Builds CouchDB packages for all platforms.
+```
+
 ## Interactively working in a built container
 
 After building the image as above:
