@@ -1,6 +1,6 @@
 # CouchDB Continuous Integration (CI) support repo
 
-The main purpose of this repository is to provide a number of Docker containers, Ansible roles/tasks and other configuration functionality so that the ASF Jenkins CI server (https://builds.apache.org/) is capable of building (and eventually packaging) CouchDB for a number of platforms. It intends to cover a range of both operating systems (Linux, macOS, BSD, Windows) and Erlang versions (OS default, 18.x, 19.x, etc.)
+The main purpose of this repository is to provide a number of Docker containers, Ansible roles/tasks and other configuration functionality so that the ASF Jenkins CI server (https://builds.apache.org/) is capable of building (and eventually packaging) CouchDB for a number of platforms. It intends to cover a range of both operating systems (Linux, macOS, BSD, Windows) and Erlang versions (17.x, 18.x, 19.x, etc.)
 
 The current configuration builds CouchDB, Fauxton, its documentation, and runs the Erlang and JS test suites for each combination of OS and Erlang revision.
 
@@ -8,10 +8,10 @@ The current configuration builds CouchDB, Fauxton, its documentation, and runs t
 
 **OS / distro** | **Version** | **Erlang Version**
 ----------------|-------------|-----------------------
-**ubuntu**      | trusty      | R16B03 (tag: default)
 **ubuntu**      | trusty      | 19.3.6
 **ubuntu**      | xenial      | 19.3.6
 **ubuntu**      | bionic      | 19.3.6
+**debian**      | jessie      | 17.5.3
 **debian**      | jessie      | 19.3.6
 **debian**      | stretch     | 19.3.6
 **centos**      | 6           | 19.3.6
@@ -35,10 +35,10 @@ Separate targets exist to build a compatible SpiderMonkey 1.8.5 package for each
 
 Valid `distro` and `version` values come from the table above.
 
-## Building the special Ubuntu Trusty default Erlang image
+## Building the special Debian Jessie 17.5.3 image
 
 ```
-ERLANGVERSION=default ./build.sh platform ubuntu-trusty
+ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
 ```
 
 ## Publishing a container
