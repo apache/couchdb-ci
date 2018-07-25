@@ -32,6 +32,9 @@ set -e
 NODEVERSION=${NODEVERSION:-8}
 # Erlang 19.3.6 as of 2018-05-08
 ERLANGVERSION=${ERLANGVERSION:-19.3.6}
+# Elixir v1.6.6 as of 2018-07-25
+ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
+
 
 # This works if we're not called through a symlink
 # otherwise, see https://stackoverflow.com/questions/59895/
@@ -87,6 +90,7 @@ case "${OSTYPE}" in
           ${SCRIPTPATH}/yum-dependencies.sh ${JSINSTALL}
       if [[ ! ${SKIPERLANG} ]]; then
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/yum-erlang.sh
+        ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
       fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'yum-'
     elif [[ ${ID} =~ ${debians} ]]; then
@@ -94,6 +98,7 @@ case "${OSTYPE}" in
           ${SCRIPTPATH}/apt-dependencies.sh ${JSINSTALL}
       if [[ ! ${SKIPERLANG} ]]; then
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/apt-erlang.sh
+        ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
       fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'apt-'
     else
@@ -109,6 +114,7 @@ case "${OSTYPE}" in
           ${SCRIPTPATH}/pkg-dependencies.sh ${JSINSTALL}
     if [[ ! ${SKIPERLANG} ]]; then
       ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/pkg-erlang.sh
+      ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
       run_scripts ${EXTRA_SCRIPTS_DIR} 'pkg-'
     fi
     ;;

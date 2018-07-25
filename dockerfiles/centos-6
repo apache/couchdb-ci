@@ -23,8 +23,9 @@ FROM centos:6
 ARG js=js
 # Choose whether to install Erlang, default yes
 ARG erlang=erlang
-# Select version of Node and Erlang to install
+# Select version of Node, Erlang and Elixir to install
 ARG erlangversion=19.3.6
+ARG elixirversion=v1.6.6
 ARG nodeversion=8
 
 # Create Jenkins user and group
@@ -45,6 +46,7 @@ RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/local.conf
 # Install all dependencies, and optionally SM 1.8.5
 # This allows us to use the same Dockerfile for building SM
 RUN ERLANGVERSION=$erlangversion \
+  ELIXIRVERSION=$elixirversion \
   NODEVERSION=$nodeversion \
   /root/couchdb-ci/bin/install-dependencies.sh $js $erlang
 

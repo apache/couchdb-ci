@@ -62,7 +62,7 @@ yum install -y git sudo wget which
 
 # Dependencies for make couch, except erlang
 yum install -y autoconf autoconf213 automake curl-devel libicu-devel libtool \
-    ncurses-devel nspr-devel zip readline-devel
+    ncurses-devel nspr-devel zip readline-devel unzip
 
 # autoconf-archive
 if [[ ${VERSION_ID} -eq 6 ]]; then

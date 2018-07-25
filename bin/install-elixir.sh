@@ -18,10 +18,17 @@
 #   under the License.
 
 # This shell script installs all OS package dependencies for Apache
-# CouchDB 2.x for pkg-based systems such as FreeBSD.
+# CouchDB 2.x for yum-based systems.
+#
+# While these scripts are primarily written to support building CI
+# Docker images, they can be used on any workstation to install a
+# suitable build environment.
 
 # stop on error
 set -e
+
+ELIXIR_PACKAGES=https://github.com/elixir-lang/elixir/releases/download
+ELIXIR_VSN=${ELIXIRVERSION:-v1.6.6}
 
 # Check if running as root
 if [[ ${EUID} -ne 0 ]]; then
@@ -30,29 +37,24 @@ if [[ ${EUID} -ne 0 ]]; then
   exit 1
 fi
 
-# Upgrade all packages
-pkg upgrade -y
+SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-pkg install -y gmake help2man openssl icu curl git bash unzip \
-    autoconf automake libtool node8 npm-node8 lang/python \
-    py27-sphinx py27-pip
+function ensure_tool() {
+    type "${1}" > /dev/null 2>&1 && return 0
+    return 1
+}
 
-# rest of python dependencies
-pip install --upgrade sphinx_rtd_theme nose requests hypothesis
+ensure_tool 'unzip' || { echo 'Please install `unzip`'; exit 1; }
+ensure_tool 'wget' || { echo 'Please install `wget`'; exit 1; }
 
-# TODO: package building stuff?
 
-# convenience stuff for the CI workflow maintainer ;)
-pkg install -y vim-tiny screen wget
+url=${ELIXIR_PACKAGES}/${ELIXIR_VSN}/Precompiled.zip
+echo "==> Downloading Elixir from ${url}"
+wget -q --max-redirect=1 -O elixir.zip ${url} \
+    || { echo '===> Cannot download Elixir from ${url}'; exit 1; }
 
-# js packages, as long as we're not told to skip them
-if [[ $1 != "nojs" ]]; then
-  pkg install -y spidermonkey185
-else
-  # install js build-time dependencies only
-  # we can't add the CouchDB repo here because the plat may not exist yet
-  pkg install -y libffi autotools
-fi
+mkdir -p /usr/local/bin/
+unzip -qq elixir.zip -d /usr/local \
+    ||  { echo "===> Cannot unpack elixir.zip"; exit 1; }
 
-# Erlang is installed by pkg-erlang.sh
-
+rm elixir.zip

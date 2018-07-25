@@ -61,7 +61,7 @@ apt-get -y dist-upgrade
 
 # install build-time dependencies
 apt-get install -y apt-transport-https curl git pkg-config python \
-    libpython-dev python-pip sudo wget zip \
+    libpython-dev python-pip sudo wget zip unzip \
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev
 
