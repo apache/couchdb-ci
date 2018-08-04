@@ -39,7 +39,7 @@ fi
 # you DID run apt-dependencies.sh first, didn't you?
 VERSION=$(/usr/bin/lsb_release -cs)
 
-apt-get update
+apt-get update || true
 
 if [[ ${ERLANGVERSION} == "default" ]]; then
   apt-get update && apt-get install -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
@@ -52,7 +52,8 @@ else
   if [[ ${ERLANGVERSION} == "19.3.6" && ${VERSION} == "bionic" ]]; then
     ERLANGVERSION=19.3.6.8
   fi
-  apt-get update && apt-get install -y esl-erlang=1:${ERLANGVERSION}
+  apt-get update || true
+  apt-get install -y esl-erlang=1:${ERLANGVERSION}
 fi
 
 # dangling symlinks cause make release to fail.
