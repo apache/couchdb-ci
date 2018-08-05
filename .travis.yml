@@ -8,8 +8,18 @@ before_script:
 
 env:
   matrix:
-    - TARGET=js-all
-    - TARGET=couch-pkg-all
+    - PLATFORM=debian-jessie
+    - PLATFORM=debian-stretch
+    - PLATFORM=ubuntu-trusty
+    - PLATFORM=ubuntu-xenial
+    - PLATFORM=ubuntu-bionic
+    - PLATFORM=centos-6
+    - PLATFORM=centos-7
 
 script:
-  - ./build.sh ${TARGET}
+  - ./build.sh js ${PLATFORM}
+  - ./build.sh couch-pkg ${PLATFORM}
+
+after_script:
+  - ls -laR js
+  - ls -laR couch
