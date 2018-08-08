@@ -37,6 +37,9 @@ ERLANGVERSION=${ERLANGVERSION:-19.3.6}
 # otherwise, see https://stackoverflow.com/questions/59895/
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# The directory when developers could put their own scripts which would be run
+EXTRA_SCRIPTS_DIR=${SCRIPTPATH}/extra
+
 # install JS by default, unless told otherwise (make-js images)
 if [[ $1 == "nojs" ]]; then
   JSINSTALL="nojs"
@@ -55,6 +58,21 @@ if [[ ${EUID} -ne 0 ]]; then
   exit 1
 fi
 
+# Unfortunately run-parts is not available in centos 6.
+# Therefore need to roll our own
+function run_scripts() {
+  local scripts_dir="$1"
+  local prefix="$2"
+  if [[ -d ${scripts_dir%/} ]]; then
+    scripts=$(LC_ALL=C; echo ${scripts_dir%/}/${prefix}*[^~,] | xargs -n 1 | sort -n)
+    for script in $scripts ; do
+        echo "Running ${script}" >&2
+        ! ([[ -f ${script} && -x ${script} ]] && ${script}) \
+            && echo "Failure in ${script}" >&2 && exit 1
+    done
+  fi
+}
+
 # TODO: help info on -h
 
 . ${SCRIPTPATH}/detect-os.sh
@@ -70,12 +88,14 @@ case "${OSTYPE}" in
       if [[ ! ${SKIPERLANG} ]]; then
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/yum-erlang.sh
       fi
+      run_scripts ${EXTRA_SCRIPTS_DIR} 'yum-'
     elif [[ ${ID} =~ ${debians} ]]; then
       NODEVERSION=${NODEVERSION} ERLANGVERSION=${ERLANGVERSION} \
           ${SCRIPTPATH}/apt-dependencies.sh ${JSINSTALL}
       if [[ ! ${SKIPERLANG} ]]; then
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/apt-erlang.sh
       fi
+      run_scripts ${EXTRA_SCRIPTS_DIR} 'apt-'
     else
       echo "Sorry, we don't support this Linux (${ID}) yet."
       exit 1
@@ -89,6 +109,7 @@ case "${OSTYPE}" in
           ${SCRIPTPATH}/pkg-dependencies.sh ${JSINSTALL}
     if [[ ! ${SKIPERLANG} ]]; then
       ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/pkg-erlang.sh
+      run_scripts ${EXTRA_SCRIPTS_DIR} 'pkg-'
     fi
     ;;
   bsd*)
