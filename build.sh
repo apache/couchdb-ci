@@ -32,6 +32,8 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 NODEVERSION=${NODEVERSION:-8}
 # Erlang 19.3.6 as of 2018-05-08
 ERLANGVERSION=${ERLANGVERSION:-19.3.6}
+# Elixir v1.6.6 as of 2018-07-25
+ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
 
 DEBIANS="debian-jessie debian-stretch"
 UBUNTUS="ubuntu-trusty ubuntu-xenial ubuntu-bionic"
@@ -81,6 +83,7 @@ build-platform() {
   docker build -f dockerfiles/$1 \
       --build-arg nodeversion=${NODEVERSION} \
       --build-arg erlangversion=${ERLANGVERSION} \
+      --build-arg elixirversion=${ELIXIRVERSION} \
       --tag couchdbdev/$1-erlang-${ERLANGVERSION} \
       ${SCRIPTPATH}
 }
