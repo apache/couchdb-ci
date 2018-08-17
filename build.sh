@@ -28,15 +28,17 @@ set -e
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # TODO: support overriding these as env vars
+QEMUVERSION=v2.9.1
+
 # Node 8 as of 2018-05-08
-NODEVERSION=${NODEVERSION:-8}
+NODEVERSION=${NODEVERSION:-8.12.0}
 # Erlang 19.3.6 as of 2018-05-08
 ERLANGVERSION=${ERLANGVERSION:-19.3.6}
 # Elixir v1.6.6 as of 2018-07-25
 ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
 
 DEBIANS="debian-jessie debian-stretch"
-UBUNTUS="ubuntu-trusty ubuntu-xenial ubuntu-bionic"
+UBUNTUS="ubuntu-trusty ubuntu-xenial ubuntu-bionic ubuntu-xenial-ppc64le"
 debs="(debian-jessie|debian-stretch|ubuntu-trusty|ubuntu-xenial|ubuntu-bionic)"
 
 CENTOSES="centos-6 centos-7"
@@ -48,13 +50,21 @@ BINTRAY_API="https://api.bintray.com"
 build-base-platform() {
   # invoke as build-base <plat>
   # base images never get JavaScript, nor Erlang
-  docker build -f dockerfiles/$1 \
-      --build-arg js=nojs \
-      --build-arg erlang=noerlang \
-      --build-arg nodeversion=${NODEVERSION} \
-      --build-arg erlangversion=${ERLANGVERSION} \
-      --tag couchdbdev/$1-base \
-      ${SCRIPTPATH}
+  if [[ $1 == 'ubuntu-xenial-ppc64le' ]]; then
+      ERLANGVERSION="default"
+      QEMUARCH=ppc64le
+
+      docker run --rm --privileged multiarch/qemu-user-static:register --reset --credential yes
+      #docker run --rm --privileged multiarch/qemu-user-static:register --reset
+      curl -sSL https://github.com/multiarch/qemu-user-static/releases/download/${QEMUVERSION}/x86_64_qemu-${QEMUARCH}-static.tar.gz | tar -xz -C ${SCRIPTPATH}/bin
+  fi
+    docker build -f dockerfiles/$1 \
+        --build-arg js=nojs \
+        --build-arg erlang=noerlang \
+        --build-arg nodeversion=${NODEVERSION} \
+        --build-arg erlangversion=${ERLANGVERSION} \
+        --tag couchdbdev/$1-base \
+        ${SCRIPTPATH}
 }
 
 build-js() {

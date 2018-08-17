@@ -29,7 +29,7 @@
 set -e
 
 # Node 8 as of 2018-05-08
-NODEVERSION=${NODEVERSION:-8}
+NODEVERSION=${NODEVERSION:-8.12.0}
 # Erlang 19.3.6 as of 2018-05-08
 ERLANGVERSION=${ERLANGVERSION:-19.3.6}
 # Elixir v1.6.6 as of 2018-07-25
@@ -98,6 +98,7 @@ case "${OSTYPE}" in
           ${SCRIPTPATH}/apt-dependencies.sh ${JSINSTALL}
       if [[ ! ${SKIPERLANG} ]]; then
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/apt-erlang.sh
+        rm -f "/usr/local/CHANGELOG.md" "/usr/local/LICENSE" "/usr/local/README.md"
         ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
       fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'apt-'

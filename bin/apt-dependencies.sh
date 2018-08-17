@@ -67,10 +67,40 @@ apt-get install -y apt-transport-https curl git pkg-config python \
 
 #Node.js
 pushd /tmp
-wget https://deb.nodesource.com/setup_${NODEVERSION}.x
-/bin/bash setup_${NODEVERSION}.x
-apt-get install -y nodejs
-rm setup_${NODEVERSION}.x
+ARCH= && dpkgArch="$(dpkg --print-architecture)" \
+  && case "${dpkgArch##*-}" in \
+    amd64) ARCH='x64';; \
+    ppc64el) ARCH='ppc64le';; \
+    i386) ARCH='x86';; \
+    *) echo "unsupported architecture"; exit 1 ;; \
+  esac \
+  && curl -fsSLO --compressed "https://nodejs.org/dist/v${NODEVERSION}/node-v$NODEVERSION-linux-$ARCH.tar.gz" \
+  && tar -xf "node-v$NODEVERSION-linux-$ARCH.tar.gz" -C /usr/local --strip-components=1 --no-same-owner \
+  && rm "node-v$NODEVERSION-linux-$ARCH.tar.gz" \
+  && ln -s /usr/local/bin/node /usr/local/bin/nodejs
+
+YARN_VERSION=1.9.4
+
+set -ex \
+  && for key in \
+    6A010C5166006599AA17F08146C2130DFD2497F5 \
+  ; do \
+    gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+    gpg --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+    gpg --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+  done \
+  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
+  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
+  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+  && mkdir -p /opt \
+  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
+  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
+  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
+#wget https://deb.nodesource.com/setup_${NODEVERSION}.x
+#/bin/bash setup_${NODEVERSION}.x
+#apt-get install -y nodejs
+#rm setup_${NODEVERSION}.x
 popd
 
 # documentation packages
@@ -115,14 +145,16 @@ apt-get install -y vim-tiny screen
 if [[ $1 != "nojs" ]]; then
   if [[ ${ARCH} == "ppc64le" ]]; then
     # install the dependencies
-    apt install -y libffi6 libnspr4 libnspr4-dev libffi-dev
+    apt install -y libffi6 libnspr4 libnspr4-dev libffi-dev devscripts
 
     # config the CouchDB repo & install the JS packages
-    curl -H 'X-JFrog-Art-Api:AKCp5Z325Lsp8hX5UgznDy9fU1VqPAeuzsSBKsMhp1y74oHw6WfgKkPkm3FUpe2QkZ4qcEzYT'  https://na.artifactory.swg-devops.com:443/artifactory/sys-powercloud-generic-local/couch-libmozjs185-xenial-ppc64el.deb --output /tmp/couch-libmozjs185-xenial-ppc64el.deb
-    curl -H 'X-JFrog-Art-Api:AKCp5Z325Lsp8hX5UgznDy9fU1VqPAeuzsSBKsMhp1y74oHw6WfgKkPkm3FUpe2QkZ4qcEzYT'  https://na.artifactory.swg-devops.com:443/artifactory/sys-powercloud-generic-local/couch-libmozjs185-dev-xenial-ppc64el.deb --output /tmp/couch-libmozjs185-dev-xenial-ppc64el.deb
-
-    dpkg -i /tmp/couch-libmozjs185-xenial-ppc64el.deb
-    dpkg -i /tmp/couch-libmozjs185-dev-xenial-ppc64el.deb
+    git clone https://github.com/apache/couchdb-pkg.git
+    cd couchdb-pkg
+    make couch-js-debs
+    ls js
+    dpkg -i js/*.deb
+    cd ..
+    rm -rf couchdb-pkg
   else 
     # config the CouchDB repo & install the JS packages
     echo "deb https://apache.bintray.com/couchdb-deb ${VERSION} main" | \

@@ -12,12 +12,14 @@ env:
     - PLATFORM=debian-stretch
     - PLATFORM=ubuntu-trusty
     - PLATFORM=ubuntu-xenial
+    - PLATFORM=ubuntu-xenial-ppc64le
     - PLATFORM=ubuntu-bionic
     - PLATFORM=centos-6
     - PLATFORM=centos-7
 
 script:
   - ./build.sh js ${PLATFORM}
+  - ./build.sh platform ${PLATFORM}
   - ./build.sh couch-pkg ${PLATFORM}
 
 after_script:
