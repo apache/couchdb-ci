@@ -85,8 +85,8 @@ fi
 pip install --upgrade sphinx_rtd_theme nose requests hypothesis
 
 # package-building stuff
-apt-get install -y curl debhelper dh-exec devscripts dialog lintian \
-    libwww-perl devscripts quilt equivs
+apt-get install -y curl debhelper devscripts dh-exec dh-python \
+    dialog equivs lintian libwww-perl quilt
 
 # install dh-systemd if available
 if [[ ${VERSION} != "precise" ]]; then
