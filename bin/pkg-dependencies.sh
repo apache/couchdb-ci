@@ -38,7 +38,7 @@ pkg install -y gmake help2man openssl icu curl git bash unzip \
     py27-sphinx py27-pip
 
 # rest of python dependencies
-pip install --upgrade sphinx_rtd_theme nose requests hypothesis
+pip install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
 # TODO: package building stuff?
 

@@ -82,7 +82,7 @@ if [[ ${VERSION} == "precise" ]]; then
 fi
 
 # rest of python dependencies
-pip install --upgrade sphinx_rtd_theme nose requests hypothesis
+pip install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
 # package-building stuff
 apt-get install -y curl debhelper devscripts dh-exec dh-python \

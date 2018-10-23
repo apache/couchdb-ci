@@ -92,7 +92,7 @@ else
   yum install -y python-pip
 fi
 pip install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
-    nose requests hypothesis
+    nose requests hypothesis==3.79.0
 
 # package-building stuff
 yum install -y createrepo xfsprogs-devel rpmdevtools
