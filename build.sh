@@ -57,6 +57,16 @@ build-base-platform() {
       ${SCRIPTPATH}
 }
 
+upload-base() {
+  if [[ ! ${DOCKER_ID_USER} ]]; then
+    echo "Please set your Docker credentials before using this command:"
+    echo "  export DOCKER_ID_USER=<username>"
+    echo "  docker login"
+    exit 1
+  fi
+  docker push couchdbdev/$1-base
+}
+
 build-js() {
   # TODO: check if image is built first, if not, complain
   # invoke as build-js <plat>
@@ -214,6 +224,16 @@ case "$1" in
       build-base-platform $plat $*
     done
     ;;
+  base-upload)
+    shift
+    upload-base $plat $*
+    ;;
+  base-upload-all)
+    shift
+    for plat in $DEBIANS $UBUNTUS $CENTOSES; do
+      upload-base $plat $*
+    done
+    ;;
   js)
     # Build js packages for a given platform
     shift
@@ -307,6 +327,9 @@ Recognized commands:
 
   base <plat>		Builds the base (no JS/Erlang) image for <plat>.
   base-all		Builds all base (no JS/Erlang) images.
+  base-upload           Uploads the couchdbdev/*-base images to Docker Hub.
+			Requires appropriate credentials.
+  base-upload-all       Uploads all the couchdbdev/*-base images.
 
   js			Builds the JS packages for <plat>.
   js-all		Builds the JS packages for all platforms.
@@ -318,10 +341,9 @@ Recognized commands:
 
   platform <plat>	Builds the image for <plat> with Erlang & JS support.
   platform-all		Builds all images with Erlang and JS support.
-
-  platform-upload	Uploads the couchdbdev/* images to Docker Hub.
+  platform-upload	Uploads the couchdbdev/*-erlang-* images to Docker Hub.
 			Requires appropriate credentials.
-  platform-upload-all	Uploads all the couchdbdev/* images to Docker Hub.
+  platform-upload-all	Uploads all the couchdbdev/*-erlang-* images to Docker.
 
   couch <plat>		Builds and tests CouchDB for <plat>.
   couch-all		Builds and tests CouchDB on all platforms.
