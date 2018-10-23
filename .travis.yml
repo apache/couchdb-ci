@@ -1,25 +1,73 @@
 sudo: required
 
+language: minimal
+
+# Avoid double build on PRs (See https://github.com/travis-ci/travis-ci/issues/1147)
+branches:
+  only:
+    - master
+
 services:
   - docker
 
-before_script:
-  - docker --version
-
 env:
-  matrix:
-    - PLATFORM=debian-jessie
-    - PLATFORM=debian-stretch
-    - PLATFORM=ubuntu-trusty
-    - PLATFORM=ubuntu-xenial
-    - PLATFORM=ubuntu-bionic
-    - PLATFORM=centos-6
-    - PLATFORM=centos-7
+  global:
+    - TARBALL_URL=https://dist.apache.org/repos/dist/release/couchdb/source/2.2.0/apache-couchdb-2.2.0.tar.gz
+    - TARBALL=apache-couchdb-2.2.0.tar.gz
+
+matrix:
+  include:
+    - name: "debian-jessie js"
+      env: PLATFORM=debian-jessie TARGET=js
+    - name: "debian-jessie couch"
+      env: PLATFORM=debian-jessie TARGET=couch
+    - name: "debian-jessie couch-pkg"
+      env: PLATFORM=debian-jessie TARGET=couch-pkg
+    - name: "debian-stretch js"
+      env: PLATFORM=debian-stretch TARGET=js
+    - name: "debian-stretch couch"
+      env: PLATFORM=debian-stretch TARGET=couch
+    - name: "debian-stretch couch-pkg"
+      env: PLATFORM=debian-stretch TARGET=couch-pkg
+    - name: "ubuntu-trusty js"
+      env: PLATFORM=ubuntu-trusty TARGET=js
+    - name: "ubuntu-trusty couch"
+      env: PLATFORM=ubuntu-trusty TARGET=couch
+    - name: "ubuntu-trusty couch-pkg"
+      env: PLATFORM=ubuntu-trusty TARGET=couch-pkg
+    - name: "ubuntu-xenial js"
+      env: PLATFORM=ubuntu-xenial TARGET=js
+    - name: "ubuntu-xenial couch"
+      env: PLATFORM=ubuntu-xenial TARGET=couch
+    - name: "ubuntu-xenial couch-pkg"
+      env: PLATFORM=ubuntu-xenial TARGET=couch-pkg
+    - name: "ubuntu-bionic js"
+      env: PLATFORM=ubuntu-bionic TARGET=js
+    - name: "ubuntu-bionic couch"
+      env: PLATFORM=ubuntu-bionic TARGET=couch
+    - name: "ubuntu-bionic couch-pkg"
+      env: PLATFORM=ubuntu-bionic TARGET=couch-pkg
+    - name: "centos-6 js"
+      env: PLATFORM=centos-6 TARGET=js
+    - name: "centos-6 couch"
+      env: PLATFORM=centos-6 TARGET=couch
+    - name: "centos-6 couch-pkg"
+      env: PLATFORM=centos-6 TARGET=couch-pkg
+    - name: "centos-7 js"
+      env: PLATFORM=centos-7 TARGET=js
+    - name: "centos-7 couch"
+      env: PLATFORM=centos-7 TARGET=couch
+    - name: "centos-7 couch-pkg"
+      env: PLATFORM=centos-7 TARGET=couch-pkg
+
+before_install:
+  - docker --version
+  - if [[ ${TARGET} == "js" ]]; then docker pull couchdbdev/${PLATFORM}-base; fi
+  - if [[ ${TARGET} == "couch-pkg" ]]; then wget ${TARBALL_URL}; fi
+  - if [[ ${TARGET} == "couch-pkg" ]]; then docker pull couchdbdev/${PLATFORM}-erlang-19.3.6; fi
 
 script:
-  - ./build.sh js ${PLATFORM}
-  - ./build.sh couch-pkg ${PLATFORM}
+  - if [[ ${TARGET} == "couch-pkg" ]]; then ./build.sh ${TARGET} ${PLATFORM} ${TARBALL}; else ./build.sh ${TARGET} ${PLATFORM}; fi
 
 after_script:
-  - ls -laR js
-  - ls -laR couch
+  - ls -laR js couch

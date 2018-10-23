@@ -25,7 +25,7 @@ CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB
 
 For those OSes that support Docker, we run builds inside of Docker containers. These containers are built using the `build.sh` command at the root level.
 
-Separate targets exist to build a compatible SpiderMonkey 1.8.5 package for each Linux target release.
+Separate targets exist to build a compatible SpiderMonkey 1.8.5 package for each Linux target release, known as the `-base` image.
 
 ## Building a container
 
@@ -36,6 +36,8 @@ Separate targets exist to build a compatible SpiderMonkey 1.8.5 package for each
 Valid `distro` and `version` values come from the table above.
 
 ## Building the special Debian Jessie 17.5.3 image
+
+We use this image to build the initial tarball, before running the build test on other platforms. We do this because we want to generate a `rebar` binary compatible with all versions of Erlang we support. If we do this on too new a version, older Erlangs won't recognize it. At present, Erlang 17 is the oldest version we still support.
 
 ```
 ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
@@ -55,27 +57,37 @@ ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
 ## Full `build.sh` options
 
 ```
+./build.sh <command> [OPTIONS]
+
 Recognized commands:
-  clean <plat>		Removes all images for <plat>.
-  clean-all		Cleans all images for all platforms.
-  base <plat>		Builds the base (no JS/Erlang) image for <plat>.
-  base-all		Builds all base (no JS/Erlang) images.
-  js			Builds the JS packages for <plat>.
-  js-all		Builds the JS packages for all platforms.
-  js-no-rebuild		Builds the JS packages for <plat> without rebuilding
-                	the base image first.
-  js-all-no-rebuild	Same as above, with the same condition.
-  js-upload <plat>	Uploads the JS packages for <plat> to bintray.
-			Requires BINTRAY_USER and BINTRAY_API_KEY env vars.
-  platform <plat>	Builds the image for <plat> with Erlang & JS support.
-  platform-all		Builds all images with Erlang and JS support.
-  platform-upload	Uploads the couchdbdev/* images to Docker Hub.
-			Requires appropriate credentials.
-  platform-upload-all	Uploads all the couchdbdev/* images to Docker Hub.
-  couch <plat>		Builds and tests CouchDB for <plat>.
-  couch-all		Builds and tests CouchDB on all platforms.
-  couch-pkg <plat>	Builds CouchDB packages for <plat>.
-  couch-pkg-all		Builds CouchDB packages for all platforms.
+  clean <plat>          Removes all images for <plat>.
+  clean-all             Cleans all images for all platforms.
+
+  base <plat>           Builds the base (no JS/Erlang) image for <plat>.
+  base-all              Builds all base (no JS/Erlang) images.
+  base-upload           Uploads the couchdbdev/*-base images to Docker Hub.
+                        Requires appropriate credentials.
+  base-upload-all       Uploads all the couchdbdev/*-base images.
+
+  js                    Builds the JS packages for <plat>.
+  js-all                Builds the JS packages for all platforms.
+  js-no-rebuild         Builds the JS packages for <plat> without rebuilding
+                        the base image first.
+  js-all-no-rebuild     Same as above, with the same condition.
+  js-upload <plat>      Uploads the JS packages for <plat> to bintray.
+                        Requires BINTRAY_USER and BINTRAY_API_KEY env vars.
+
+  platform <plat>       Builds the image for <plat> with Erlang & JS support.
+  platform-all          Builds all images with Erlang and JS support.
+  platform-upload       Uploads the couchdbdev/*-erlang-* images to Docker Hub.
+                        Requires appropriate credentials.
+  platform-upload-all   Uploads all the couchdbdev/*-erlang-* images to Docker.
+
+  couch <plat>          Builds and tests CouchDB for <plat>.
+  couch-all             Builds and tests CouchDB on all platforms.
+
+  couch-pkg <plat>      Builds CouchDB packages for <plat>.
+  couch-pkg-all         Builds CouchDB packages for all platforms.
 ```
 
 ## Interactively working in a built container
