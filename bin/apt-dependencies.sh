@@ -101,8 +101,18 @@ mkdir -p /usr/share/lintian/profiles/couchdb
 chmod 0755 /usr/share/lintian/profiles/couchdb
 if [[ ${VERSION} =~ ${debians} ]]; then
   cp ${SCRIPTPATH}/../files/debian.profile /usr/share/lintian/profiles/couchdb/main.profile
+  if [[ ${VERSION} == "jessie" ]]; then
+    # remove unknown lintian rule privacy-breach-uses-embedded-file
+    sed -i -e 's/, privacy-breach-uses-embedded-file//' /usr/share/lintian/profiles/couchdb/main.profile
+    # add rule to suppress python-script-but-no-python-dep
+    sed -i -e 's/Disable-Tags: /Disable-Tags: python-script-but-no-python-dep, /' /usr/share/lintian/profiles/couchdb/main.profile
+  fi
 elif [[ ${VERSION} =~ ${ubuntus} ]]; then
   cp ${SCRIPTPATH}/../files/ubuntu.profile /usr/share/lintian/profiles/couchdb/main.profile
+  if [[ ${VERSION} == "xenial" ]]; then
+    # add rule to suppress python-script-but-no-python-dep
+    sed -i -e 's/Disable-Tags: /Disable-Tags: python-script-but-no-python-dep, /' /usr/share/lintian/profiles/couchdb/main.profile
+  fi
 else
   echo "Unrecognized Debian-like release: ${VERSION}! Skipping lintian work."
 fi
