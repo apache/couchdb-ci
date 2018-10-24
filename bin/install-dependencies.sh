@@ -38,7 +38,7 @@ ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
 
 # This works if we're not called through a symlink
 # otherwise, see https://stackoverflow.com/questions/59895/
-SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # The directory when developers could put their own scripts which would be run
 EXTRA_SCRIPTS_DIR=${SCRIPTPATH}/extra
@@ -78,6 +78,7 @@ function run_scripts() {
 
 # TODO: help info on -h
 
+. ${SCRIPTPATH}/detect-arch.sh
 . ${SCRIPTPATH}/detect-os.sh
 
 case "${OSTYPE}" in

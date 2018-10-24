@@ -34,9 +34,13 @@ if [[ ${EUID} -ne 0 ]]; then
   exit 1
 fi
 
+arms='(aarch64)'
+
 # TODO: Do the Right Things(tm) for Fedora
 if [[ ${ERLANGVERSION} == "default" ]]; then
   yum install -y erlang
+elif [[ $ARCH =~ $arms ]]; then
+  ${SCRIPTPATH}/source-erlang.sh
 else
   wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
   rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
