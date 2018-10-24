@@ -59,7 +59,9 @@ fi
 # dangling symlinks cause make release to fail.
 # so, we remove the manpage symlink
 # see endless complaints about this on GH issues, SO, etc.
-rm /usr/lib/erlang/man
+if [[ -h /usr/lib/erlang/man ]]; then
+    rm /usr/lib/erlang/man
+fi
 
 # clean up
 apt-get clean
