@@ -37,7 +37,7 @@ fi
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
-ARCH=$(arch)
+. ${SCRIPTPATH}/detect-arch.sh >/dev/null
 echo "Detected RedHat/Centos/Fedora version: ${VERSION_ID}   arch: ${ARCH}"
 
 # TODO: Do the Right Things(tm) for Fedora

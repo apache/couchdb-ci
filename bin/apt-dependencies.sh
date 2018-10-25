@@ -40,8 +40,8 @@ fi
 apt-get update && apt-get install -y lsb-release
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. ${SCRIPTPATH}/detect-arch.sh >/dev/null
 VERSION=$(/usr/bin/lsb_release -cs)
-ARCH=$(arch)
 debians='(wheezy|jessie|stretch|buster)'
 ubuntus='(precise|trusty|xenial|artful|bionic)'
 echo "Detected Ubuntu/Debian version: ${VERSION}   arch: ${ARCH}"
