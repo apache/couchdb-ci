@@ -89,9 +89,10 @@ if [[ ${VERSION_ID} -eq 6 ]]; then
   wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
   /usr/bin/python3.4 /tmp/get-pip.py
 else
-  yum install -y python-pip
+  yum install -y python34-pip python-virtualenv
 fi
-pip install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
+
+pip3 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
     nose requests hypothesis==3.79.0
 
 # package-building stuff

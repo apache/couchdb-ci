@@ -60,8 +60,9 @@ fi
 apt-get -y dist-upgrade
 
 # install build-time dependencies
-apt-get install -y apt-transport-https curl git pkg-config python \
-    libpython-dev python-pip sudo wget zip unzip \
+apt-get install -y apt-transport-https curl git pkg-config \
+    python3 libpython3-dev python3-pip \
+    sudo wget zip unzip \
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev
 
@@ -78,11 +79,11 @@ apt-get install -y help2man python-sphinx
 
 # fix for broken sphinx on ubuntu 12.04 only
 if [[ ${VERSION} == "precise" ]]; then
-  pip install docutils==0.13.1 sphinx==1.5.3
+  pip3 install docutils==0.13.1 sphinx==1.5.3
 fi
 
 # rest of python dependencies
-pip install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+pip3 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
 # package-building stuff
 apt-get install -y curl debhelper devscripts dh-exec dh-python \
