@@ -17,44 +17,58 @@ env:
 
 matrix:
   include:
-    - name: "debian-jessie js"
-      env: PLATFORM=debian-jessie TARGET=js
+    - name: "debian-jessie base"
+      env: PLATFORM=debian-jessie TARGET=base
+    - name: "debian-jessie js-no-rebuild"
+      env: PLATFORM=debian-jessie TARGET=js-no-rebuild
     - name: "debian-jessie couch"
       env: PLATFORM=debian-jessie TARGET=couch
     - name: "debian-jessie couch-pkg"
       env: PLATFORM=debian-jessie TARGET=couch-pkg
-    - name: "debian-stretch js"
-      env: PLATFORM=debian-stretch TARGET=js
+    - name: "debian-stretch base"
+      env: PLATFORM=debian-stretch TARGET=base
+    - name: "debian-stretch js-no-rebuild"
+      env: PLATFORM=debian-stretch TARGET=js-no-rebuild
     - name: "debian-stretch couch"
       env: PLATFORM=debian-stretch TARGET=couch
     - name: "debian-stretch couch-pkg"
       env: PLATFORM=debian-stretch TARGET=couch-pkg
-    - name: "ubuntu-trusty js"
-      env: PLATFORM=ubuntu-trusty TARGET=js
+    - name: "ubuntu-trusty base"
+      env: PLATFORM=ubuntu-trusty TARGET=base
+    - name: "ubuntu-trusty js-no-rebuild"
+      env: PLATFORM=ubuntu-trusty TARGET=js-no-rebuild
     - name: "ubuntu-trusty couch"
       env: PLATFORM=ubuntu-trusty TARGET=couch
     - name: "ubuntu-trusty couch-pkg"
       env: PLATFORM=ubuntu-trusty TARGET=couch-pkg
-    - name: "ubuntu-xenial js"
-      env: PLATFORM=ubuntu-xenial TARGET=js
+    - name: "ubuntu-xenial base"
+      env: PLATFORM=ubuntu-xenial TARGET=base
+    - name: "ubuntu-xenial js-no-rebuild"
+      env: PLATFORM=ubuntu-xenial TARGET=js-no-rebuild
     - name: "ubuntu-xenial couch"
       env: PLATFORM=ubuntu-xenial TARGET=couch
     - name: "ubuntu-xenial couch-pkg"
       env: PLATFORM=ubuntu-xenial TARGET=couch-pkg
-    - name: "ubuntu-bionic js"
-      env: PLATFORM=ubuntu-bionic TARGET=js
+    - name: "ubuntu-bionic base"
+      env: PLATFORM=ubuntu-bionic TARGET=base
+    - name: "ubuntu-bionic js-no-rebuild"
+      env: PLATFORM=ubuntu-bionic TARGET=js-no-rebuild
     - name: "ubuntu-bionic couch"
       env: PLATFORM=ubuntu-bionic TARGET=couch
     - name: "ubuntu-bionic couch-pkg"
       env: PLATFORM=ubuntu-bionic TARGET=couch-pkg
-    - name: "centos-6 js"
-      env: PLATFORM=centos-6 TARGET=js
+    - name: "centos-6 base"
+      env: PLATFORM=centos-6 TARGET=base
+    - name: "centos-6 js-no-rebuild"
+      env: PLATFORM=centos-6 TARGET=js-no-rebuild
     - name: "centos-6 couch"
       env: PLATFORM=centos-6 TARGET=couch
     - name: "centos-6 couch-pkg"
       env: PLATFORM=centos-6 TARGET=couch-pkg
-    - name: "centos-7 js"
-      env: PLATFORM=centos-7 TARGET=js
+    - name: "centos-7 base"
+      env: PLATFORM=centos-7 TARGET=base
+    - name: "centos-7 js-no-rebuild"
+      env: PLATFORM=centos-7 TARGET=js-no-rebuild
     - name: "centos-7 couch"
       env: PLATFORM=centos-7 TARGET=couch
     - name: "centos-7 couch-pkg"
@@ -62,7 +76,7 @@ matrix:
 
 before_install:
   - docker --version
-  - if [[ ${TARGET} == "js" ]]; then docker pull couchdbdev/${PLATFORM}-base; fi
+  - if [[ ${TARGET} == "js-no-rebuild" ]]; then docker pull couchdbdev/${PLATFORM}-base; fi
   - if [[ ${TARGET} == "couch-pkg" ]]; then wget ${TARBALL_URL}; fi
   - if [[ ${TARGET} == "couch-pkg" ]]; then docker pull couchdbdev/${PLATFORM}-erlang-19.3.6; fi
 

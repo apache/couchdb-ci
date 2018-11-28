@@ -60,11 +60,23 @@ fi
 apt-get -y dist-upgrade
 
 # install build-time dependencies
+if [[ ${VERSION} == "trusty" ]]; then
+  VENV=python3.4-venv
+else
+  VENV=python3-venv
+fi
+
+# build deps, doc build deps, pkg building, then userland helper stuff
 apt-get install -y apt-transport-https curl git pkg-config \
-    python3 libpython3-dev python3-pip \
+    python3 libpython3-dev python3-pip ${VENV} \
     sudo wget zip unzip \
     build-essential ca-certificates libcurl4-openssl-dev \
-    libicu-dev libnspr4-dev
+    libicu-dev libnspr4-dev \
+    help2man python3-sphinx \
+    curl debhelper devscripts dh-exec dh-python \
+    dialog equivs lintian libwww-perl quilt \
+    reprepro createrepo \
+    vim-tiny screen
 
 # Node.js
 pushd /tmp
@@ -74,9 +86,6 @@ apt-get install -y nodejs
 rm setup_${NODEVERSION}.x
 popd
 
-# documentation packages
-apt-get install -y help2man python-sphinx
-
 # fix for broken sphinx on ubuntu 12.04 only
 if [[ ${VERSION} == "precise" ]]; then
   pip3 install docutils==0.13.1 sphinx==1.5.3
@@ -85,17 +94,10 @@ fi
 # rest of python dependencies
 pip3 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
-# package-building stuff
-apt-get install -y curl debhelper devscripts dh-exec dh-python \
-    dialog equivs lintian libwww-perl quilt
-
 # install dh-systemd if available
 if [[ ${VERSION} != "precise" ]]; then
   apt-get install -y dh-systemd
 fi
-
-# Stuff to make Debian and RPM repositories
-apt-get install -y reprepro createrepo
 
 # relaxed lintian rules for CouchDB
 mkdir -p /usr/share/lintian/profiles/couchdb
@@ -118,9 +120,6 @@ else
   echo "Unrecognized Debian-like release: ${VERSION}! Skipping lintian work."
 fi
 chmod 0644 /usr/share/lintian/profiles/couchdb/main.profile
-
-# convenience stuff for the CI workflow maintainer ;)
-apt-get install -y vim-tiny screen
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then
