@@ -34,8 +34,8 @@ fi
 pkg upgrade -y
 
 pkg install -y gmake help2man openssl icu curl git bash unzip \
-    autoconf automake libtool node8 npm-node8 lang/python \
-    py27-sphinx py27-pip
+    autoconf automake libtool node8 npm-node8 lang/python3 \
+    py36-sphinx py36-pip
 
 # rest of python dependencies
 pip install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
