@@ -119,7 +119,11 @@ elif [[ ${VERSION_CODENAME} =~ ${ubuntus} ]]; then
 else
   echo "Unrecognized Debian-like release: ${VERSION_CODENAME}! Skipping lintian work."
 fi
-chmod 0644 /usr/share/lintian/profiles/couchdb/main.profile
+
+MAINPROFILE=/usr/share/lintian/profiles/couchdb/main.profile
+if [[ -e ${MAINPROFILE} ]]; then
+    chmod 0644 ${MAINPROFILE}
+fi
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then
