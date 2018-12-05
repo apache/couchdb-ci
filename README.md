@@ -1,23 +1,31 @@
 # CouchDB Continuous Integration (CI) support repo
 
-The main purpose of this repository is to provide a number of Docker containers, Ansible roles/tasks and other configuration functionality so that the ASF Jenkins CI server (https://builds.apache.org/) is capable of building (and eventually packaging) CouchDB for a number of platforms. It intends to cover a range of both operating systems (Linux, macOS, BSD, Windows) and Erlang versions (17.x, 18.x, 19.x, etc.)
+The main purpose of this repository is to provide scripts that:
 
-The current configuration builds CouchDB, Fauxton, its documentation, and runs the Erlang and JS test suites for each combination of OS and Erlang revision.
+* Install the necessary build-time dependencies for CouchDB on a number of platforms, either inside or outside of a container or VM
+* Build Docker containers with those dependencies necessary to build binary JavaScript (SpiderMonkey 1.8.5) packages
+* Build Docker containers with all dependencies necessary to build CouchDB, including Erlang and JavaScript
 
-# Supported Configurations (updated 2018-05-19)
+It intends to cover a range of both operating systems (Linux, macOS, BSD, Windows) and Erlang versions (17.x, 18.x, 19.x, etc.)
 
-**OS / distro** | **Version** | **Erlang Version**
-----------------|-------------|-----------------------
-**ubuntu**      | trusty      | 19.3.6
-**ubuntu**      | xenial      | 19.3.6
-**ubuntu**      | bionic      | 19.3.6
-**debian**      | jessie      | 17.5.3
-**debian**      | jessie      | 19.3.6
-**debian**      | stretch     | 19.3.6
-**centos**      | 6           | 19.3.6
-**centos**      | 7           | 19.3.6
+These images are used by [Apache Jenkins CI](https://builds.apache.org/blue/organizations/jenkins/CouchDB/branches/) to build CouchDB with every checkin to `master` or a release branch (*e.g.*, `2.3.0`).
 
-CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB against different Erlang versions, and to use Jenkins to validate CouchDB against different OSes and architectures. Where possible, Jenkins also auto-builds convenience binaries or packages.
+CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB against different Erlang versions, and to use Jenkins to validate CouchDB against different OSes and architectures. Where possible, Jenkins also auto-builds convenience binaries or packages. The eventual goal is that these auto-built binaries/packages/Docker images will be auto-pushed to our distribution repos for downstream consumption.
+
+# Supported Configurations (updated 2018-12-05)
+
+**OS / distro** | **Version** | **Erlang Version** | **Architecture** | **Docker?**
+----------------|-------------|--------------------|------------------|--------------------
+**debian**      | jessie      | 17.5.3             | `x86_64`         | :heavy_check_mark:
+**debian**      | jessie      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**debian**      | stretch     | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**ubuntu**      | trusty      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**ubuntu**      | xenial      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**ubuntu**      | bionic      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**centos**      | 6           | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**centos**      | 7           | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**freebsd**     | 11.x        | *default*          | `x86_64`         | :x:
+**freebsd**     | 12.0        | *default*          | `x86_64`         | :x:
 
 ---
 
@@ -25,20 +33,31 @@ CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB
 
 For those OSes that support Docker, we run builds inside of Docker containers. These containers are built using the `build.sh` command at the root level.
 
-Separate targets exist to build a compatible SpiderMonkey 1.8.5 package for each Linux target release, known as the `-base` image.
+## Building a "base image"
 
-## Building a container
+The base images include all of the build dependencies necessary to build CouchDB **except** for Erlang and SpiderMonkey 1.8.5. These images are typically used to build the CouchDB SpiderMonkey 1.8.5 binaries for a given OS/version/architecture combination.
+
+Build a base image with:
+
+```
+./build.sh base <distro>-<version>
+```
+
+## Building a "platform image"
+
+The platform images include all of the build dependencies necessary to build and full test CouchDB on a given OS/version/architecture combination.
+
+Build a platform image with:
 
 ```
 ./build.sh platform <distro>-<version>
 ```
 
-Valid `distro` and `version` values come from the table above.
-
-## Building the special Debian Jessie 17.5.3 image
+## Building the special Debian Jessie 17.5.3 `x86_64` image
 
 We use this image to build the initial tarball, before running the build test on other platforms. We do this because we want to generate a `rebar` binary compatible with all versions of Erlang we support. If we do this on too new a version, older Erlangs won't recognize it. At present, Erlang 17 is the oldest version we still support.
 
+The build command is:
 ```
 ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
 ```
@@ -61,33 +80,23 @@ ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
 
 Recognized commands:
   clean <plat>          Removes all images for <plat>.
-  clean-all             Cleans all images for all platforms.
+  clean-all             Removes all images for all platforms & base images.
 
   base <plat>           Builds the base (no JS/Erlang) image for <plat>.
   base-all              Builds all base (no JS/Erlang) images.
-  base-upload           Uploads the couchdbdev/*-base images to Docker Hub.
-                        Requires appropriate credentials.
-  base-upload-all       Uploads all the couchdbdev/*-base images.
-
-  js                    Builds the JS packages for <plat>.
-  js-all                Builds the JS packages for all platforms.
-  js-no-rebuild         Builds the JS packages for <plat> without rebuilding
-                        the base image first.
-  js-all-no-rebuild     Same as above, with the same condition.
-  js-upload <plat>      Uploads the JS packages for <plat> to bintray.
-                        Requires BINTRAY_USER and BINTRAY_API_KEY env vars.
+  *base-upload          Uploads the specified couchdbdev/*-base image
+                        to Docker Hub.
+  *base-upload-all      Uploads all the couchdbdev/*-base images.
 
   platform <plat>       Builds the image for <plat> with Erlang & JS support.
   platform-all          Builds all images with Erlang and JS support.
-  platform-upload       Uploads the couchdbdev/*-erlang-* images to Docker Hub.
-                        Requires appropriate credentials.
-  platform-upload-all   Uploads all the couchdbdev/*-erlang-* images to Docker.
+  *platform-upload      Uploads the couchdbdev/*-erlang-* images to Docker Hub.
+  *platform-upload-all  Uploads all the couchdbdev/*-erlang-* images to Docker.
 
   couch <plat>          Builds and tests CouchDB for <plat>.
   couch-all             Builds and tests CouchDB on all platforms.
 
-  couch-pkg <plat>      Builds CouchDB packages for <plat>.
-  couch-pkg-all         Builds CouchDB packages for all platforms.
+  Commands marked with * require appropriate Docker Hub credentials.
 ```
 
 ## Interactively working in a built container
@@ -108,28 +117,16 @@ where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-stre
 
 ## Building SpiderMonkey 1.8.5 convenience packages
 
-The Linux docker containers are also used to build suitable SpiderMonkey 1.8.5 binary packages.
+After building the base image as above, head over to the [apache/couchdb-pkg](https://github.com/apache/couchdb-pkg) repository and follow the instructions there.
 
-```
-./build.sh js <distro>-<version>
-```
+## Adding support for a new release/platform/architecture
 
-To build packages for all supported platforms:
-
-```
-./build.sh js-all
-```
-
-## Adding support for a new release/platform
-
-1. Copy and customize an appropriate Dockerfile in the `dockerfiles` directory.
-1. Build a base image using `./build.sh base <distro>-<version>`. Solve any problems with the build process here.
-1. Build the JS packages using `./build.sh js <distro>-<version>`. Again, fix any problems that arise.
-1. Publish the new JS packages with `./build.sh js-upload <distro>-<version>`.
-1. Build the full platform image with `./build.sh platform <distro>-<version>`.
-1. Publish the new image with `./build.sh platform-upload <distro>-<version>`.
-1. Be sure to add the new platform to Apache CouchDB's `Jenkinsfile`.
-1. Push any changes to this repo, or to `couchdb-pkg`, out for review and merging.
+1. Update the build scripts in the `bin/` directory to install the dependencies correctly on your new OS/version/platform. Push a PR with these changes.
+1. Copy and customize an appropriate Dockerfile in the `dockerfiles` directory for your new OS.
+1. Build a base image using `./build.sh base <distro>-<version>`. Solve any problems with the build process here. Add your new platform combination to the `.travis.yml` file, then push a PR with these changes.
+1. Using the [apache/couchdb-pkg](https://github.com/apache/couchdb-pkg) repository, validate you can build the JS package. Fix any problems in that repo that arise and raise a new PR. Open a new issue on that PR requesting that the JS packages be made available through the CouchDB repository/download infrastructure.
+1. Build a full platform image with `./build.sh platform <distro>-<version>`. Solve any problems with the build process here. Add your new platform combination to the `.travis.yml` file, then push a PR with these changes.
+1. Submit a PR against the [apache/couchdb](https://github.com/apache/couchdb) repository, adding the new platform to the top level `Jenkinsfile`. Ask if you need help.
 
 ---
 
@@ -137,15 +134,14 @@ To build packages for all supported platforms:
 
 We are eager for contributions to enhance the build scripts to support setting up machines with the necessary build environment for:
 
-* FreeBSD
 * NetBSD
 * OpenBSD
 * macOS
-* Windows x64
+* Windows x64 (see [apache/couchdb-glazier](https://github.com/apache/couchdb-glazier]) for the current approach)
 
 as well as alternative architectures for the already supported image types (arm, ppc64le, s390x, sparc, etc).
 
-We know that Docker won't support most of these, but we should be able to at least expand the install scripts for all of these platforms (save Win x64).
+We know that Docker won't support some of these, but we should be able to at least expand the install scripts for all of these platforms.
 
 # Background 
 
@@ -153,4 +149,3 @@ See:
 * this [thread](https://www.mail-archive.com/dev%40couchdb.apache.org/msg43591.html) on the couchdb-dev mailing list and
 * this [ASF Infra ticket](https://issues.apache.org/jira/browse/INFRA-10126).
 for the origins of this work.
-
