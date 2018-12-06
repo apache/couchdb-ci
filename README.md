@@ -17,13 +17,13 @@ CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB
 **OS / distro** | **Version** | **Erlang Version** | **Architecture** | **Docker?**
 ----------------|-------------|--------------------|------------------|--------------------
 **debian**      | jessie      | 17.5.3             | `x86_64`         | :heavy_check_mark:
-**debian**      | jessie      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
-**debian**      | stretch     | 19.3.6             | `x86_64`         | :heavy_checK_mark:
-**ubuntu**      | trusty      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
-**ubuntu**      | xenial      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
-**ubuntu**      | bionic      | 19.3.6             | `x86_64`         | :heavy_checK_mark:
-**centos**      | 6           | 19.3.6             | `x86_64`         | :heavy_checK_mark:
-**centos**      | 7           | 19.3.6             | `x86_64`         | :heavy_checK_mark:
+**debian**      | jessie      | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**debian**      | stretch     | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**ubuntu**      | trusty      | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**ubuntu**      | xenial      | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**ubuntu**      | bionic      | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**centos**      | 6           | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**centos**      | 7           | 19.3.6             | `x86_64`         | :heavy_check_mark:
 **freebsd**     | 11.x        | *default*          | `x86_64`         | :x:
 **freebsd**     | 12.0        | *default*          | `x86_64`         | :x:
 
