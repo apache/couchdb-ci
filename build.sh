@@ -67,28 +67,6 @@ upload-base() {
   docker push couchdbdev/$1-base
 }
 
-build-js() {
-  # TODO: check if image is built first, if not, complain
-  # invoke as build-js <plat>
-  rm -rf ${SCRIPTPATH}/js/$1
-  mkdir -p ${SCRIPTPATH}/js/$1
-  docker run \
-      --mount type=bind,src=${SCRIPTPATH}/js/$1,dst=/root/output \
-      --mount type=bind,src=${SCRIPTPATH},dst=/root/couchdb-ci \
-      couchdbdev/$1-base \
-      sudo /root/couchdb-ci/bin/build-js.sh
-}
-
-build-all-js() {
-  rm -rf ${SCRIPTPATH}/js/*
-  for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-    if [[ $1 != "no-rebuild" ]]; then
-      build-base-platform $plat
-    fi
-    build-js $plat
-  done
-}
-
 build-platform() {
   docker build -f dockerfiles/$1 \
       --build-arg nodeversion=${NODEVERSION} \
@@ -110,62 +88,6 @@ clean-all() {
   done
 }
 
-bintray-check-credentials() {
-  if [[ ! ${BINTRAY_USER} || ! ${BINTRAY_API_KEY} ]]; then
-    echo "Please set your Bintray credentials before using this command:"
-    echo "  export BINTRAY_USER=<username>"
-    echo "  export BINTRAY_API_KEY=<key>"
-    exit 1
-  fi
-}
-
-upload-js() {
-  # invoke with $1 as plat, expect to find the binaries under js/$plat/*
-  bintray-check-credentials
-  for pkg in $(find js/$1 -type f); do
-    if [[ $1 =~ ${debs} ]]; then
-      # TODO: pull this stuff from buildinfo / changes files, perhaps? Not sure it matters.
-      if [[ $pkg =~ (changes|buildinfo)$ ]]; then
-        continue
-      fi
-      repo="couchdb-deb"
-      dist=$(echo $1 | cut -d- -f 2)
-      arch=$(echo $pkg | cut -d_ -f 3 | cut -d. -f 1)
-      relpath="pool/s/spidermonkey/${pkg##*/}"
-      HEADERS=("--header" "X-Bintray-Debian-Distribution: ${dist}")
-      HEADERS+=("--header" "X-Bintray-Debian-Component: main")
-      HEADERS+=("--header" "X-Bintray-Debian-Architecture: ${arch}")
-    elif [[ $1 =~ ${rpms} ]]; then
-      repo="couchdb-rpm"
-      # better not put any extra . in the filename...
-      dist=$(echo $pkg | cut -d. -f 4)
-      arch=$(echo $pkg | cut -d. -f 5)
-      relpath="${dist}/${arch}/${pkg##*/}"
-      HEADERS=()
-    else
-      echo "Unknown repo type $1, aborting"
-      exit 1
-    fi
-    local ret="$(curl \
-        --request PUT \
-        --upload-file $pkg \
-        --user ${BINTRAY_USER}:${BINTRAY_API_KEY} \
-        --header "X-Bintray-Package: spidermonkey" \
-        --header "X-Bintray-Version: 1.8.5" \
-        --header "X-Bintray-Publish: 1" \
-        --header "X-Bintray-Override: 1" \
-        --header "X-Bintray-Explode: 0" \
-        "${HEADERS[@]}" \
-        "${BINTRAY_API}/content/apache/${repo}/${relpath}")"
-    if [[ ${ret} == '{"message":"success"}' ]]; then
-      echo "Uploaded ${pkg} successfully."
-    else
-      echo "Failed to upload $pkg, ${ret}"
-      exit 1
-    fi
-  done
-}
-
 upload-platform() {
   if [[ ! ${DOCKER_ID_USER} ]]; then
     echo "Please set your Docker credentials before using this command:"
@@ -183,25 +105,7 @@ build-test-couch() {
       /home/jenkins/couchdb-ci/bin/build-test-couchdb.sh $2
 }
 
-build-package() {
-  # $1 is plat, $2 is the optional path to a dist tarball
-  rm -rf ${SCRIPTPATH}/couch/$1
-  mkdir -p ${SCRIPTPATH}/couch/$1
-  chmod 777 ${SCRIPTPATH}/couch/$1
-  if [[ $2 ]]; then
-    cp $2 ${SCRIPTPATH}/${2##*/} || true
-  fi
-  if [[ ! -d ../couchdb-pkg ]]; then
-    git clone https://github.com/apache/couchdb-pkg ../couchdb-pkg
-  fi
-  docker run \
-      --mount type=bind,src=${SCRIPTPATH},dst=/home/jenkins/couchdb-ci \
-      --mount type=bind,src=${SCRIPTPATH}/../couchdb-pkg,dst=/home/jenkins/couchdb-pkg \
-      couchdbdev/$1-erlang-${ERLANGVERSION} \
-      /home/jenkins/couchdb-ci/bin/build-couchdb-pkg.sh ${2##*/}
-}
 
-# TODO help
 case "$1" in
   clean)
     # removes image for a given target platform
@@ -232,37 +136,6 @@ case "$1" in
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       upload-base $plat $*
-    done
-    ;;
-  js)
-    # Build js packages for a given platform
-    shift
-    build-base-platform $1
-    build-js $1
-    ;;
-  js-no-rebuild)
-    # Build js packages for a given platform but do NOT rebuild base img
-    shift
-    build-js $1
-    ;;
-  js-all)
-    # build all supported JS packages
-    shift
-    build-all-js
-    ;;
-  js-all-no-rebuild)
-    # build all supported JS packages with no rebuild
-    shift
-    build-all-js no-rebuild
-    ;;
-  js-upload)
-    shift
-    upload-js $1
-    ;;
-  js-upload-all)
-    shift
-    for dir in $(ls js); do
-      upload-js $dir
     done
     ;;
   platform)
@@ -300,19 +173,6 @@ case "$1" in
       build-test-couch $plat $*
     done
     ;;
-  couch-pkg)
-    # build CouchDB pkgs for <plat>
-    shift
-    build-package $*
-    ;;
-  couch-pkg-all)
-    # build CouchDB pkgs for all platforms
-    shift
-    rm -rf ${SCRIPTPATH}/couch/*
-    for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-      build-package $plat $*
-    done
-    ;;
   *)
     if [[ $1 ]]; then
       echo "Unknown target $1."
@@ -322,34 +182,25 @@ case "$1" in
 $0 <command> [OPTIONS]
 
 Recognized commands:
-  clean <plat>		Removes all images for <plat>.
-  clean-all		Cleans all images for all platforms.
+  clean <plat>          Removes all images for <plat>.
+  clean-all             Removes all images for all platforms & base images.
 
-  base <plat>		Builds the base (no JS/Erlang) image for <plat>.
-  base-all		Builds all base (no JS/Erlang) images.
-  base-upload           Uploads the couchdbdev/*-base images to Docker Hub.
-			Requires appropriate credentials.
-  base-upload-all       Uploads all the couchdbdev/*-base images.
+  base <plat>           Builds the base (no JS/Erlang) image for <plat>.
+  base-all              Builds all base (no JS/Erlang) images.
+  *base-upload          Uploads the specified couchdbdev/*-base image 
+                        to Docker Hub.
+  *base-upload-all      Uploads all the couchdbdev/*-base images.
 
-  js			Builds the JS packages for <plat>.
-  js-all		Builds the JS packages for all platforms.
-  js-no-rebuild		Builds the JS packages for <plat> without rebuilding
-                	the base image first.
-  js-all-no-rebuild	Same as above, with the same condition.
-  js-upload <plat>	Uploads the JS packages for <plat> to bintray.
-			Requires BINTRAY_USER and BINTRAY_API_KEY env vars.
+  platform <plat>       Builds the image for <plat> with Erlang & JS support.
+  platform-all          Builds all images with Erlang and JS support.
+  *platform-upload      Uploads the couchdbdev/*-erlang-* images to Docker Hub.
+  *platform-upload-all  Uploads all the couchdbdev/*-erlang-* images to Docker.
 
-  platform <plat>	Builds the image for <plat> with Erlang & JS support.
-  platform-all		Builds all images with Erlang and JS support.
-  platform-upload	Uploads the couchdbdev/*-erlang-* images to Docker Hub.
-			Requires appropriate credentials.
-  platform-upload-all	Uploads all the couchdbdev/*-erlang-* images to Docker.
+  couch <plat>          Builds and tests CouchDB for <plat>.
+  couch-all             Builds and tests CouchDB on all platforms.
 
-  couch <plat>		Builds and tests CouchDB for <plat>.
-  couch-all		Builds and tests CouchDB on all platforms.
+  Commands marked with * require appropriate Docker Hub credentials.
 
-  couch-pkg <plat>	Builds CouchDB packages for <plat>.
-  couch-pkg-all		Builds CouchDB packages for all platforms.
 EOF
     if [[ $1 ]]; then
       exit 1
