@@ -40,11 +40,11 @@ fi
 apt-get update && apt-get install -y lsb-release
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-VERSION=$(/usr/bin/lsb_release -cs)
-ARCH=$(arch)
+. ${SCRIPTPATH}/detect-arch.sh >/dev/null
+. ${SCRIPTPATH}/detect-os.sh >/dev/null
 debians='(wheezy|jessie|stretch|buster)'
 ubuntus='(precise|trusty|xenial|artful|bionic)'
-echo "Detected Ubuntu/Debian version: ${VERSION}   arch: ${ARCH}"
+echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
 # bionic Docker image seems to be missing /etc/timezone...
 if [[ ! -f /etc/timezone ]]; then
@@ -87,7 +87,7 @@ rm setup_${NODEVERSION}.x
 popd
 
 # fix for broken sphinx on ubuntu 12.04 only
-if [[ ${VERSION} == "precise" ]]; then
+if [[ ${VERSION_CODENAME} == "precise" ]]; then
   pip3 install docutils==0.13.1 sphinx==1.5.3
 fi
 
@@ -95,36 +95,40 @@ fi
 pip3 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
 # install dh-systemd if available
-if [[ ${VERSION} != "precise" ]]; then
+if [[ ${VERSION_CODENAME} != "precise" ]]; then
   apt-get install -y dh-systemd
 fi
 
 # relaxed lintian rules for CouchDB
 mkdir -p /usr/share/lintian/profiles/couchdb
 chmod 0755 /usr/share/lintian/profiles/couchdb
-if [[ ${VERSION} =~ ${debians} ]]; then
+if [[ ${VERSION_CODENAME} =~ ${debians} ]]; then
   cp ${SCRIPTPATH}/../files/debian.profile /usr/share/lintian/profiles/couchdb/main.profile
-  if [[ ${VERSION} == "jessie" ]]; then
+  if [[ ${VERSION_CODENAME} == "jessie" ]]; then
     # remove unknown lintian rule privacy-breach-uses-embedded-file
     sed -i -e 's/, privacy-breach-uses-embedded-file//' /usr/share/lintian/profiles/couchdb/main.profile
     # add rule to suppress python-script-but-no-python-dep
     sed -i -e 's/Disable-Tags: /Disable-Tags: python-script-but-no-python-dep, /' /usr/share/lintian/profiles/couchdb/main.profile
   fi
-elif [[ ${VERSION} =~ ${ubuntus} ]]; then
+elif [[ ${VERSION_CODENAME} =~ ${ubuntus} ]]; then
   cp ${SCRIPTPATH}/../files/ubuntu.profile /usr/share/lintian/profiles/couchdb/main.profile
-  if [[ ${VERSION} == "xenial" ]]; then
+  if [[ ${VERSION_CODENAME} == "xenial" ]]; then
     # add rule to suppress python-script-but-no-python-dep
     sed -i -e 's/Disable-Tags: /Disable-Tags: python-script-but-no-python-dep, /' /usr/share/lintian/profiles/couchdb/main.profile
   fi
 else
-  echo "Unrecognized Debian-like release: ${VERSION}! Skipping lintian work."
+  echo "Unrecognized Debian-like release: ${VERSION_CODENAME}! Skipping lintian work."
 fi
-chmod 0644 /usr/share/lintian/profiles/couchdb/main.profile
+
+MAINPROFILE=/usr/share/lintian/profiles/couchdb/main.profile
+if [[ -e ${MAINPROFILE} ]]; then
+    chmod 0644 ${MAINPROFILE}
+fi
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then
   # config the CouchDB repo & install the JS packages
-  echo "deb https://apache.bintray.com/couchdb-deb ${VERSION} main" | \
+  echo "deb https://apache.bintray.com/couchdb-deb ${VERSION_CODENAME} main" | \
       sudo tee /etc/apt/sources.list.d/couchdb.list
   for server in $(shuf -e pgpkeys.mit.edu \
                           ha.pool.sks-keyservers.net \

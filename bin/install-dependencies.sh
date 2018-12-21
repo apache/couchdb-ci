@@ -38,7 +38,7 @@ ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
 
 # This works if we're not called through a symlink
 # otherwise, see https://stackoverflow.com/questions/59895/
-SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # The directory when developers could put their own scripts which would be run
 EXTRA_SCRIPTS_DIR=${SCRIPTPATH}/extra
@@ -78,12 +78,16 @@ function run_scripts() {
 
 # TODO: help info on -h
 
+. ${SCRIPTPATH}/detect-arch.sh
 . ${SCRIPTPATH}/detect-os.sh
+
+arms='(aarch64)'
 
 case "${OSTYPE}" in
   linux*)
     redhats='(rhel|centos|fedora)'
     debians='(debian|ubuntu)'
+    latest='(stretch|buster|bionic)'
 
     if [[ ${ID} =~ ${redhats} ]]; then
       NODEVERSION=${NODEVERSION} \
@@ -94,6 +98,19 @@ case "${OSTYPE}" in
       fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'yum-'
     elif [[ ${ID} =~ ${debians} ]]; then
+
+      # Catching this early, so as to avoid user frustration
+      if [[ ${ERLANGVERSION%%.*} -le 19 ]] && [[ ${VERSION_CODENAME} =~ ${latest} ]]; then
+        if [[ $ARCH =~ $arms ]] && [[ ! ${SKIPERLANG} ]]; then
+          echo ""
+          echo "Recent versions of Linux (Stretch, Bionic, etc) provide a version of libssl"
+          echo "which is too new to complile earlier (<=19) versions of Erlang.  Please"
+          echo "either choose an earlier distro release or a more rencent version of Erlang."
+          echo ""
+          exit 1
+        fi
+      fi
+
       NODEVERSION=${NODEVERSION} ERLANGVERSION=${ERLANGVERSION} \
           ${SCRIPTPATH}/apt-dependencies.sh ${JSINSTALL}
       if [[ ! ${SKIPERLANG} ]]; then

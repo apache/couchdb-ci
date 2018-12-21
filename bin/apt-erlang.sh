@@ -36,13 +36,19 @@ if [[ ${EUID} -ne 0 ]]; then
   exit 1
 fi
 
+SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # you DID run apt-dependencies.sh first, didn't you?
 VERSION=$(/usr/bin/lsb_release -cs)
 
 apt-get update || true
 
+arms='(aarch64)'
+
 if [[ ${ERLANGVERSION} == "default" ]]; then
   apt-get update && apt-get install -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
+elif [[ $ARCH =~ $arms ]]; then
+    ${SCRIPTPATH}/source-erlang.sh
 else
   wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
   dpkg -i erlang-solutions_1.0_all.deb
@@ -59,7 +65,9 @@ fi
 # dangling symlinks cause make release to fail.
 # so, we remove the manpage symlink
 # see endless complaints about this on GH issues, SO, etc.
-rm /usr/lib/erlang/man
+if [[ -h /usr/lib/erlang/man ]]; then
+    rm /usr/lib/erlang/man
+fi
 
 # clean up
 apt-get clean
