@@ -60,7 +60,7 @@ fi
 apt-get -y dist-upgrade
 
 # install build-time dependencies
-if [[ ${VERSION} == "trusty" ]]; then
+if [[ ${VERSION_CODENAME} == "trusty" ]]; then
   VENV=python3.4-venv
 else
   VENV=python3-venv
