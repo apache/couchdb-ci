@@ -19,8 +19,8 @@ env:
     - PLATFORM=debian-stretch TARGET=platform
     - PLATFORM=debian-stretch TARGET=couch
     - PLATFORM=aarch64-debian-stretch TARGET=base
-    - PLATFORM=aarch64-debian-stretch TARGET=platform
-    - PLATFORM=aarch64-debian-stretch TARGET=couch
+    - ERLANGVERSION=20.3.8.20 PLATFORM=aarch64-debian-stretch TARGET=platform
+    - ERLANGVERSION=20.3.8.20 PLATFORM=aarch64-debian-stretch TARGET=couch
     - PLATFORM=ubuntu-xenial TARGET=base
     - PLATFORM=ubuntu-xenial TARGET=platform
     - PLATFORM=ubuntu-xenial TARGET=couch
@@ -36,6 +36,7 @@ env:
 
 before_install:
   - docker --version
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 script:
-  - ./build.sh ${TARGET} ${PLATFORM}
+  - ERLANGVERSION=${ERLANGVERSION:-19.3.6} ./build.sh ${TARGET} ${PLATFORM}

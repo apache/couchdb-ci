@@ -38,7 +38,7 @@ pkg install -y gmake help2man openssl icu curl git bash unzip \
     py36-sphinx py36-pip
 
 # rest of python dependencies
-pip install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+pip --default-timeout=100 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0 typing
 
 # TODO: package building stuff?
 
