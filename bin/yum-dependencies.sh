@@ -97,7 +97,7 @@ fi
 
 ln -s /usr/bin/python3.4 /usr/local/bin/python3
 
-${PIP} --default-timeout=100 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
+${PIP} --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
     typing nose requests hypothesis==3.79.0
 
 # package-building stuff

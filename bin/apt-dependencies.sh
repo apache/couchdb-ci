@@ -88,11 +88,11 @@ popd
 
 # fix for broken sphinx on ubuntu 12.04 only
 if [[ ${VERSION_CODENAME} == "precise" ]]; then
-  pip3 --default-timeout=100 install docutils==0.13.1 sphinx==1.5.3 typing
+  pip3 --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 typing
 fi
 
 # rest of python dependencies
-pip3 --default-timeout=100 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+pip3 --default-timeout=1000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
 # install dh-systemd if available
 if [[ ${VERSION_CODENAME} != "precise" ]]; then
