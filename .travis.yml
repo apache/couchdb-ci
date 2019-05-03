@@ -18,9 +18,9 @@ env:
     - PLATFORM=debian-stretch TARGET=base
     - PLATFORM=debian-stretch TARGET=platform
     - PLATFORM=debian-stretch TARGET=couch
-    - PLATFORM=ubuntu-trusty TARGET=base
-    - PLATFORM=ubuntu-trusty TARGET=platform
-    - PLATFORM=ubuntu-trusty TARGET=couch
+    - PLATFORM=aarch64-debian-stretch TARGET=base
+    - PLATFORM=aarch64-debian-stretch TARGET=platform
+    - PLATFORM=aarch64-debian-stretch TARGET=couch
     - PLATFORM=ubuntu-xenial TARGET=base
     - PLATFORM=ubuntu-xenial TARGET=platform
     - PLATFORM=ubuntu-xenial TARGET=couch
