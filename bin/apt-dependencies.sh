@@ -68,7 +68,7 @@ fi
 
 # build deps, doc build deps, pkg building, then userland helper stuff
 apt-get install -y apt-transport-https curl git pkg-config \
-    python3 libpython3-dev python3-pip ${VENV} \
+    python3 libpython3-dev python3-setuptools python3-pip ${VENV} \
     sudo wget zip unzip \
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev \

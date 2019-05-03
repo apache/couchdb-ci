@@ -35,9 +35,9 @@ ERLANGVERSION=${ERLANGVERSION:-19.3.6}
 # Elixir v1.6.6 as of 2018-07-25
 ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
 
-DEBIANS="debian-jessie debian-stretch"
+DEBIANS="debian-jessie debian-stretch aarch64-debian-stretch"
 UBUNTUS="ubuntu-trusty ubuntu-xenial ubuntu-bionic"
-debs="(debian-jessie|debian-stretch|ubuntu-trusty|ubuntu-xenial|ubuntu-bionic)"
+debs="(debian-jessie|debian-stretch|aarch64-debian-stretch|ubuntu-trusty|ubuntu-xenial|ubuntu-bionic)"
 
 CENTOSES="centos-6 centos-7"
 rpms="(centos-6|centos-7)"

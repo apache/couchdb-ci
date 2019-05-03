@@ -44,6 +44,7 @@ echo "Detected RedHat/Centos/Fedora version: ${VERSION_ID}   arch: ${ARCH}"
 
 # Enable EPEL
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
 if [[ ${VERSION_ID} -ne 6 ]]; then
   # more for RHEL than CentOS...
   yum install subscription-manager -y
@@ -88,11 +89,15 @@ if [[ ${VERSION_ID} -eq 6 ]]; then
   ln -s /usr/bin/python3.4 /usr/local/bin/python
   wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
   /usr/bin/python3.4 /tmp/get-pip.py
+  PIP=pip3
 else
   yum install -y python34-pip python-virtualenv
+  PIP=pip3.4
 fi
 
-pip3 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
+ln -s /usr/bin/python3.4 /usr/local/bin/python3
+
+${PIP} install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
     nose requests hypothesis==3.79.0
 
 # package-building stuff
