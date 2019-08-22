@@ -27,17 +27,31 @@ set -e
 # otherwise, see https://stackoverflow.com/questions/59895/
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# TODO: support overriding these as env vars
-# Node 8 as of 2018-05-08
-NODEVERSION=${NODEVERSION:-8}
-# Erlang 19.3.6 as of 2018-05-08
-ERLANGVERSION=${ERLANGVERSION:-19.3.6}
-# Elixir v1.6.6 as of 2018-07-25
-ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
+#
+# NOTE!
+#
+# Defaults for these are now set in each Dockerfile, since some
+# platform/default combinations don't work. If you are looking
+# to upgrade the Erlang or Node or Elixir version across many
+# platforms, go to dockerfiles/* and update all the files
+# there...but be aware Erlang packages may be missing on
+# some platforms!
+if [ ! -z "${NODEVERSION}" ]
+then
+  buildargs="$buildargs --build-arg nodeversion=${NODEVERSION} "
+fi
+if [ ! -z "${ERLANGVERSION}" ]
+then
+  buildargs="$buildargs --build-arg erlangversion=${ERLANGVERSION} "
+fi
+if [ ! -z "${ELIXIRVERSION}" ]
+then
+  buildargs="$buildargs --build-arg elixirversion=${ELIXIRVERSION} "
+fi
 
-DEBIANS="debian-jessie debian-stretch aarch64-debian-stretch"
-UBUNTUS="ubuntu-trusty ubuntu-xenial ubuntu-bionic"
-debs="(debian-jessie|debian-stretch|aarch64-debian-stretch|ubuntu-trusty|ubuntu-xenial|ubuntu-bionic)"
+DEBIANS="debian-stretch aarch64-debian-stretch debian-buster"
+UBUNTUS="ubuntu-xenial ubuntu-bionic"
+debs="(debian-stretch|aarch64-debian-stretch|debian-buster|ubuntu-xenial|ubuntu-bionic)"
 
 CENTOSES="centos-6 centos-7"
 rpms="(centos-6|centos-7)"
@@ -51,8 +65,7 @@ build-base-platform() {
   docker build -f dockerfiles/$1 \
       --build-arg js=nojs \
       --build-arg erlang=noerlang \
-      --build-arg nodeversion=${NODEVERSION} \
-      --build-arg erlangversion=${ERLANGVERSION} \
+      $buildargs \
       --tag couchdbdev/$1-base \
       ${SCRIPTPATH}
 }
@@ -67,11 +80,17 @@ upload-base() {
   docker push couchdbdev/$1-base
 }
 
+find-erlang-version() {
+  if [ -z "${ERLANGVERSION}" ]
+  then
+    ERLANGVERSION="$(grep "ARG erlangversion" dockerfiles/$1 | cut -d = -f 2)"
+  fi
+}
+
 build-platform() {
+  find-erlang-version $1
   docker build -f dockerfiles/$1 \
-      --build-arg nodeversion=${NODEVERSION} \
-      --build-arg erlangversion=${ERLANGVERSION} \
-      --build-arg elixirversion=${ELIXIRVERSION} \
+      $buildargs \
       --tag couchdbdev/$1-erlang-${ERLANGVERSION} \
       ${SCRIPTPATH}
 }
@@ -82,8 +101,8 @@ clean() {
 
 clean-all() {
   for plat in $DEBIANS $UBUNTUS $CENTOSES; do
+    find-erlang-version $plat
     clean $plat-erlang-${ERLANGVERSION}
-    clean ubuntu-trusty-erlang-default
     clean $plat-base
   done
 }
@@ -95,10 +114,12 @@ upload-platform() {
     echo "  docker login"
     exit 1
   fi
+  find-erlang-version $1
   docker push couchdbdev/$1-erlang-${ERLANGVERSION}
 }
 
 build-test-couch() {
+  find-erlang-version $1
   docker run \
       --mount type=bind,src=${SCRIPTPATH},dst=/home/jenkins/couchdb-ci \
       couchdbdev/$1-erlang-${ERLANGVERSION} \

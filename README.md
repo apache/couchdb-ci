@@ -12,15 +12,13 @@ These images are used by [Apache Jenkins CI](https://builds.apache.org/blue/orga
 
 CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB against different Erlang versions, and to use Jenkins to validate CouchDB against different OSes and architectures. Where possible, Jenkins also auto-builds convenience binaries or packages. The eventual goal is that these auto-built binaries/packages/Docker images will be auto-pushed to our distribution repos for downstream consumption.
 
-# Supported Configurations (updated 2018-12-05)
+# Supported Configurations (updated 2019-08-22)
 
 **OS / distro** | **Version** | **Erlang Version** | **Architecture** | **Docker?**
 ----------------|-------------|--------------------|------------------|--------------------
-**debian**      | jessie      | 17.5.3             | `x86_64`         | :heavy_check_mark:
-**debian**      | jessie      | 19.3.6             | `x86_64`         | :heavy_check_mark:
 **debian**      | stretch     | 19.3.6             | `x86_64`         | :heavy_check_mark:
 **debian**      | stretch     | 19.3.6             | `aarch64`        | :heavy_check_mark:
-**ubuntu**      | trusty      | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**debian**      | buster      | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
 **ubuntu**      | xenial      | 19.3.6             | `x86_64`         | :heavy_check_mark:
 **ubuntu**      | bionic      | 19.3.6             | `x86_64`         | :heavy_check_mark:
 **centos**      | 6           | 19.3.6             | `x86_64`         | :heavy_check_mark:
@@ -54,9 +52,11 @@ Build a platform image with:
 ./build.sh platform <distro>-<version>
 ```
 
-## Building the special Debian Jessie 17.5.3 `x86_64` image
+## Building a special old Erlang version image
 
-We use this image to build the initial tarball, before running the build test on other platforms. We do this because we want to generate a `rebar` binary compatible with all versions of Erlang we support. If we do this on too new a version, older Erlangs won't recognize it. At present, Erlang 17 is the oldest version we still support.
+Previously, we used this image to build the initial tarball, before running the build test on other platforms. We do this because we want to generate a `rebar` binary compatible with all versions of Erlang we support. If we do this on too new a version, older Erlangs won't recognize it.
+
+At present, Erlang 19 is the oldest version we still support, so this image isn't used anymore, and isn't strictly supported anymore either, but should still work.
 
 The build command is:
 ```
@@ -68,7 +68,7 @@ ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
 1.  You need a Docker Cloud account with access to the `couchdbdev` organization. Ask the CouchDB PMC for assistance with this.
 2. `export DOCKER_ID_USER="username"`
 3. `docker login` and enter your password.
-4. `./build.sh publish <distro>-<version>` just as above.
+4. `./build.sh platform-upload <distro>-<version>` just as above.
 
 ---
 
