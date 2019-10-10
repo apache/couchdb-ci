@@ -46,7 +46,7 @@ latest='(stretch|buster|bionic)'
 #  http://docs.basho.com/riak/1.3.0/tutorials/installation/Installing-Erlang/
 # NB: Dropping suggested superfluous packages; fop and unixodbc-dev
 if [[ ${ID} =~ ${redhats} ]]; then
-    yum install git gcc glibc-devel make ncurses-devel openssl-devel autoconf
+    yum install -y git gcc glibc-devel make ncurses-devel openssl-devel autoconf
 elif [[ ${ID} =~ ${debians} ]]; then
     if [[ ${ERLANGVERSION%%.*} -le 19 ]] && [[ ${VERSION_CODENAME} =~ ${latest} ]]; then
 	echo "Recent versions of Linux (Stretch, Bionic, etc) provide a version of libssl"

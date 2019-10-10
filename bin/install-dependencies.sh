@@ -28,12 +28,10 @@
 # stop on error
 set -e
 
-# Node 8 as of 2018-05-08
-NODEVERSION=${NODEVERSION:-8}
-# Erlang 19.3.6 as of 2018-05-08
-ERLANGVERSION=${ERLANGVERSION:-19.3.6}
-# Elixir v1.6.6 as of 2018-07-25
-ELIXIRVERSION=${ELIXIRVERSION:-v1.6.6}
+# Defaults updated 2019-10-14
+NODEVERSION=${NODEVERSION:-10}
+ERLANGVERSION=${ERLANGVERSION:-20.3.8.22}
+ELIXIRVERSION=${ELIXIRVERSION:-v1.9.1}
 
 
 # This works if we're not called through a symlink

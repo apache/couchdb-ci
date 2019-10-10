@@ -73,10 +73,10 @@ apt-get install -y apt-transport-https curl git pkg-config \
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev \
     help2man python3-sphinx \
-    curl debhelper devscripts dh-exec dh-python \
+    curl debhelper devscripts dh-exec dh-python equivs \
     dialog equivs lintian libwww-perl quilt \
     reprepro createrepo \
-    vim-tiny screen
+    vim-tiny screen \
 
 # Node.js
 pushd /tmp
@@ -84,6 +84,26 @@ wget https://deb.nodesource.com/setup_${NODEVERSION}.x
 /bin/bash setup_${NODEVERSION}.x
 apt-get install -y nodejs
 rm setup_${NODEVERSION}.x
+if [ -z "$(which node)" ]; then
+  # extracting the right version to dl is a pain :(
+  node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${ARCH}.tar.gz | cut -d ' ' -f 3)"
+  wget https://nodejs.org/dist/latest-v${NODEVERSION}.x/${node_filename}
+  tar --directory=/usr --strip-components=1 -xzf ${node_filename}
+  rm ${node_filename}
+  # then, fake a package install
+  cat << EOF > nodejs-control
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Package: nodejs
+Provides: nodejs
+Version: ${NODEVERSION}.0.0
+Description: Fake nodejs package to appease package builder
+EOF
+  equivs-build nodejs-control
+  apt install -y ./nodejs*.deb
+  rm nodejs-control nodejs*deb
+fi
 popd
 
 # fix for broken sphinx on ubuntu 12.04 only
@@ -92,7 +112,7 @@ if [[ ${VERSION_CODENAME} == "precise" ]]; then
 fi
 
 # rest of python dependencies
-pip3 --default-timeout=1000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
 # install dh-systemd if available
 if [[ ${VERSION_CODENAME} != "precise" ]]; then
@@ -130,13 +150,8 @@ if [[ $1 != "nojs" ]]; then
   # config the CouchDB repo & install the JS packages
   echo "deb https://apache.bintray.com/couchdb-deb ${VERSION_CODENAME} main" | \
       sudo tee /etc/apt/sources.list.d/couchdb.list
-  for server in $(shuf -e pgpkeys.mit.edu \
-                          ha.pool.sks-keyservers.net \
-                          hkp://p80.pool.sks-keyservers.net:80 \
-                          pgp.mit.edu) ; do \
-    gpg --keyserver $server --recv-key 379CE192D401AB61 && break || : ;
-  done
-  gpg -a --export 379CE192D401AB61 | apt-key add -
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
+      8756C4F765C9AC3CB6B85D62379CE192D401AB61
   apt-get update && apt-get install -y couch-libmozjs185-dev
 else
   # install js build-time dependencies only

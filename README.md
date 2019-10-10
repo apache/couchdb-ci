@@ -12,19 +12,21 @@ These images are used by [Apache Jenkins CI](https://builds.apache.org/blue/orga
 
 CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB against different Erlang versions, and to use Jenkins to validate CouchDB against different OSes and architectures. Where possible, Jenkins also auto-builds convenience binaries or packages. The eventual goal is that these auto-built binaries/packages/Docker images will be auto-pushed to our distribution repos for downstream consumption.
 
-# Supported Configurations (updated 2019-08-22)
+# Supported Configurations (updated 2019-10-08)
 
-**OS / distro** | **Version** | **Erlang Version** | **Architecture** | **Docker?**
+**OS / distro** | **Version** | **Erlang Versions** | **Architectures** | **Docker?**
 ----------------|-------------|--------------------|------------------|--------------------
-**debian**      | stretch     | 19.3.6             | `x86_64`         | :heavy_check_mark:
-**debian**      | stretch     | 19.3.6             | `aarch64`        | :heavy_check_mark:
-**debian**      | buster      | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
-**ubuntu**      | xenial      | 19.3.6             | `x86_64`         | :heavy_check_mark:
-**ubuntu**      | bionic      | 19.3.6             | `x86_64`         | :heavy_check_mark:
-**centos**      | 6           | 19.3.6             | `x86_64`         | :heavy_check_mark:
-**centos**      | 7           | 19.3.6             | `x86_64`         | :heavy_check_mark:
+**debian**      | stretch     | 19.3.6, 20.3.8.22  | `x86_64`, `arm64v8`, `ppc64le`         | :heavy_check_mark:
+**debian**      | buster      | 20.3.8.22          | `x86_64`, `arm64v8`                    | :heavy_check_mark:
+**ubuntu**      | xenial      | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
+**ubuntu**      | bionic      | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
+**centos**      | 6           | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
+**centos**      | 7           | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
+**centos**      | 8           | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
 **freebsd**     | 11.x        | *default*          | `x86_64`         | :x:
 **freebsd**     | 12.0        | *default*          | `x86_64`         | :x:
+
+...with support now for _any_ arbitrary Erlang version!
 
 ---
 
@@ -52,15 +54,35 @@ Build a platform image with:
 ./build.sh platform <distro>-<version>
 ```
 
-## Building a special old Erlang version image
+## Overriding the Erlang, Elixir or Node version
 
-Previously, we used this image to build the initial tarball, before running the build test on other platforms. We do this because we want to generate a `rebar` binary compatible with all versions of Erlang we support. If we do this on too new a version, older Erlangs won't recognize it.
+We want to generate a `rebar` binary compatible with all versions of Erlang we support. If we do this on too new a version, older Erlangs won't recognize it. So we always keep an image around with that version.
 
-At present, Erlang 19 is the oldest version we still support, so this image isn't used anymore, and isn't strictly supported anymore either, but should still work.
+On the other hand, some OSes won't run older Erlangs because of library changes, so you need to override that environment variable.
 
-The build command is:
+Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `ELIXIRVERSION` environment variables:
+
 ```
-ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
+NODEVERSION=8 ELIXIRVERSION=v1.6.1 ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
+```
+
+# Building a cross-architecture Docker image
+
+This only works from an `x86_64` build host.
+
+First, configure your machine with the correct dependencies to build multi-arch binaries:
+
+```
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes --credential yes
+```
+
+This is a one-time setup step. The `multiarch/qemu-user-static` docker container run will install the correct qemu static binaries necessary for running foreign architecture binaries on your host machine. It includes special magic to ensure `sudo` works correctly inside a container, too.
+
+Then, override the `CONTAINERARCH` environment variable when starting `build.sh`:
+
+
+```
+CONTAINERARCH=aarch64 ./build.sh platform debian-stretch
 ```
 
 ## Publishing a container

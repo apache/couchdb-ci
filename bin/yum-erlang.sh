@@ -34,17 +34,63 @@ if [[ ${EUID} -ne 0 ]]; then
   exit 1
 fi
 
-arms='(aarch64)'
+fake-rpm() {
+  tmpdir=/tmp/$1rpm
+  mkdir -p $tmpdir/rpmbuild/{SOURCES,BUILD,RPMS}/noarch
+  cat > $tmpdir/rpmbuild/SOURCES/README <<EOF
+Fake package to appease later package builders.
+EOF
+  cat > $tmpdir/fake$1.spec <<EOF
+Name:        fake-$1
+Version:     $2
+Release:     1%{?dist}
+Summary:     Fake package for $1
+Group:       Fake
+License:     BSD
+BuildRoot:   %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Source:      README
+Provides:    $1
+BuildArch:   noarch
+
+%description
+%{summary}
+
+%prep
+%setup -c -T
+
+%build
+cp %{SOURCE0} .
+
+%install
+
+%files
+%defattr(-,root,root,-)
+%doc README
+
+%changelog
+
+EOF
+  rpmbuild --verbose -bb --define "_topdir $tmpdir/rpmbuild" $tmpdir/fake$1.spec
+  yum -y --nogpgcheck localinstall $tmpdir/rpmbuild/RPMS/*/*.rpm
+  rm -rf $tmpdir
+}
 
 # TODO: Do the Right Things(tm) for Fedora
 if [[ ${ERLANGVERSION} == "default" ]]; then
   yum install -y erlang
-elif [[ $ARCH =~ $arms ]]; then
-  ${SCRIPTPATH}/source-erlang.sh
-else
+elif [ ${ARCH} == x86_64 ]; then
   wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
   rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
-  yum install -y esl-erlang-${ERLANGVERSION}
+  yum install -y esl-erlang-${ERLANGVERSION} || true
+fi
+
+# fallback to source install if all else fails
+if [ ! -x /usr/bin/erl -a ! -x /usr/local/bin/erl ]; then
+  # remove any trailing -### in version used for erlang solutions packages
+  yum remove -y erlang-solutions
+  export ERLANGVERSION=$(echo ${ERLANGVERSION} | cut -d- -f 1)
+  ${SCRIPTPATH}/source-erlang.sh
+  fake-rpm esl-erlang $(date "+%Y%m%d%H%M%S")
 fi
 
 # clean up
