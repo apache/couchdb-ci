@@ -36,28 +36,36 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # platforms, go to dockerfiles/* and update all the files
 # there...but be aware Erlang packages may be missing on
 # some platforms!
-if [ ! -z "${NODEVERSION}" ]
-then
-  buildargs="$buildargs --build-arg nodeversion=${NODEVERSION} "
-fi
-if [ ! -z "${ERLANGVERSION}" ]
-then
-  buildargs="$buildargs --build-arg erlangversion=${ERLANGVERSION} "
-fi
-if [ ! -z "${ELIXIRVERSION}" ]
-then
-  buildargs="$buildargs --build-arg elixirversion=${ELIXIRVERSION} "
-fi
 
-DEBIANS="debian-stretch aarch64-debian-stretch debian-buster"
+DEBIANS="debian-stretch debian-buster"
 UBUNTUS="ubuntu-xenial ubuntu-bionic"
-debs="(debian-stretch|aarch64-debian-stretch|debian-buster|ubuntu-xenial|ubuntu-bionic)"
+debs="(debian-stretch|debian-buster|ubuntu-xenial|ubuntu-bionic)"
 
 CENTOSES="centos-6 centos-7"
 rpms="(centos-6|centos-7)"
 
 BINTRAY_API="https://api.bintray.com"
 
+
+check-envs() {
+  if [ ! -z "${NODEVERSION}" ]
+  then
+    buildargs="$buildargs --build-arg nodeversion=${NODEVERSION} "
+  fi
+  if [ ! -z "${ERLANGVERSION}" ]
+  then
+    buildargs="$buildargs --build-arg erlangversion=${ERLANGVERSION} "
+  fi
+  if [ ! -z "${ELIXIRVERSION}" ]
+  then
+    buildargs="$buildargs --build-arg elixirversion=${ELIXIRVERSION} "
+  fi
+  if [ ! -z "${CONTAINERARCH}" ]
+  then
+    buildargs="$buildargs --build-arg containerarch=${CONTAINERARCH} "
+    CONTAINERARCH="${CONTAINERARCH}-"
+  fi
+}
 
 build-base-platform() {
   # invoke as build-base <plat>
@@ -66,7 +74,7 @@ build-base-platform() {
       --build-arg js=nojs \
       --build-arg erlang=noerlang \
       $buildargs \
-      --tag couchdbdev/$1-base \
+      --tag couchdbdev/${CONTAINERARCH}$1-base \
       ${SCRIPTPATH}
 }
 
@@ -91,7 +99,7 @@ build-platform() {
   find-erlang-version $1
   docker build -f dockerfiles/$1 \
       $buildargs \
-      --tag couchdbdev/$1-erlang-${ERLANGVERSION} \
+      --tag couchdbdev/${CONTAINERARCH}$1-erlang-${ERLANGVERSION} \
       ${SCRIPTPATH}
 }
 
@@ -126,6 +134,10 @@ build-test-couch() {
       /home/jenkins/couchdb-ci/bin/build-test-couchdb.sh $2
 }
 
+
+# #######################
+
+check-envs
 
 case "$1" in
   clean)

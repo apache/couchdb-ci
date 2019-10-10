@@ -45,11 +45,24 @@ apt-get update || true
 
 arms='(aarch64)'
 
+fake-pkg() {
+  cat << EOF > $1-control
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Package: $1
+Provides: $1
+Version: ${ERLANGVERSION}
+Description: Fake $1 package to appease package builder
+EOF
+  equivs-build $1-control
+  apt install -y ./$1*.deb
+  rm $1-control $1*.deb
+}
+
 if [[ ${ERLANGVERSION} == "default" ]]; then
   apt-get update && apt-get install -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
-elif [[ $ARCH =~ $arms ]]; then
-    ${SCRIPTPATH}/source-erlang.sh
-else
+elif [ ${ARCH} == x86_64 ]; then
   wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
   dpkg -i erlang-solutions_1.0_all.deb
   rm erlang-solutions_1.0_all.deb
@@ -59,7 +72,21 @@ else
     ERLANGVERSION=19.3.6.8
   fi
   apt-get update || true
-  apt-get install -y esl-erlang=1:${ERLANGVERSION}
+  apt-get install -y esl-erlang=1:${ERLANGVERSION} || true
+fi
+
+# fallback to source install if all else fails
+if [ ! -x /usr/bin/erl -a ! -x /usr/local/bin/erl ]; then
+  # remove any trailing -### in version used for erlang solutions packages
+  apt-get purge -y erlang-solutions && apt-get update
+  export ERLANGVERSION=$(echo ${ERLANGVERSION} | cut -d- -f 1)
+  ${SCRIPTPATH}/source-erlang.sh
+  for pkg in \
+      erlang-dev erlang-crypto erlang-dialyzer \
+      erlang-eunit erlang-inets erlang-xmerl \
+      erlang-os-mon erlang-reltool erlang-syntax-tools; do
+    fake-pkg $pkg
+  done
 fi
 
 # dangling symlinks cause make release to fail.

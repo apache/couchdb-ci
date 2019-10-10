@@ -27,6 +27,48 @@
 # stop on error
 set -e
 
+fake-rpm() {
+  tmpdir=/tmp/$1rpm
+  mkdir -p $tmpdir/rpmbuild/{SOURCES,BUILD,RPMS}/noarch
+  cat > $tmpdir/rpmbuild/SOURCES/README <<EOF
+Fake package to appease later package builders.
+EOF
+  cat > $tmpdir/fake$1.spec <<EOF
+Name:        fake-$1
+Version:     $2
+Release:     1%{?dist}
+Summary:     Fake package for $1
+Group:       Fake
+License:     BSD
+BuildRoot:   %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Source:      README
+Provides:    $1
+BuildArch:   noarch
+
+%description
+%{summary}
+
+%prep
+%setup -c -T
+
+%build
+cp %{SOURCE0} .
+
+%install
+
+%files
+%defattr(-,root,root,-)
+%doc README
+
+%changelog
+
+EOF
+  rpmbuild --verbose -bb --define "_topdir $tmpdir/rpmbuild" $tmpdir/fake$1.spec
+  yum --nogpgcheck localinstall -y $tmpdir/rpmbuild/RPMS/*/*.rpm
+  rm -rf $tmpdir
+}
+
+
 # Check if running as root
 if [[ ${EUID} -ne 0 ]]; then
   echo "Sorry, this script must be run as root."
@@ -44,6 +86,12 @@ echo "Detected RedHat/Centos/Fedora version: ${VERSION_ID}   arch: ${ARCH}"
 
 # Enable EPEL
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
+# PowerTools for CentOS 8
+if [[ ${VERSION_ID} -gt 7 ]]; then
+  dnf install -y 'dnf-command(config-manager)'
+  dnf config-manager --set-enabled PowerTools
+  yum update -y
+fi
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
 if [[ ${VERSION_ID} -ne 6 ]]; then
   # more for RHEL than CentOS...
@@ -63,7 +111,8 @@ yum install -y git sudo wget which
 
 # Dependencies for make couch, except erlang
 yum install -y autoconf autoconf213 automake curl-devel libicu-devel libtool \
-    ncurses-devel nspr-devel zip readline-devel unzip
+    ncurses-devel nspr-devel zip readline-devel unzip \
+    perl python2
 
 # autoconf-archive
 if [[ ${VERSION_ID} -eq 6 ]]; then
@@ -72,13 +121,31 @@ else
   yum install -y autoconf-archive
 fi
 
+# package-building stuff
+yum install -y createrepo xfsprogs-devel rpmdevtools
+
 # Node.js
 pushd /tmp
 wget https://rpm.nodesource.com/setup_${NODEVERSION}.x
-/bin/bash setup_${NODEVERSION}.x
+set +e
+/bin/bash setup_${NODEVERSION}.x 
+if [ $? -ne 0 ]; then
+  set -e
+  # extracting the right version to dl is a pain :(
+  SAVEARCH=${ARCH}
+  if [ ${SAVEARCH} == "x86_64" ]; then SAVEARCH=x64; fi
+  node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${SAVEARCH}.tar.gz | cut -d ' ' -f 3)"
+  wget https://nodejs.org/dist/latest-v${NODEVERSION}.x/${node_filename}
+  tar --directory=/usr --strip-components=1 -xzf ${node_filename}
+  rm ${node_filename}
+  # then, fake a package install
+  fake-rpm nodejs ${NODEVERSION}.0.0
+else
+  set -e
+  yum install -y nodejs
+fi
 rm setup_${NODEVERSION}.x
 popd
-yum install -y nodejs
 
 # documentation packages
 yum install -y help2man
@@ -90,18 +157,19 @@ if [[ ${VERSION_ID} -eq 6 ]]; then
   wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
   /usr/bin/python3.4 /tmp/get-pip.py
   PIP=pip3
-else
+  ln -s /usr/bin/python3.4 /usr/local/bin/python3
+elif [[ ${VERSION_ID} -eq 7 ]]; then
   yum install -y python34-pip python-virtualenv
   PIP=pip3.4
+  ln -s /usr/bin/python3.4 /usr/local/bin/python3
+else
+  yum install -y python3-pip python3-virtualenv
+  PIP=pip3
 fi
 
-ln -s /usr/bin/python3.4 /usr/local/bin/python3
 
 ${PIP} --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
     typing nose requests hypothesis==3.79.0
-
-# package-building stuff
-yum install -y createrepo xfsprogs-devel rpmdevtools
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then

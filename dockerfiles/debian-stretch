@@ -17,16 +17,19 @@
 # NOTE: These are intended to be built using the arguments as
 # described in ../build.sh. See that script for more details.
 
-FROM debian:stretch
+# Support multi-platform builds with a single Dockerfile
+ARG containerarch=amd64
+
+FROM $containerarch/debian:stretch
 
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js
 # Choose whether to install Erlang, default yes
 ARG erlang=erlang
-# Select version of Node, Erlang and Elixir to install
-ARG erlangversion=19.3.6
-ARG elixirversion=v1.6.6
-ARG nodeversion=8
+# Select version of Node, Erlang and Elixir
+ARG erlangversion=20.3.8.22-1
+ARG elixirversion=v1.9.1
+ARG nodeversion=10
 
 # Create Jenkins user and group
 RUN groupadd --gid 910 jenkins; \
