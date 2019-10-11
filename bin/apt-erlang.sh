@@ -52,7 +52,7 @@ Priority: optional
 Standards-Version: 3.9.2
 Package: $1
 Provides: $1
-Version: ${ERLANGVERSION}
+Version: 2:${ERLANGVERSION}
 Description: Fake $1 package to appease package builder
 EOF
   equivs-build $1-control
