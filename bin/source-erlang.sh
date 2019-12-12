@@ -89,6 +89,7 @@ EOF
     ${KERL} delete build ${ver}
   done
   ${KERL} list installations
+  rm -rf ~/.kerl/archives/*
 else
   # Build from source tarball
   # Pull down and checkout the requested Erlang version
