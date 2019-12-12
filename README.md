@@ -16,13 +16,13 @@ CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB
 
 **OS / distro** | **Version** | **Erlang Versions** | **Architectures** | **Docker?**
 ----------------|-------------|--------------------|------------------|--------------------
-**debian**      | stretch     | 19.3.6, 20.3.8.22  | `x86_64`, `arm64v8`, `ppc64le`         | :heavy_check_mark:
-**debian**      | buster      | 20.3.8.22          | `x86_64`, `arm64v8`                    | :heavy_check_mark:
-**ubuntu**      | xenial      | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
-**ubuntu**      | bionic      | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
-**centos**      | 6           | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
-**centos**      | 7           | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
-**centos**      | 8           | 20.3.8.22          | `x86_64`         | :heavy_check_mark:
+**debian**      | stretch     | 19.3.6, 20.3.8.24  | `x86_64`, `arm64v8`, `ppc64le`         | :heavy_check_mark:
+**debian**      | buster      | 20.3.8.24          | `x86_64`, `arm64v8`                    | :heavy_check_mark:
+**ubuntu**      | xenial      | 20.3.8.24          | `x86_64`         | :heavy_check_mark:
+**ubuntu**      | bionic      | 20.3.8.24          | `x86_64`         | :heavy_check_mark:
+**centos**      | 6           | 20.3.8.24          | `x86_64`         | :heavy_check_mark:
+**centos**      | 7           | 20.3.8.24          | `x86_64`         | :heavy_check_mark:
+**centos**      | 8           | 20.3.8.24          | `x86_64`         | :heavy_check_mark:
 **freebsd**     | 11.x        | *default*          | `x86_64`         | :x:
 **freebsd**     | 12.0        | *default*          | `x86_64`         | :x:
 
@@ -65,6 +65,12 @@ Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `
 ```
 NODEVERSION=8 ELIXIRVERSION=v1.6.1 ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
 ```
+
+The tool also recognizes a special `ERLANGVERSION=all` value for the `debian-buster`
+platform. This builds the lowest, default, and highest versions of Erlang using
+the [kerl](https://github.com/kerl/kerl) build system, and installs them to
+`/usr/local/kerl` for activation before builds. This version is intended for use
+in standard CI runs, such as for pull requests.
 
 # Building a cross-architecture Docker image
 

@@ -181,6 +181,7 @@ case "$1" in
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       build-platform $plat $*
+    ERLANGVERSION=all build-platform debian-buster
     done
     ;;
   platform-upload)
@@ -192,6 +193,7 @@ case "$1" in
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       upload-platform $plat $*
     done
+    ERLANGVERSION=all upload-platform debian-buster
     ;;
   couch)
     # build and test CouchDB on <plat>

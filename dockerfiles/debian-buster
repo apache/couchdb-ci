@@ -27,7 +27,8 @@ ARG js=js
 # Choose whether to install Erlang, default yes
 ARG erlang=erlang
 # Select version of Node, Erlang and Elixir
-ARG erlangversion=20.3.8.22-1
+ARG erlangversion=20.3.8.24-1
+ARG kerlversions=20.3.8.11,20.3.8.24,22.2
 ARG elixirversion=v1.9.1
 ARG nodeversion=10
 
@@ -46,6 +47,7 @@ RUN mkdir -p /usr/src/couchdb; \
 # Install all dependencies, and optionally SM 1.8.5
 # This allows us to use the same Dockerfile for building SM
 RUN ERLANGVERSION=$erlangversion \
+  KERLVERSIONS=$kerlversions \
   ELIXIRVERSION=$elixirversion \
   NODEVERSION=$nodeversion \
   /root/couchdb-ci/bin/install-dependencies.sh $js $erlang

@@ -104,6 +104,7 @@ EOF
   apt install -y ./nodejs*.deb
   rm nodejs-control nodejs*deb
 fi
+npm install npm@latest -g
 popd
 
 # fix for broken sphinx on ubuntu 12.04 only

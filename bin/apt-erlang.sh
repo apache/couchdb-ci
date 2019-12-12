@@ -30,7 +30,8 @@ set -e
 # TODO: support Mint, Devuan, etc.
 
 # Check if running as root
-if [[ ${EUID} -ne 0 ]]; then
+if [[ ${EUID} -ne 0 ]]
+then
   echo "Sorry, this script must be run as root."
   echo "Try: sudo $0 $*"
   exit 1
@@ -40,8 +41,6 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # you DID run apt-dependencies.sh first, didn't you?
 VERSION=$(/usr/bin/lsb_release -cs)
-
-apt-get update || true
 
 arms='(aarch64)'
 
@@ -60,9 +59,14 @@ EOF
   rm $1-control $1*.deb
 }
 
-if [[ ${ERLANGVERSION} == "default" ]]; then
+
+apt-get update || true
+
+if [ "${ERLANGVERSION}" = "default" ]
+then
   apt-get update && apt-get install -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
-elif [ ${ARCH} == x86_64 ]; then
+elif [ "${ARCH}" = x86_64 ] && [ "${ERLANGVERSION}" != "all" ]
+then
   wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
   dpkg -i erlang-solutions_1.0_all.deb
   rm erlang-solutions_1.0_all.deb
@@ -76,7 +80,8 @@ elif [ ${ARCH} == x86_64 ]; then
 fi
 
 # fallback to source install if all else fails
-if [ ! -x /usr/bin/erl -a ! -x /usr/local/bin/erl ]; then
+if [ ! -x /usr/bin/erl -a ! -x /usr/local/bin/erl ]
+then
   # remove any trailing -### in version used for erlang solutions packages
   apt-get purge -y erlang-solutions && apt-get update
   export ERLANGVERSION=$(echo ${ERLANGVERSION} | cut -d- -f 1)
@@ -85,14 +90,15 @@ if [ ! -x /usr/bin/erl -a ! -x /usr/local/bin/erl ]; then
       erlang-dev erlang-crypto erlang-dialyzer \
       erlang-eunit erlang-inets erlang-xmerl \
       erlang-os-mon erlang-reltool erlang-syntax-tools; do
-    fake-pkg $pkg
+    ERLANGVERSION=99.99.99 fake-pkg $pkg
   done
 fi
 
 # dangling symlinks cause make release to fail.
 # so, we remove the manpage symlink
 # see endless complaints about this on GH issues, SO, etc.
-if [[ -h /usr/lib/erlang/man ]]; then
+if [[ -h /usr/lib/erlang/man ]]
+then
     rm /usr/lib/erlang/man
 fi
 

@@ -145,6 +145,7 @@ else
   yum install -y nodejs
 fi
 rm setup_${NODEVERSION}.x
+npm install npm@latest -g
 popd
 
 # documentation packages
