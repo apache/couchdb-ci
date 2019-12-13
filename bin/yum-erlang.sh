@@ -79,9 +79,10 @@ EOF
 if [[ ${ERLANGVERSION} == "default" ]]; then
   yum install -y erlang
 elif [ ${ARCH} == x86_64 ]; then
-  wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
-  rpm -Uvh erlang-solutions-1.0-1.noarch.rpm
+  wget https://packages.erlang-solutions.com/erlang-solutions-2.0-1.noarch.rpm
+  rpm -Uvh erlang-solutions-2.0-1.noarch.rpm
   yum install -y esl-erlang-${ERLANGVERSION} || true
+  rm erlang-solutions-2.0-1.noarch.rpm
 fi
 
 # fallback to source install if all else fails

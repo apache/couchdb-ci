@@ -14,7 +14,7 @@ env:
   matrix:
     - PLATFORM=debian-stretch TARGET=base
     - PLATFORM=debian-stretch TARGET=platform
-    - CONTAINERARCH=ppc64le PLATFORM=debian-stretch TARGET=base
+    #- CONTAINERARCH=ppc64le PLATFORM=debian-stretch TARGET=base
     #- PLATFORM=debian-stretch TARGET=couch
     # too slow!
     #- ERLANGVERSION=20.3.8.20 PLATFORM=aarch64-debian-stretch TARGET=platform
@@ -22,7 +22,7 @@ env:
     - PLATFORM=debian-buster TARGET=base
     - PLATFORM=debian-buster TARGET=platform
     #- ERLANGVERSION=20.3.8.22-1 PLATFORM=debian-buster TARGET=couch
-    - CONTAINERARCH=amd64v8 PLATFORM=debian-buster TARGET=base
+    #- CONTAINERARCH=arm64v8 PLATFORM=debian-buster TARGET=base
     - PLATFORM=ubuntu-xenial TARGET=base
     - PLATFORM=ubuntu-xenial TARGET=platform
     #- PLATFORM=ubuntu-xenial TARGET=couch

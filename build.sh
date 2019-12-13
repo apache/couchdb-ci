@@ -41,8 +41,8 @@ DEBIANS="debian-stretch debian-buster"
 UBUNTUS="ubuntu-xenial ubuntu-bionic"
 debs="(debian-stretch|debian-buster|ubuntu-xenial|ubuntu-bionic)"
 
-CENTOSES="centos-6 centos-7"
-rpms="(centos-6|centos-7)"
+CENTOSES="centos-6 centos-7 centos-8"
+rpms="(centos-6|centos-7|centos-8)"
 
 BINTRAY_API="https://api.bintray.com"
 
