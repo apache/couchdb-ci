@@ -14,23 +14,26 @@ env:
   matrix:
     - PLATFORM=debian-stretch TARGET=base
     - PLATFORM=debian-stretch TARGET=platform
-    #- CONTAINERARCH=ppc64le PLATFORM=debian-stretch TARGET=base
     #- PLATFORM=debian-stretch TARGET=couch
-    # too slow!
-    #- ERLANGVERSION=20.3.8.20 PLATFORM=aarch64-debian-stretch TARGET=platform
-    #- ERLANGVERSION=20.3.8.20 PLATFORM=aarch64-debian-stretch TARGET=couch
+    # xplat commented out -- too slow on Travis
+    #- CONTAINERARCH=ppc64le PLATFORM=debian-stretch TARGET=base
+    #- CONTAINERARCH=ppc64le PLATFORM=debian-stretch TARGET=platform
+    #- CONTAINERARCH=ppc64le PLATFORM=debian-stretch TARGET=couch
     - PLATFORM=debian-buster TARGET=base
     - PLATFORM=debian-buster TARGET=platform
     #- ERLANGVERSION=20.3.8.22-1 PLATFORM=debian-buster TARGET=couch
+    # xplat commented out -- too slow on Travis
     #- CONTAINERARCH=arm64v8 PLATFORM=debian-buster TARGET=base
+    #- CONTAINERARCH=arm64v8 PLATFORM=debian-buster TARGET=platform
+    #- CONTAINERARCH=arm64v8 PLATFORM=debian-buster TARGET=couch
     - PLATFORM=ubuntu-xenial TARGET=base
     - PLATFORM=ubuntu-xenial TARGET=platform
     #- PLATFORM=ubuntu-xenial TARGET=couch
     - PLATFORM=ubuntu-bionic TARGET=base
     - PLATFORM=ubuntu-bionic TARGET=platform
     #- PLATFORM=ubuntu-bionic TARGET=couch
-    #- PLATFORM=centos-6 TARGET=base
-    #- PLATFORM=centos-6 TARGET=platform
+    - PLATFORM=centos-6 TARGET=base
+    - PLATFORM=centos-6 TARGET=platform
     #- PLATFORM=centos-6 TARGET=couch
     - PLATFORM=centos-7 TARGET=base
     - PLATFORM=centos-7 TARGET=platform
@@ -41,7 +44,7 @@ env:
 
 before_install:
   - docker --version
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 script:
   - CONTAINERARCH=${CONTAINERARCH} ERLANGVERSION=${ERLANGVERSION} ./build.sh ${TARGET} ${PLATFORM}
