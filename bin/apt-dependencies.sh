@@ -156,6 +156,9 @@ if [[ $1 != "nojs" ]]; then
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
       8756C4F765C9AC3CB6B85D62379CE192D401AB61
   apt-get update && apt-get install -y couch-libmozjs185-dev
+  if [ "${VERSION_CODENAME}" == "buster" ]; then
+    apt-get install -y libmozjs-60-dev
+  fi
 else
   # install js build-time dependencies only
   # we can't add the CouchDB repo here because the plat may not exist yet
