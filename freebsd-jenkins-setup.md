@@ -151,7 +151,7 @@ couchdb-ci/bin/install-dependencies.sh js erlang
 couchdb-ci/bin/install-elixir.sh
 
 # or, if you don't trust our CI scripts
-pkg install -y -r Synth unzip autoconf automake git gmake icu libtool py36-hypothesis py36-nose py36-pip vim-console curl wget erlang python3 spidermonkey185 help2man py36-progressbar openssl bash screen py36-sphinx py36-sphinx_rtd_theme node10 npm-node10 py36-requests elixir
+pkg install -y -r Synth unzip autoconf automake git gmake icu libtool py37-hypothesis py37-nose py37-pip vim-console curl wget elixir erlang python3 spidermonkey185 help2man py37-progressbar openssl111 bash screen py37-sphinx py37-sphinx_rtd_theme node10 npm-node10 py37-requests
 ```
 
 now, fix 2 broken things
