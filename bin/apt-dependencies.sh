@@ -75,7 +75,7 @@ apt-get install -y apt-transport-https curl git pkg-config \
     help2man python3-sphinx \
     curl debhelper devscripts dh-exec dh-python equivs \
     dialog equivs lintian libwww-perl quilt \
-    reprepro createrepo \
+    reprepro createrepo rsync \
     vim-tiny screen \
 
 # Node.js
