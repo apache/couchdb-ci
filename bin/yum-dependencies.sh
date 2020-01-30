@@ -112,7 +112,7 @@ yum install -y git sudo wget which
 # Dependencies for make couch, except erlang
 yum install -y autoconf autoconf213 automake curl-devel libicu-devel libtool \
     ncurses-devel nspr-devel zip readline-devel unzip \
-    perl python2
+    perl
 
 # autoconf-archive
 if [[ ${VERSION_ID} -eq 6 ]]; then
@@ -153,16 +153,19 @@ yum install -y help2man
 
 # python for testing and documentaiton
 if [[ ${VERSION_ID} -eq 6 ]]; then
-  yum install -y python34
-  ln -s /usr/bin/python3.4 /usr/local/bin/python
+  yum install -y \
+    https://repo.ius.io/ius-release-el6.rpm \
+    https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+  yum install -y python35u
+  ln -s /usr/bin/python3.5 /usr/local/bin/python
   wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
-  /usr/bin/python3.4 /tmp/get-pip.py
+  /usr/bin/python3.5 /tmp/get-pip.py
   PIP=pip3
-  ln -s /usr/bin/python3.4 /usr/local/bin/python3
+  ln -s /usr/bin/python3.5 /usr/local/bin/python3
 elif [[ ${VERSION_ID} -eq 7 ]]; then
-  yum install -y python34-pip python-virtualenv
-  PIP=pip3.4
-  ln -s /usr/bin/python3.4 /usr/local/bin/python3
+  yum install -y python36 python36-pip python-virtualenv
+  PIP=pip3.6
+  ln -s /usr/bin/python3.6 /usr/local/bin/python3
 else
   yum install -y python3-pip python3-virtualenv
   PIP=pip3

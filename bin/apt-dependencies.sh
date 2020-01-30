@@ -79,21 +79,24 @@ apt-get install -y apt-transport-https curl git pkg-config \
     vim-tiny screen \
 
 # Node.js
-if [ "${ARCH}" != "ppc64le" ] || [ "${VERSION_CODENAME}" != "buster" ]; then
-  pushd /tmp
+if [ "${ARCH}" == "ppc64le" ]; then
+  apt-get install -y nodejs npm
+else
   wget https://deb.nodesource.com/setup_${NODEVERSION}.x
   /bin/bash setup_${NODEVERSION}.x
   apt-get install -y nodejs
   rm setup_${NODEVERSION}.x
-  if [ -z "$(which node)" ]; then
-    apt-get purge -y nodejs || true
-    # extracting the right version to dl is a pain :(
-    node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${ARCH}.tar.gz | cut -d ' ' -f 3)"
-    wget https://nodejs.org/dist/latest-v${NODEVERSION}.x/${node_filename}
-    tar --directory=/usr --strip-components=1 -xzf ${node_filename}
-    rm ${node_filename}
-    # then, fake a package install
-    cat << EOF > nodejs-control
+fi
+# maybe install node from scratch if pkg install failed...
+if [ -z "$(which node)" ]; then
+  apt-get purge -y nodejs || true
+  # extracting the right version to dl is a pain :(
+  node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${ARCH}.tar.gz | cut -d ' ' -f 3)"
+  wget https://nodejs.org/dist/latest-v${NODEVERSION}.x/${node_filename}
+  tar --directory=/usr --strip-components=1 -xzf ${node_filename}
+  rm ${node_filename}
+  # fake a package install
+  cat << EOF > nodejs-control
 Section: misc
 Priority: optional
 Standards-Version: 3.9.2
@@ -102,17 +105,12 @@ Provides: nodejs
 Version: ${NODEVERSION}.99.99
 Description: Fake nodejs package to appease package builder
 EOF
-    equivs-build nodejs-control
-    apt-get install -y ./nodejs*.deb
-    rm nodejs-control nodejs*deb
-  fi
-  npm install npm@latest -g
-  popd
+  equivs-build nodejs-control
+  apt-get install -y ./nodejs*.deb
+  rm nodejs-control nodejs*deb
 fi
-# fix for broken sphinx on ubuntu 12.04 only
-if [[ ${VERSION_CODENAME} == "precise" ]]; then
-  pip3 --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 typing
-fi
+# update to latest npm
+npm install npm@latest -g --unsafe-perm
 
 # rest of python dependencies
 pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
