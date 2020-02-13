@@ -79,12 +79,14 @@ apt-get install -y apt-transport-https curl git pkg-config \
     vim-tiny screen \
 
 if [[ ${VERSION_CODENAME} == "xenial" ]]; then
+  apt remove -y ${VENV}
   apt install -y software-properties-common
   add-apt-repository ppa:deadsnakes/ppa
   apt-get update
-  apt install -y python3.7 python3.7-dev
+  apt install -y python3.7 python3.7-dev python3.7-venv
   rm /usr/bin/python3
   ln -s /usr/bin/python3.7 /usr/bin/python3
+  pip3 install --upgrade pip
   pip3 install setuptools
 fi
 
