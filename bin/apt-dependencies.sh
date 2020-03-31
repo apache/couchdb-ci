@@ -76,7 +76,7 @@ apt-get install -y apt-transport-https curl git pkg-config \
     curl debhelper devscripts dh-exec dh-python equivs \
     dialog equivs lintian libwww-perl quilt \
     reprepro createrepo rsync \
-    vim-tiny screen \
+    vim-tiny screen procps
 
 if [[ ${VERSION_CODENAME} == "xenial" ]]; then
   apt remove -y ${VENV}
@@ -176,6 +176,13 @@ else
 fi
 
 # Erlang is installed by apt-erlang.sh
+
+# FoundationDB
+wget https://www.foundationdb.org/downloads/6.2.15/ubuntu/installers/foundationdb-clients_6.2.15-1_amd64.deb
+wget https://www.foundationdb.org/downloads/6.2.15/ubuntu/installers/foundationdb-server_6.2.15-1_amd64.deb
+dpkg -i ./foundationdb*deb
+pkill -f fdb || true
+pkill -f foundation || true
 
 # clean up
 apt-get clean
