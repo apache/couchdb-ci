@@ -159,9 +159,9 @@ if [ -e ${MAINPROFILE} ]; then
 fi
 
 # js packages, as long as we're not told to skip them
-if [ $1 != "nojs" ]; then
+if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
-  if [ "${VERSION_CODENAME}" != "focal" && "${VERSION_CODENAME}" != "bullseye" ]; then
+  if [ "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" ]; then
     echo "deb https://apache.bintray.com/couchdb-deb ${VERSION_CODENAME} main" | \
     sudo tee /etc/apt/sources.list.d/couchdb.list
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
@@ -170,10 +170,10 @@ if [ $1 != "nojs" ]; then
     apt-get install -y couch-libmozjs185-dev
   fi
   # newer releases have newer libmozjs
-  if [ "${VERSION_CODENAME}" != "xenial" && "${VERSION_CODENAME}" != "stretch" ]; then
+  if [ "${VERSION_CODENAME}" == "bionic" -o "${VERSION_CODENAME}" == "buster" ]; then
     apt-get install -y libmozjs-60-dev
   fi
-  if [ "${VERSION_CODENAME}" != "focal" ]; then
+  if [ "${VERSION_CODENAME}" == "focal" ]; then
     apt-get install -y libmozjs-68-dev
   fi
 else
