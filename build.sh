@@ -38,11 +38,8 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # some platforms!
 
 DEBIANS="debian-stretch debian-buster"
-UBUNTUS="ubuntu-xenial ubuntu-bionic"
-debs="(debian-stretch|debian-buster|ubuntu-xenial|ubuntu-bionic)"
-
+UBUNTUS="ubuntu-xenial ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-6 centos-7 centos-8"
-rpms="(centos-6|centos-7|centos-8)"
 
 BINTRAY_API="https://api.bintray.com"
 

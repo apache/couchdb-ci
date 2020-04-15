@@ -30,7 +30,7 @@ set -e
 # TODO: support Mint, Devuan, etc.
 
 # Check if running as root
-if [[ ${EUID} -ne 0 ]]; then
+if [ ${EUID} -ne 0 ]; then
   echo "Sorry, this script must be run as root."
   echo "Try: sudo $0 $*"
   exit 1
@@ -43,11 +43,11 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
 debians='(wheezy|jessie|stretch|buster)'
-ubuntus='(precise|trusty|xenial|artful|bionic)'
+ubuntus='(xenial|bionic|focal)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
 # bionic Docker image seems to be missing /etc/timezone...
-if [[ ! -f /etc/timezone ]]; then
+if [ ! -f /etc/timezone ]; then
   rm -f /etc/localtime
   ln -snf /usr/share/zoneinfo/Etc/UTC /etc/localtime
   echo "Etc/UTC" > /etc/timezone
@@ -60,26 +60,25 @@ fi
 apt-get -y dist-upgrade
 
 # install build-time dependencies
-if [[ ${VERSION_CODENAME} == "trusty" ]]; then
-  VENV=python3.4-venv
-else
-  VENV=python3-venv
-fi
 
 # build deps, doc build deps, pkg building, then userland helper stuff
 apt-get install -y apt-transport-https curl git pkg-config \
-    python3 libpython3-dev python3-setuptools python3-pip ${VENV} \
+    python3 libpython3-dev python3-setuptools python3-pip python3-venv \
     sudo wget zip unzip \
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev \
     help2man python3-sphinx \
-    curl debhelper devscripts dh-exec dh-python equivs \
+    curl debhelper devscripts dh-exec dh-python dh-systemd equivs \
     dialog equivs lintian libwww-perl quilt \
-    reprepro createrepo rsync \
+    reprepro rsync \
     vim-tiny screen procps
 
-if [[ ${VERSION_CODENAME} == "xenial" ]]; then
-  apt remove -y ${VENV}
+# python 2 based; gone from focal / bullseye. look for createrepo_c eventually
+# hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
+apt-get install -y createrepo || true
+
+if [ ${VERSION_CODENAME} == "xenial" ]; then
+  apt remove -y python3-venv
   apt install -y software-properties-common
   add-apt-repository ppa:deadsnakes/ppa
   apt-get update
@@ -95,15 +94,21 @@ if [ "${ARCH}" == "ppc64le" ]; then
   apt-get install -y nodejs npm
 else
   wget https://deb.nodesource.com/setup_${NODEVERSION}.x
-  /bin/bash setup_${NODEVERSION}.x
-  apt-get install -y nodejs
+  if /bin/bash setup_${NODEVERSION}.x; then
+    apt-get install -y nodejs
+  fi
   rm setup_${NODEVERSION}.x
 fi
 # maybe install node from scratch if pkg install failed...
 if [ -z "$(which node)" ]; then
   apt-get purge -y nodejs || true
   # extracting the right version to dl is a pain :(
-  node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${ARCH}.tar.gz | cut -d ' ' -f 3)"
+  if [ ${ARCH} == "x86_64" ]; then
+    NODEARCH=x64
+  else
+    NODEARCH=${ARCH}
+  fi
+  node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${NODEARCH}.tar.gz | cut -d ' ' -f 3)"
   wget https://nodejs.org/dist/latest-v${NODEVERSION}.x/${node_filename}
   tar --directory=/usr --strip-components=1 -xzf ${node_filename}
   rm ${node_filename}
@@ -127,17 +132,12 @@ npm install npm@latest -g --unsafe-perm
 # rest of python dependencies
 pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 
-# install dh-systemd if available
-if [[ ${VERSION_CODENAME} != "precise" ]]; then
-  apt-get install -y dh-systemd
-fi
-
 # relaxed lintian rules for CouchDB
 mkdir -p /usr/share/lintian/profiles/couchdb
 chmod 0755 /usr/share/lintian/profiles/couchdb
 if [[ ${VERSION_CODENAME} =~ ${debians} ]]; then
   cp ${SCRIPTPATH}/../files/debian.profile /usr/share/lintian/profiles/couchdb/main.profile
-  if [[ ${VERSION_CODENAME} == "jessie" ]]; then
+  if [ ${VERSION_CODENAME} == "jessie" ]; then
     # remove unknown lintian rule privacy-breach-uses-embedded-file
     sed -i -e 's/, privacy-breach-uses-embedded-file//' /usr/share/lintian/profiles/couchdb/main.profile
     # add rule to suppress python-script-but-no-python-dep
@@ -145,7 +145,7 @@ if [[ ${VERSION_CODENAME} =~ ${debians} ]]; then
   fi
 elif [[ ${VERSION_CODENAME} =~ ${ubuntus} ]]; then
   cp ${SCRIPTPATH}/../files/ubuntu.profile /usr/share/lintian/profiles/couchdb/main.profile
-  if [[ ${VERSION_CODENAME} == "xenial" ]]; then
+  if [ ${VERSION_CODENAME} == "xenial" ]; then
     # add rule to suppress python-script-but-no-python-dep
     sed -i -e 's/Disable-Tags: /Disable-Tags: python-script-but-no-python-dep, /' /usr/share/lintian/profiles/couchdb/main.profile
   fi
@@ -154,20 +154,27 @@ else
 fi
 
 MAINPROFILE=/usr/share/lintian/profiles/couchdb/main.profile
-if [[ -e ${MAINPROFILE} ]]; then
+if [ -e ${MAINPROFILE} ]; then
     chmod 0644 ${MAINPROFILE}
 fi
 
 # js packages, as long as we're not told to skip them
-if [[ $1 != "nojs" ]]; then
-  # config the CouchDB repo & install the JS packages
-  echo "deb https://apache.bintray.com/couchdb-deb ${VERSION_CODENAME} main" | \
-      sudo tee /etc/apt/sources.list.d/couchdb.list
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
-      8756C4F765C9AC3CB6B85D62379CE192D401AB61
-  apt-get update && apt-get install -y couch-libmozjs185-dev
-  if [ "${VERSION_CODENAME}" == "buster" ]; then
+if [ $1 != "nojs" ]; then
+  # older releases don't have libmozjs60+, and we provide 1.8.5
+  if [ "${VERSION_CODENAME}" != "focal" && "${VERSION_CODENAME}" != "bullseye" ]; then
+    echo "deb https://apache.bintray.com/couchdb-deb ${VERSION_CODENAME} main" | \
+    sudo tee /etc/apt/sources.list.d/couchdb.list
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
+        8756C4F765C9AC3CB6B85D62379CE192D401AB61
+    apt-get update
+    apt-get install -y couch-libmozjs185-dev
+  fi
+  # newer releases have newer libmozjs
+  if [ "${VERSION_CODENAME}" != "xenial" && "${VERSION_CODENAME}" != "stretch" ]; then
     apt-get install -y libmozjs-60-dev
+  fi
+  if [ "${VERSION_CODENAME}" != "focal" ]; then
+    apt-get install -y libmozjs-68-dev
   fi
 else
   # install js build-time dependencies only
