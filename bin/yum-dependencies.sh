@@ -200,17 +200,18 @@ fi
 
 # FoundationDB
 if [[ ${VERSION_ID} -eq 6 ]]; then
-  wget https://www.foundationdb.org/downloads/6.2.15/rhel6/installers/foundationdb-clients-6.2.15-1.el6.x86_64.rpm
-  wget https://www.foundationdb.org/downloads/6.2.15/rhel6/installers/foundationdb-server-6.2.15-1.el6.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.2.20/rhel6/installers/foundationdb-clients-6.2.20-1.el6.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.2.20/rhel6/installers/foundationdb-server-6.2.20-1.el6.x86_64.rpm
   yum --nogpgcheck localinstall -y foundationdb*rpm
 else
-  wget https://www.foundationdb.org/downloads/6.2.15/rhel7/installers/foundationdb-clients-6.2.15-1.el7.x86_64.rpm
-  wget https://www.foundationdb.org/downloads/6.2.15/rhel7/installers/foundationdb-server-6.2.15-1.el7.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.2.20/rhel7/installers/foundationdb-clients-6.2.20-1.el7.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.2.20/rhel7/installers/foundationdb-server-6.2.20-1.el7.x86_64.rpm
   # Buggy FoundationDB packages require this workaround
   rpm -i --nodeps ./foundationdb*rpm
 fi
 pkill -f fdb || true
 pkill -f foundation || true
+rm -rf ./foundationdb*rpm
 
 # clean up
 yum clean all -y

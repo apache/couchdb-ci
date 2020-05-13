@@ -170,7 +170,7 @@ if [ "$1" != "nojs" ]; then
     apt-get install -y couch-libmozjs185-dev
   fi
   # newer releases have newer libmozjs
-  if [ "${VERSION_CODENAME}" == "bionic" -o "${VERSION_CODENAME}" == "buster" ]; then
+  if [ "${VERSION_CODENAME}" == "buster" ]; then
     apt-get install -y libmozjs-60-dev
   fi
   if [ "${VERSION_CODENAME}" == "focal" ]; then
@@ -185,11 +185,12 @@ fi
 # Erlang is installed by apt-erlang.sh
 
 # FoundationDB
-wget https://www.foundationdb.org/downloads/6.2.15/ubuntu/installers/foundationdb-clients_6.2.15-1_amd64.deb
-wget https://www.foundationdb.org/downloads/6.2.15/ubuntu/installers/foundationdb-server_6.2.15-1_amd64.deb
+wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-clients_6.2.20-1_amd64.deb
+wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-server_6.2.20-1_amd64.deb
 dpkg -i ./foundationdb*deb
 pkill -f fdb || true
 pkill -f foundation || true
+rm -rf ./foundationdb*deb
 
 # clean up
 apt-get clean

@@ -40,7 +40,9 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DEBIANS="debian-stretch debian-buster"
 UBUNTUS="ubuntu-xenial ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-6 centos-7 centos-8"
-
+ERLANGALL_BASE="debian-buster"
+XPLAT_BASE="debian-buster"
+XPLAT_ARCHES="arm64v8 ppc64le"
 BINTRAY_API="https://api.bintray.com"
 
 
@@ -92,10 +94,17 @@ find-erlang-version() {
   fi
 }
 
+pull-os-image() {
+  image_name=$(echo $1 | tr "-" ":")
+  docker pull $image_name
+}
+
 build-platform() {
   find-erlang-version $1
+  pull-os-image $1
   docker build -f dockerfiles/$1 \
       $buildargs \
+      --no-cache \
       --tag couchdbdev/${CONTAINERARCH}$1-erlang-${ERLANGVERSION} \
       ${SCRIPTPATH}
 }
@@ -178,7 +187,10 @@ case "$1" in
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       build-platform $plat $*
-    ERLANGVERSION=all build-platform debian-buster
+    done
+    ERLANGVERSION=all build-platform $ERLANGALL_BASE
+    for arch in $XPLAT_ARCHES; do
+      CONTAINERARCH=$arch build-platform $XPLAT_BASE
     done
     ;;
   platform-upload)
