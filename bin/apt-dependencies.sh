@@ -90,7 +90,7 @@ if [ ${VERSION_CODENAME} == "xenial" ]; then
 fi
 
 # Node.js
-if [ "${ARCH}" == "ppc64le" ]; then
+if [ "${ARCH}" == "ppc64le" -o "${ARCH}" == "s390x" ]; then
   apt-get install -y nodejs npm
 else
   wget https://deb.nodesource.com/setup_${NODEVERSION}.x
@@ -161,7 +161,7 @@ fi
 # js packages, as long as we're not told to skip them
 if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
-  if [ "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" ]; then
+  if [ "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" -a "${ARCH}" != "s390x" ]; then
     echo "deb https://apache.bintray.com/couchdb-deb ${VERSION_CODENAME} main" | \
     sudo tee /etc/apt/sources.list.d/couchdb.list
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
@@ -184,13 +184,16 @@ fi
 
 # Erlang is installed by apt-erlang.sh
 
-# FoundationDB
-wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-clients_6.2.20-1_amd64.deb
-wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-server_6.2.20-1_amd64.deb
-dpkg -i ./foundationdb*deb
-pkill -f fdb || true
-pkill -f foundation || true
-rm -rf ./foundationdb*deb
+# FoundationDB - but only for amd64 right now!!!!
+# TODO: fix for ppc64le and s390x - get IBM to help build these packages maybe?
+if [ "${ARCH}" == "x86_64" ]; then
+  wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-clients_6.2.20-1_amd64.deb
+  wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-server_6.2.20-1_amd64.deb
+  dpkg -i ./foundationdb*deb
+  pkill -f fdb || true
+  pkill -f foundation || true
+  rm -rf ./foundationdb*deb
+fi
 
 # clean up
 apt-get clean
