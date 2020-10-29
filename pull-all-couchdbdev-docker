@@ -85,7 +85,13 @@ ubuntu-xenial-erlang-19.3.6
 ubuntu-xenial-erlang-20.3.8.25-1
 )
 
-for image in ${IMAGES[*]} ${BASE_IMAGES[*]}
+if [ "$(date +%u)" -ne "1" ]; then
+    LIST=( ${KEEP_IMAGES[*]})
+else
+    LIST=( ${IMAGES[*]} ${BASE_IMAGES[*]} )
+fi
+
+for image in ${LIST[*]}
 do
     echo docker pull couchdbdev/${image}
     docker pull couchdbdev/${image}
