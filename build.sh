@@ -44,9 +44,11 @@ ERLANGALL_BASE="debian-buster"
 XPLAT_BASE="debian-buster"
 XPLAT_ARCHES="arm64v8 ppc64le"
 BINTRAY_API="https://api.bintray.com"
+PASSED_BUILDARGS="$buildargs"
 
 
 check-envs() {
+  buildargs=$PASSED_BUILDARGS
   if [ ! -z "${NODEVERSION}" ]
   then
     buildargs="$buildargs --build-arg nodeversion=${NODEVERSION} "
@@ -67,6 +69,7 @@ check-envs() {
 }
 
 build-base-platform() {
+  check-envs
   # invoke as build-base <plat>
   # base images never get JavaScript, nor Erlang
   docker build -f dockerfiles/$1 \
@@ -100,6 +103,7 @@ pull-os-image() {
 }
 
 build-platform() {
+  check-envs
   find-erlang-version $1
   pull-os-image $1
   docker build -f dockerfiles/$1 \
@@ -142,8 +146,6 @@ build-test-couch() {
 
 
 # #######################
-
-check-envs
 
 case "$1" in
   clean)
@@ -190,7 +192,7 @@ case "$1" in
     done
     ERLANGVERSION=all build-platform $ERLANGALL_BASE
     for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH="$arch-" build-platform $XPLAT_BASE
+      CONTAINERARCH=$arch build-platform $XPLAT_BASE
     done
     ;;
   platform-upload)
