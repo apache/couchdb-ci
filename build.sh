@@ -190,7 +190,7 @@ case "$1" in
     done
     ERLANGVERSION=all build-platform $ERLANGALL_BASE
     for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch build-platform $XPLAT_BASE
+      CONTAINERARCH="$arch-" build-platform $XPLAT_BASE
     done
     ;;
   platform-upload)

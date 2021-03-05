@@ -5,8 +5,6 @@ DOCKER_ORG="couchdbdev"
 # These are the images that are currently being used, so don't `docker rmi` them on cleanup.
 KEEP_IMAGES=(
 debian-buster-erlang-all
-ppc64ledebian-buster-erlang-20.3.8.25-1
-arm64v8debian-buster-erlang-20.3.8.25-1
 centos-8-erlang-20.3.8.25-1
 centos-7-erlang-20.3.8.25-1
 centos-6-erlang-20.3.8.25-1
