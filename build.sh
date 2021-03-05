@@ -202,6 +202,9 @@ case "$1" in
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       upload-platform $plat $*
     done
+    for arch in $XPLAT_ARCHES; do
+      upload-platform $arch-$XPLAT_BASE $*
+    done
     ERLANGVERSION=all upload-platform debian-buster
     ;;
   couch)
