@@ -187,12 +187,26 @@ fi
 # FoundationDB - but only for amd64 right now!!!!
 # TODO: fix for ppc64le and s390x - get IBM to help build these packages maybe?
 if [ "${ARCH}" == "x86_64" ]; then
-  wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-clients_6.2.20-1_amd64.deb
-  wget https://www.foundationdb.org/downloads/6.2.20/ubuntu/installers/foundationdb-server_6.2.20-1_amd64.deb
+  wget https://www.foundationdb.org/downloads/6.2.29/ubuntu/installers/foundationdb-clients_6.2.29-1_amd64.deb
+  wget https://www.foundationdb.org/downloads/6.2.29/ubuntu/installers/foundationdb-server_6.2.29-1_amd64.deb
   dpkg -i ./foundationdb*deb
   pkill -f fdb || true
   pkill -f foundation || true
   rm -rf ./foundationdb*deb
+else
+  apt install -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix fakeroot liblz4-1
+  git clone https://github.com/apple/foundationdb/
+  cd foundationdb && git checkout 6.3.11
+  mkdir .build && cd .build
+  cmake -G Ninja ..
+  ninja -j2
+  fakeroot cpack -G DEB
+  # see https://forums.foundationdb.org/t/possible-missing-dependency-in-6-3-x-deb-package/2579
+  ln -nfs /usr/bin/update-alternatives /usr/bin/alternatives
+  mkdir -p /var/lib/foundationdb/data
+  dpkg -i packages/foundationdb-clients*deb packages/foundationdb-server*deb || true
+  apt purge -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix
+  cd ../../ && rm -rf foundationdb
 fi
 
 # clean up
