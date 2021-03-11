@@ -13,7 +13,7 @@ ubuntu-bionic-erlang-20.3.8.25-1
 ubuntu-xenial-erlang-20.3.8.25-1
 debian-buster-erlang-20.3.8.25-1
 debian-stretch-erlang-20.3.8.25-1
-ppc64le-debian-buster-erlang-20.3.8.25-1
+# ppc64le-debian-buster-erlang-20.3.8.25-1
 arm64v8-debian-buster-erlang-20.3.8.25-1
 debian-stretch-erlang-19.3.6
 centos-7-erlang-19.3.6
@@ -63,11 +63,7 @@ debian-stretch-erlang-19.3.6
 #debian-stretch-erlang-20.3.8.22-1
 #debian-stretch-erlang-20.3.8.24-1
 debian-stretch-erlang-20.3.8.25-1
-#ppc64le-debian-buster-erlang-20.3.8.24-1
 ppc64le-debian-buster-erlang-20.3.8.25-1
-#ppc64le-debian-stretch-erlang-20.3.8.20
-#ppc64le-debian-stretch-erlang-20.3.8.22-1
-ppc64le-debian-stretch-erlang-20.3.8.24-1
 s390x-debian-buster-erlang-20.3.8.25-1
 ubuntu-12.04-erlang-18.3
 ubuntu-bionic-erlang-19.3.6

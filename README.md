@@ -12,11 +12,11 @@ These images are used by [Apache Jenkins CI](https://builds.apache.org/blue/orga
 
 CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB against different Erlang versions, and to use Jenkins to validate CouchDB against different OSes and architectures. Where possible, Jenkins also auto-builds convenience binaries or packages. The eventual goal is that these auto-built binaries/packages/Docker images will be auto-pushed to our distribution repos for downstream consumption.
 
-# Supported Configurations (updated 2019-10-08)
+# Supported Configurations (updated 2021-03-11)
 
 **OS / distro** | **Version** | **Erlang Versions** | **Architectures** | **Docker?**
 ----------------|-------------|--------------------|------------------|--------------------
-**debian**      | stretch     | 19.3.6, 20.3.8.25  | `x86_64`, `arm64v8`, `ppc64le`         | :heavy_check_mark:
+**debian**      | stretch     | 19.3.6, 20.3.8.25  | `x86_64`, `arm64v8`        | :heavy_check_mark:
 **debian**      | buster      | 20.3.8.25          | `x86_64`, `arm64v8`                    | :heavy_check_mark:
 **ubuntu**      | xenial      | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
 **ubuntu**      | bionic      | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
@@ -168,7 +168,7 @@ We are eager for contributions to enhance the build scripts to support setting u
 * macOS
 * Windows x64 (see [apache/couchdb-glazier](https://github.com/apache/couchdb-glazier]) for the current approach)
 
-as well as alternative architectures for the already supported image types (arm, ppc64le, s390x, sparc, etc).
+as well as alternative architectures for the already supported image types (armhf, ppc64le, s390x, sparc, etc).
 
 We know that Docker won't support some of these, but we should be able to at least expand the install scripts for all of these platforms.
 
