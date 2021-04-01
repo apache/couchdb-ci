@@ -34,8 +34,8 @@ fi
 pkg upgrade -y
 
 pkg install -y gmake help2man openssl icu curl git bash unzip \
-    autoconf automake libtool node8 npm-node8 lang/python3 \
-    py36-sphinx py36-pip
+    autoconf automake libtool node12 npm-node12 lang/python3 \
+    py37-sphinx py37-pip
 
 npm install npm@latest -g
 
