@@ -37,7 +37,7 @@ if [ ${EUID} -ne 0 ]; then
 fi
 
 # install lsb-release
-apt-get update && apt-get install -y lsb-release
+apt-get update && apt-get install --no-install-recommends -y lsb-release
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
@@ -52,17 +52,17 @@ if [ ! -f /etc/timezone ]; then
   ln -snf /usr/share/zoneinfo/Etc/UTC /etc/localtime
   echo "Etc/UTC" > /etc/timezone
   chmod 0644 /etc/timezone
-  apt-get install -y tzdata
+  apt-get install --no-install-recommends -y tzdata
   export TZ=Etc/UTC
 fi
 
 # Upgrade all packages
-apt-get -y dist-upgrade
+apt-get --no-install-recommends -y dist-upgrade
 
 # install build-time dependencies
 
 # build deps, doc build deps, pkg building, then userland helper stuff
-apt-get install -y apt-transport-https curl git pkg-config \
+apt-get install --no-install-recommends -y apt-transport-https curl git pkg-config \
     python3 libpython3-dev python3-setuptools python3-pip python3-venv \
     sudo wget zip unzip \
     build-essential ca-certificates libcurl4-openssl-dev \
@@ -71,18 +71,18 @@ apt-get install -y apt-transport-https curl git pkg-config \
     curl debhelper devscripts dh-exec dh-python dh-systemd equivs \
     dialog equivs lintian libwww-perl quilt \
     reprepro rsync \
-    vim-tiny screen procps
+    vim-tiny screen procps dirmngr
 
 # python 2 based; gone from focal / bullseye. look for createrepo_c eventually
 # hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
-apt-get install -y createrepo || true
+apt-get install --no-install-recommends -y createrepo || true
 
 if [ ${VERSION_CODENAME} == "xenial" ]; then
   apt remove -y python3-venv
-  apt install -y software-properties-common
+  apt install --no-install-recommends -y software-properties-common
   add-apt-repository ppa:deadsnakes/ppa
   apt-get update
-  apt install -y python3.7 python3.7-dev python3.7-venv
+  apt install --no-install-recommends -y python3.7 python3.7-dev python3.7-venv
   rm /usr/bin/python3
   ln -s /usr/bin/python3.7 /usr/bin/python3
   pip3 install --upgrade pip
@@ -91,11 +91,11 @@ fi
 
 # Node.js
 if [ "${ARCH}" == "ppc64le" -o "${ARCH}" == "s390x" ]; then
-  apt-get install -y nodejs npm
+  apt-get install --no-install-recommends -y nodejs npm
 else
   wget https://deb.nodesource.com/setup_${NODEVERSION}.x
   if /bin/bash setup_${NODEVERSION}.x; then
-    apt-get install -y nodejs
+    apt-get install --no-install-recommends -y nodejs
   fi
   rm setup_${NODEVERSION}.x
 fi
@@ -123,7 +123,7 @@ Version: ${NODEVERSION}.99.99
 Description: Fake nodejs package to appease package builder
 EOF
   equivs-build nodejs-control
-  apt-get install -y ./nodejs*.deb
+  apt-get install --no-install-recommends -y ./nodejs*.deb
   rm nodejs-control nodejs*deb
 fi
 # update to latest npm
@@ -167,19 +167,19 @@ if [ "$1" != "nojs" ]; then
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
         8756C4F765C9AC3CB6B85D62379CE192D401AB61
     apt-get update
-    apt-get install -y couch-libmozjs185-dev
+    apt-get install --no-install-recommends -y couch-libmozjs185-dev
   fi
   # newer releases have newer libmozjs
   if [ "${VERSION_CODENAME}" == "buster" ]; then
-    apt-get install -y libmozjs-60-dev
+    apt-get install --no-install-recommends -y libmozjs-60-dev
   fi
   if [ "${VERSION_CODENAME}" == "focal" ]; then
-    apt-get install -y libmozjs-68-dev
+    apt-get install --no-install-recommends -y libmozjs-68-dev
   fi
 else
   # install js build-time dependencies only
   # we can't add the CouchDB repo here because the plat may not exist yet
-  apt-get install -y libffi-dev pkg-kde-tools autotools-dev
+  apt-get install --no-install-recommends -y libffi-dev pkg-kde-tools autotools-dev
 fi
 
 # Erlang is installed by apt-erlang.sh
@@ -187,16 +187,16 @@ fi
 # FoundationDB - but only for amd64 right now!!!!
 # TODO: fix for ppc64le and s390x - get IBM to help build these packages maybe?
 if [ "${ARCH}" == "x86_64" ]; then
-  wget https://www.foundationdb.org/downloads/6.2.29/ubuntu/installers/foundationdb-clients_6.2.29-1_amd64.deb
-  wget https://www.foundationdb.org/downloads/6.2.29/ubuntu/installers/foundationdb-server_6.2.29-1_amd64.deb
+  wget https://www.foundationdb.org/downloads/6.3.9/ubuntu/installers/foundationdb-clients_6.3.9-1_amd64.deb
+  wget https://www.foundationdb.org/downloads/6.3.9/ubuntu/installers/foundationdb-server_6.3.9-1_amd64.deb
   dpkg -i ./foundationdb*deb
   pkill -f fdb || true
   pkill -f foundation || true
   rm -rf ./foundationdb*deb
 else
-  apt install -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix fakeroot liblz4-1
+  apt install --no-install-recommends -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix fakeroot liblz4-1
   git clone https://github.com/apple/foundationdb/
-  cd foundationdb && git checkout 6.3.11
+  cd foundationdb && git checkout 6.3.9
   mkdir .build && cd .build
   cmake -G Ninja ..
   ninja -j2

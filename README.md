@@ -34,16 +34,6 @@ CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB
 
 For those OSes that support Docker, we run builds inside of Docker containers. These containers are built using the `build.sh` command at the root level.
 
-## Building a "base image"
-
-The base images include all of the build dependencies necessary to build CouchDB **except** for Erlang and SpiderMonkey 1.8.5. These images are typically used to build the CouchDB SpiderMonkey 1.8.5 binaries for a given OS/version/architecture combination.
-
-Build a base image with:
-
-```
-./build.sh base <distro>-<version>
-```
-
 ## Building a "platform image"
 
 The platform images include all of the build dependencies necessary to build and full test CouchDB on a given OS/version/architecture combination.
@@ -109,13 +99,7 @@ CONTAINERARCH=aarch64 ./build.sh platform debian-stretch
 
 Recognized commands:
   clean <plat>          Removes all images for <plat>.
-  clean-all             Removes all images for all platforms & base images.
-
-  base <plat>           Builds the base (no JS/Erlang) image for <plat>.
-  base-all              Builds all base (no JS/Erlang) images.
-  *base-upload          Uploads the specified couchdbdev/*-base image
-                        to Docker Hub.
-  *base-upload-all      Uploads all the couchdbdev/*-base images.
+  clean-all             Removes all images for all platforms.
 
   platform <plat>       Builds the image for <plat> with Erlang & JS support.
   platform-all          Builds all images with Erlang and JS support.
@@ -146,13 +130,21 @@ where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-stre
 
 ## Building SpiderMonkey 1.8.5 convenience packages
 
+This is only needed if a platform does not have a supported SpiderMonkey library. As of April 2021, this is no currently supported platform.
+
+First, build the 'base' image with:
+
+```
+./build.sh base <distro>-<version>
+```
+
 After building the base image as above, head over to the [apache/couchdb-pkg](https://github.com/apache/couchdb-pkg) repository and follow the instructions there.
 
 ## Adding support for a new release/platform/architecture
 
 1. Update the build scripts in the `bin/` directory to install the dependencies correctly on your new OS/version/platform. Push a PR with these changes.
 1. Copy and customize an appropriate Dockerfile in the `dockerfiles` directory for your new OS.
-1. Build a base image using `./build.sh base <distro>-<version>`. Solve any problems with the build process here. Add your new platform combination to the `.travis.yml` file, then push a PR with these changes.
+1. If a supported SpiderMonkey library is not available on the target platform, build a base image using `./build.sh base <distro>-<version>`. Solve any problems with the build process here. Add your new platform combination to the `.travis.yml` file, then push a PR with these changes.
 1. Using the [apache/couchdb-pkg](https://github.com/apache/couchdb-pkg) repository, validate you can build the JS package. Fix any problems in that repo that arise and raise a new PR. Open a new issue on that PR requesting that the JS packages be made available through the CouchDB repository/download infrastructure.
 1. Build a full platform image with `./build.sh platform <distro>-<version>`. Solve any problems with the build process here. Add your new platform combination to the `.travis.yml` file, then push a PR with these changes.
 1. Submit a PR against the [apache/couchdb](https://github.com/apache/couchdb) repository, adding the new platform to the top level `Jenkinsfile`. Ask if you need help.

@@ -37,9 +37,14 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # there...but be aware Erlang packages may be missing on
 # some platforms!
 
+# References:
+#    https://wiki.debian.org/LTS
+#    https://ubuntu.com/about/release-cycle
+#    https://access.redhat.com/support/policy/updates/errata/ (same for CentOS)
+#    also https://endoflife.software/operating-systems/linux/centos
 DEBIANS="debian-stretch debian-buster"
 UBUNTUS="ubuntu-xenial ubuntu-bionic ubuntu-focal"
-CENTOSES="centos-6 centos-7 centos-8"
+CENTOSES="centos-7 centos-8"
 ERLANGALL_BASE="debian-buster"
 XPLAT_BASE="debian-buster"
 # XPLAT_ARCHES="arm64v8 ppc64le"
@@ -69,15 +74,24 @@ check-envs() {
   fi
 }
 
+split-os-ver() {
+  OLDIFS=$IFS
+  IFS='-' tokens=( $1 )
+  IFS=$OLDIFS
+  os=${tokens[0]}
+  version=${tokens[1]}
+}
+
 build-base-platform() {
   check-envs
+  split-os-ver $1
   # invoke as build-base <plat>
   # base images never get JavaScript, nor Erlang
-  docker build -f dockerfiles/$1 \
+  docker build -f dockerfiles/${os}-${version} \
       --build-arg js=nojs \
       --build-arg erlang=noerlang \
       $buildargs \
-      --tag couchdbdev/${CONTAINERARCH}$1-base \
+      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-base \
       ${SCRIPTPATH}
 }
 
@@ -107,23 +121,19 @@ build-platform() {
   check-envs
   find-erlang-version $1
   pull-os-image $1
-  docker build -f dockerfiles/$1 \
+  split-os-ver $1
+  docker build -f dockerfiles/${os}-${version} \
       $buildargs \
       --no-cache \
-      --tag couchdbdev/${CONTAINERARCH}$1-erlang-${ERLANGVERSION} \
+      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION} \
       ${SCRIPTPATH}
+  unset ERLANGVERSION
 }
 
 clean() {
-  docker rmi couchdbdev/$1 -f || true
-}
-
-clean-all() {
-  for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-    find-erlang-version $plat
-    clean $plat-erlang-${ERLANGVERSION}
-    clean $plat-base
-  done
+  check-envs
+  split-os-ver $1
+  docker rmi apache/couchdbci-${os} -f || true
 }
 
 upload-platform() {
@@ -134,7 +144,8 @@ upload-platform() {
     exit 1
   fi
   find-erlang-version $1
-  docker push couchdbdev/$1-erlang-${ERLANGVERSION}
+  split-os-ver $1
+  docker push apache/couchdbci-${os}:${version}-erlang-${ERLANGVERSION}
 }
 
 build-test-couch() {
@@ -156,7 +167,10 @@ case "$1" in
     ;;
   clean-all)
     # removes all known target platform images
-    clean-all
+    # docker rmi apache/couchdbci-ubuntu should remove all tags under that...
+    for plat in $DEBIANS $UBUNTUS $CENTOSES; do
+      clean $plat
+    done
     ;;
   base)
     # Build base image for requested target platform
@@ -191,10 +205,10 @@ case "$1" in
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       build-platform $plat $*
     done
-    ERLANGVERSION=all build-platform $ERLANGALL_BASE
     for arch in $XPLAT_ARCHES; do
       CONTAINERARCH=$arch build-platform $XPLAT_BASE
     done
+    ERLANGVERSION=all build-platform $ERLANGALL_BASE
     ;;
   platform-upload)
     shift
@@ -206,9 +220,9 @@ case "$1" in
       upload-platform $plat $*
     done
     for arch in $XPLAT_ARCHES; do
-      upload-platform $arch-$XPLAT_BASE $*
+      CONTAINERARCH=$arch upload-platform $arch-$XPLAT_BASE $*
     done
-    ERLANGVERSION=all upload-platform debian-buster
+    ERLANGVERSION=all upload-platform $ERLANGALL_BASE
     ;;
   couch)
     # build and test CouchDB on <plat>
@@ -233,13 +247,7 @@ $0 <command> [OPTIONS]
 
 Recognized commands:
   clean <plat>          Removes all images for <plat>.
-  clean-all             Removes all images for all platforms & base images.
-
-  base <plat>           Builds the base (no JS/Erlang) image for <plat>.
-  base-all              Builds all base (no JS/Erlang) images.
-  *base-upload          Uploads the specified couchdbdev/*-base image 
-                        to Docker Hub.
-  *base-upload-all      Uploads all the couchdbdev/*-base images.
+  clean-all             Removes all images for all platforms.
 
   platform <plat>       Builds the image for <plat> with Erlang & JS support.
   platform-all          Builds all images with Erlang and JS support.

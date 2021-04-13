@@ -89,7 +89,7 @@ yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSI
 # PowerTools for CentOS 8
 if [[ ${VERSION_ID} -gt 7 ]]; then
   dnf install -y 'dnf-command(config-manager)'
-  dnf config-manager --set-enabled PowerTools
+  dnf config-manager --set-enabled powertools
   yum update -y
 fi
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
@@ -200,12 +200,12 @@ fi
 
 # FoundationDB
 if [[ ${VERSION_ID} -eq 6 ]]; then
-  wget https://www.foundationdb.org/downloads/6.2.29/rhel6/installers/foundationdb-clients-6.2.29-1.el6.x86_64.rpm
-  wget https://www.foundationdb.org/downloads/6.2.29/rhel6/installers/foundationdb-server-6.2.29-1.el6.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.3.9/rhel6/installers/foundationdb-clients-6.3.29-1.el6.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.3.9/rhel6/installers/foundationdb-server-6.3.29-1.el6.x86_64.rpm
   yum --nogpgcheck localinstall -y foundationdb*rpm
 else
-  wget https://www.foundationdb.org/downloads/6.2.29/rhel7/installers/foundationdb-clients-6.2.29-1.el7.x86_64.rpm
-  wget https://www.foundationdb.org/downloads/6.2.29/rhel7/installers/foundationdb-server-6.2.29-1.el7.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.3.9/rhel7/installers/foundationdb-clients-6.3.29-1.el7.x86_64.rpm
+  wget https://www.foundationdb.org/downloads/6.3.9/rhel7/installers/foundationdb-server-6.3.29-1.el7.x86_64.rpm
   # Buggy FoundationDB packages require this workaround
   rpm -i --nodeps ./foundationdb*rpm
 fi

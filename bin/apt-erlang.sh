@@ -55,7 +55,7 @@ Version: 2:${ERLANGVERSION}
 Description: Fake $1 package to appease package builder
 EOF
   equivs-build $1-control
-  apt install -y ./$1*.deb
+  apt install --no-install-recommends -y ./$1*.deb
   rm $1-control $1*.deb
 }
 
@@ -64,19 +64,19 @@ apt-get update || true
 
 if [ "${ERLANGVERSION}" = "default" ]
 then
-  apt-get update && apt-get install -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
+  apt-get update && apt-get install --no-install-recommends -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
 elif [ "${ARCH}" = x86_64 ] && [ "${ERLANGVERSION}" != "all" ]
 then
-  wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
-  dpkg -i erlang-solutions_1.0_all.deb
-  rm erlang-solutions_1.0_all.deb
+  wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
+  dpkg -i erlang-solutions_*_all.deb
+  rm erlang-solutions_*_all.deb
   # bionic is broken...
   sed -i 's/debian  contrib/debian ${VERSION} contrib/' /etc/apt/sources.list.d/erlang-solutions.list
   if [[ ${ERLANGVERSION} == "19.3.6" && ${VERSION} == "bionic" ]]; then
     ERLANGVERSION=19.3.6.8
   fi
   apt-get update || true
-  apt-get install -y esl-erlang=1:${ERLANGVERSION} || true
+  apt-get install --no-install-recommends -y esl-erlang=1:${ERLANGVERSION} || true
 fi
 
 # fallback to source install if all else fails
