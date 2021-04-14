@@ -71,7 +71,7 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
     curl debhelper devscripts dh-exec dh-python dh-systemd equivs \
     dialog equivs lintian libwww-perl quilt \
     reprepro rsync \
-    vim-tiny screen procps dirmngr
+    vim-tiny screen procps dirmngr ssh-client
 
 # python 2 based; gone from focal / bullseye. look for createrepo_c eventually
 # hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
@@ -198,7 +198,11 @@ else
   git clone https://github.com/apple/foundationdb/
   cd foundationdb && git checkout 6.3.9
   mkdir .build && cd .build
-  cmake -G Ninja ..
+  if [ "${ARCH}" == "ppc64le" ]; then
+    cmake -DCMAKE_CXX_FLAGS="-DNO_WARN_X86_INTRINSICS" -G Ninja ..
+  else
+    cmake -G Ninja ..
+  fi
   ninja -j2
   fakeroot cpack -G DEB
   # see https://forums.foundationdb.org/t/possible-missing-dependency-in-6-3-x-deb-package/2579
@@ -206,6 +210,7 @@ else
   mkdir -p /var/lib/foundationdb/data
   dpkg -i packages/foundationdb-clients*deb packages/foundationdb-server*deb || true
   apt purge -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix
+  apt autoremove -y
   cd ../../ && rm -rf foundationdb
 fi
 
