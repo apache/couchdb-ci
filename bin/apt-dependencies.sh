@@ -68,14 +68,19 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev \
     help2man python3-sphinx \
-    curl debhelper devscripts dh-exec dh-python dh-systemd equivs \
+    curl debhelper devscripts dh-exec dh-python equivs \
     dialog equivs lintian libwww-perl quilt \
     reprepro rsync \
     vim-tiny screen procps dirmngr ssh-client
 
-# python 2 based; gone from focal / bullseye. look for createrepo_c eventually
-# hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
-apt-get install --no-install-recommends -y createrepo || true
+# createrepo_c or createrepo, depending on packaging support
+if [ ${VERSION_CODENAME} == "bullseye" ]; then
+  apt-get install --no-install-recommends -y createrepo-c || true
+else
+  # python 2 based; gone from focal / bullseye. look for createrepo_c eventually
+  # hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
+  apt-get install --no-install-recommends -y createrepo || true
+fi
 
 if [ ${VERSION_CODENAME} == "xenial" ]; then
   apt remove -y python3-venv
@@ -175,6 +180,9 @@ if [ "$1" != "nojs" ]; then
   fi
   if [ "${VERSION_CODENAME}" == "focal" ]; then
     apt-get install --no-install-recommends -y libmozjs-68-dev
+  fi
+  if [ "${VERSION_CODENAME}" == "bullseye" ]; then
+    apt-get install --no-install-recommends -y libmozjs-78-dev
   fi
 else
   # install js build-time dependencies only

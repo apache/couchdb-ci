@@ -42,7 +42,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #    https://ubuntu.com/about/release-cycle
 #    https://access.redhat.com/support/policy/updates/errata/ (same for CentOS)
 #    also https://endoflife.software/operating-systems/linux/centos
-DEBIANS="debian-stretch debian-buster"
+DEBIANS="debian-stretch debian-buster debian-bullseye"
 UBUNTUS="ubuntu-xenial ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-7 centos-8"
 ERLANGALL_BASE="debian-buster"
@@ -144,8 +144,9 @@ upload-platform() {
     exit 1
   fi
   find-erlang-version $1
+  check-envs
   split-os-ver $1
-  docker push apache/couchdbci-${os}:${version}-erlang-${ERLANGVERSION}
+  docker push apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION}
 }
 
 build-test-couch() {
@@ -199,6 +200,13 @@ case "$1" in
     shift
     build-platform $1
     ;;
+  platform-foreign)
+    # makes only foreign arch platforms
+    shift
+    for arch in $XPLAT_ARCHES; do
+      CONTAINERARCH=$arch build-platform $XPLAT_BASE
+    done
+    ;;
   platform-all)
     # build all platforms with JS and Erlang support
     shift
@@ -220,7 +228,7 @@ case "$1" in
       upload-platform $plat $*
     done
     for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch upload-platform $arch-$XPLAT_BASE $*
+      CONTAINERARCH=$arch upload-platform $XPLAT_BASE $*
     done
     ERLANGVERSION=all upload-platform $ERLANGALL_BASE
     ;;

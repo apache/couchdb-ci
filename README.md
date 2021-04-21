@@ -69,10 +69,10 @@ This only works from an `x86_64` build host.
 First, configure your machine with the correct dependencies to build multi-arch binaries:
 
 ```
-docker run --rm --privileged multiarch/qemu-user-static --reset -p yes --credential yes
+docker run --privileged --rm tonistiigi/binfmt --install all
 ```
 
-This is a one-time setup step. The `multiarch/qemu-user-static` docker container run will install the correct qemu static binaries necessary for running foreign architecture binaries on your host machine. It includes special magic to ensure `sudo` works correctly inside a container, too.
+This is a one-time setup step. This docker container run will install the correct qemu static binaries necessary for running foreign architecture binaries on your host machine. It includes special magic to ensure `sudo` works correctly inside a container, too.
 
 Then, override the `CONTAINERARCH` environment variable when starting `build.sh`:
 

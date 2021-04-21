@@ -44,21 +44,29 @@ latest='(stretch|buster|bionic)'
 
 echo "Erlang source build started @ $(date)"
 
+export CC=gcc
+export CXX=gcc
+
 # Install per-distro dependencies according to:
 #  http://docs.basho.com/riak/1.3.0/tutorials/installation/Installing-Erlang/
 # NB: Dropping suggested superfluous packages; fop and unixodbc-dev
 if [[ ${ID} =~ ${redhats} ]]; then
-    yum install -y git gcc glibc-devel make ncurses-devel openssl-devel autoconf procps
+  yum install -y git gcc glibc-devel make ncurses-devel openssl-devel autoconf procps
 elif [[ ${ID} =~ ${debians} ]]; then
-    if [[ ${ERLANGVERSION%%.*} -le 19 ]] && [[ ${VERSION_CODENAME} =~ ${latest} ]] && [ ${ERLANGVERSION} != "all" ]; then
-	echo "Recent versions of Linux (Stretch, Bionic, etc) provide a version of libssl"
-	echo "which is too new to complile earlier (<=19) versions of Erlang.  Please"
-	echo "either choose an earlier distro release or a more rencent version of Erlang."
-	exit 1
-    fi
+  if [[ ${ERLANGVERSION%%.*} -le 19 ]] && [[ ${VERSION_CODENAME} =~ ${latest} ]] && [ ${ERLANGVERSION} != "all" ]; then
+    echo "Recent versions of Linux (Stretch, Bionic, etc) provide a version of libssl"
+    echo "which is too new to complile earlier (<=19) versions of Erlang.  Please"
+    echo "either choose an earlier distro release or a more rencent version of Erlang."
+    exit 1
+  fi
 
-    apt-get update
-    apt-get install -y git build-essential autoconf libncurses5-dev openssl libssl-dev xsltproc procps
+  apt-get update
+  apt-get install -y git build-essential autoconf libncurses5-dev openssl libssl-dev xsltproc procps
+  if [ ${VERSION_CODENAME} == "bullseye" ]; then
+    apt install -y gcc-9
+    export CC=gcc-9
+    export CXX=g++-9
+  fi
 else
   echo "Sorry, we don't support this Linux (${ID}) yet."
   exit 1
@@ -117,5 +125,8 @@ if [[ ${ID} =~ ${redhats} ]]; then
 elif [[ ${ID} =~ ${debians} ]]; then
     apt-get clean
 fi
+
+unset CC
+unset CXX
 
 echo "Erlang source build finished @ $(date)"
