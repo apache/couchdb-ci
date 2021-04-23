@@ -73,6 +73,11 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
     reprepro rsync \
     vim-tiny screen procps dirmngr ssh-client
 
+
+if [ ${VERSION_CODENAME} == "xenial" ]; then
+  apt-get install --no-install-recommends -y dh-systemd || true
+fi
+
 # createrepo_c or createrepo, depending on packaging support
 if [ ${VERSION_CODENAME} == "bullseye" ]; then
   apt-get install --no-install-recommends -y createrepo-c || true
