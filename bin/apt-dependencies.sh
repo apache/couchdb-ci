@@ -172,10 +172,10 @@ fi
 if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
   if [ "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" -a "${ARCH}" != "s390x" ]; then
-    echo "deb https://apache.bintray.com/couchdb-deb ${VERSION_CODENAME} main" | \
-    sudo tee /etc/apt/sources.list.d/couchdb.list
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys \
-        8756C4F765C9AC3CB6B85D62379CE192D401AB61
+    curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
+    source /etc/os-release
+    echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \
+    | tee /etc/apt/sources.list.d/couchdb.list >/dev/null
     apt-get update
     apt-get install --no-install-recommends -y couch-libmozjs185-dev
   fi

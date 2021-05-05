@@ -179,14 +179,8 @@ ${PIP} --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_
 if [[ $1 != "nojs" ]]; then
   if [[ ${VERSION_ID} -lt 8 ]]; then
   # config the CouchDB repo & install the JS packages
-    cat << EOF > /etc/yum.repos.d/binary-apache-couchdb.repo
-[bintray--apache-couchdb-rpm]
-name=bintray--apache-couchdb-rpm
-baseurl=http://apache.bintray.com/couchdb-rpm/el${VERSION_ID}/${ARCH}/
-gpgcheck=0
-repo_gpgcheck=0
-enabled=1
-EOF
+    yum install -y yum-utils
+    yum-config-manager --add-repo https://couchdb.apache.org/repo/couchdb.repo
     # install the JS packages
     yum install -y couch-js-devel
   else
