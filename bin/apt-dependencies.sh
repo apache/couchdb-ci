@@ -210,6 +210,7 @@ else
   apt install --no-install-recommends -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix fakeroot liblz4-1
   git clone https://github.com/apple/foundationdb/
   cd foundationdb && git checkout 6.3.9
+  git apply /root/couchdb-ci/files/no-bintray.patch || true
   mkdir .build && cd .build
   if [ "${ARCH}" == "ppc64le" ]; then
     cmake -DCMAKE_CXX_FLAGS="-DNO_WARN_X86_INTRINSICS" -G Ninja ..
