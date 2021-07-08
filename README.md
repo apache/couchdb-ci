@@ -8,7 +8,7 @@ The main purpose of this repository is to provide scripts that:
 
 It intends to cover a range of both operating systems (Linux, macOS, BSD, Windows) and Erlang versions (17.x, 18.x, 19.x, etc.)
 
-These images are used by [Apache Jenkins CI](https://builds.apache.org/blue/organizations/jenkins/CouchDB/branches/) to build CouchDB with every checkin to `master` or a release branch (*e.g.*, `2.3.0`).
+These images are used by [Apache Jenkins CI](https://builds.apache.org/blue/organizations/jenkins/CouchDB/branches/) to build CouchDB with every checkin to `main` or a release branch (*e.g.*, `2.3.0`).
 
 CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB against different Erlang versions, and to use Jenkins to validate CouchDB against different OSes and architectures. Where possible, Jenkins also auto-builds convenience binaries or packages. The eventual goal is that these auto-built binaries/packages/Docker images will be auto-pushed to our distribution repos for downstream consumption.
 
@@ -83,9 +83,9 @@ CONTAINERARCH=aarch64 ./build.sh platform debian-stretch
 
 ## Publishing a container
 
-1.  You need a Docker Cloud account with access to the `couchdbdev` organization. Ask the CouchDB PMC for assistance with this.
+1.  You need a Docker Cloud account with access to the `apache` organization. Ask the CouchDB PMC for assistance with this.
 2. `export DOCKER_ID_USER="username"`
-3. `docker login` and enter your password.
+3. `docker login -u "username"` and enter your password.
 4. `./build.sh platform-upload <distro>-<version>` just as above.
 
 ---
