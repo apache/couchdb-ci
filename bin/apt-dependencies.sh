@@ -200,8 +200,8 @@ fi
 # FoundationDB - but only for amd64 right now!!!!
 # TODO: fix for ppc64le and s390x - get IBM to help build these packages maybe?
 if [ "${ARCH}" == "x86_64" ]; then
-  wget https://www.foundationdb.org/downloads/6.3.9/ubuntu/installers/foundationdb-clients_6.3.9-1_amd64.deb
-  wget https://www.foundationdb.org/downloads/6.3.9/ubuntu/installers/foundationdb-server_6.3.9-1_amd64.deb
+  wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-clients_6.3.23-1_amd64.deb
+  wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-server_6.3.23-1_amd64.deb
   dpkg -i ./foundationdb*deb
   pkill -f fdb || true
   pkill -f foundation || true
@@ -209,7 +209,7 @@ if [ "${ARCH}" == "x86_64" ]; then
 else
   apt install --no-install-recommends -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix fakeroot liblz4-1
   git clone https://github.com/apple/foundationdb/
-  cd foundationdb && git checkout 6.3.9
+  cd foundationdb && git checkout 6.3.23
   git apply /root/couchdb-ci/files/no-bintray.patch || true
   mkdir .build && cd .build
   if [ "${ARCH}" == "ppc64le" ]; then
