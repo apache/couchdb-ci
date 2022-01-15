@@ -18,7 +18,6 @@ CouchDB's CI build philosophy is to use Travis (with `kerl`) to validate CouchDB
 ----------------|-------------|--------------------|------------------|--------------------
 **debian**      | stretch     | 19.3.6, 20.3.8.25  | `x86_64`, `arm64v8`        | :heavy_check_mark:
 **debian**      | buster      | 20.3.8.25          | `x86_64`, `arm64v8`                    | :heavy_check_mark:
-**ubuntu**      | xenial      | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
 **ubuntu**      | bionic      | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
 **centos**      | 6           | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
 **centos**      | 7           | 20.3.8.25          | `x86_64`         | :heavy_check_mark:

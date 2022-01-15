@@ -43,7 +43,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #    https://access.redhat.com/support/policy/updates/errata/ (same for CentOS)
 #    also https://endoflife.software/operating-systems/linux/centos
 DEBIANS="debian-stretch debian-buster debian-bullseye"
-UBUNTUS="ubuntu-xenial ubuntu-bionic ubuntu-focal"
+UBUNTUS="ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-7 centos-8"
 ERLANGALL_BASE="debian-bullseye"
 XPLAT_BASE="debian-buster"

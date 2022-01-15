@@ -43,7 +43,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
 debians='(wheezy|jessie|stretch|buster)'
-ubuntus='(xenial|bionic|focal)'
+ubuntus='(bionic|focal)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
 # bionic Docker image seems to be missing /etc/timezone...
@@ -74,10 +74,6 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
     vim-tiny screen procps dirmngr ssh-client
 
 
-if [ ${VERSION_CODENAME} == "xenial" ]; then
-  apt-get install --no-install-recommends -y dh-systemd || true
-fi
-
 # createrepo_c or createrepo, depending on packaging support
 if [ ${VERSION_CODENAME} == "bullseye" ]; then
   apt-get install --no-install-recommends -y createrepo-c || true
@@ -85,18 +81,6 @@ else
   # python 2 based; gone from focal / bullseye. look for createrepo_c eventually
   # hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
   apt-get install --no-install-recommends -y createrepo || true
-fi
-
-if [ ${VERSION_CODENAME} == "xenial" ]; then
-  apt remove -y python3-venv
-  apt install --no-install-recommends -y software-properties-common
-  add-apt-repository ppa:deadsnakes/ppa
-  apt-get update
-  apt install --no-install-recommends -y python3.7 python3.7-dev python3.7-venv
-  rm /usr/bin/python3
-  ln -s /usr/bin/python3.7 /usr/bin/python3
-  pip3 install --upgrade pip
-  pip3 install setuptools
 fi
 
 # Node.js
@@ -155,10 +139,6 @@ if [[ ${VERSION_CODENAME} =~ ${debians} ]]; then
   fi
 elif [[ ${VERSION_CODENAME} =~ ${ubuntus} ]]; then
   cp ${SCRIPTPATH}/../files/ubuntu.profile /usr/share/lintian/profiles/couchdb/main.profile
-  if [ ${VERSION_CODENAME} == "xenial" ]; then
-    # add rule to suppress python-script-but-no-python-dep
-    sed -i -e 's/Disable-Tags: /Disable-Tags: python-script-but-no-python-dep, /' /usr/share/lintian/profiles/couchdb/main.profile
-  fi
 else
   echo "Unrecognized Debian-like release: ${VERSION_CODENAME}! Skipping lintian work."
 fi
