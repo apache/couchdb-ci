@@ -12,7 +12,6 @@ couchdbci-centos:8-erlang-20.3.8.26-1
 couchdbci-centos:7-erlang-20.3.8.26-1
 couchdbci-ubuntu:focal-erlang-20.3.8.26-1
 couchdbci-ubuntu:bionic-erlang-20.3.8.26-1
-couchdbci-ubuntu:xenial-erlang-20.3.8.26-1
 )
 
 # Base images are used for building old libmozjs, primarily.
