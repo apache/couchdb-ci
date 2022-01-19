@@ -12,6 +12,18 @@ couchdbci-centos:8-erlang-20.3.8.26-1
 couchdbci-centos:7-erlang-20.3.8.26-1
 couchdbci-ubuntu:focal-erlang-20.3.8.26-1
 couchdbci-ubuntu:bionic-erlang-20.3.8.26-1
+couchdbci-debian:erlang-20
+couchdbci-debian:erlang-21
+couchdbci-debian:erlang-22
+couchdbci-debian:erlang-23
+couchdbci-debian:erlang-24
+couchdbci-debian:stretch-erlang-24.2
+couchdbci-debian:buster-erlang-24.2
+couchdbci-debian:bullseye-erlang-24.2
+couchdbci-centos:8-erlang-24.2
+couchdbci-centos:7-erlang-24.2
+couchdbci-ubuntu:focal-erlang-24.2
+couchdbci-ubuntu:bionic-erlang-24.2
 )
 
 # Base images are used for building old libmozjs, primarily.
