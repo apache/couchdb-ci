@@ -178,7 +178,6 @@ fi
 # Erlang is installed by apt-erlang.sh
 
 # FoundationDB - but only for amd64 right now!!!!
-# TODO: fix for ppc64le and s390x - get IBM to help build these packages maybe?
 if [ "${ARCH}" == "x86_64" ]; then
   wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-clients_6.3.23-1_amd64.deb
   wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-server_6.3.23-1_amd64.deb
@@ -186,26 +185,6 @@ if [ "${ARCH}" == "x86_64" ]; then
   pkill -f fdb || true
   pkill -f foundation || true
   rm -rf ./foundationdb*deb
-else
-  apt install --no-install-recommends -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix fakeroot liblz4-1
-  git clone https://github.com/apple/foundationdb/
-  cd foundationdb && git checkout 6.3.23
-  git apply /root/couchdb-ci/files/no-bintray.patch || true
-  mkdir .build && cd .build
-  if [ "${ARCH}" == "ppc64le" ]; then
-    cmake -DCMAKE_CXX_FLAGS="-DNO_WARN_X86_INTRINSICS" -G Ninja ..
-  else
-    cmake -G Ninja ..
-  fi
-  ninja -j2
-  fakeroot cpack -G DEB
-  # see https://forums.foundationdb.org/t/possible-missing-dependency-in-6-3-x-deb-package/2579
-  ln -nfs /usr/bin/update-alternatives /usr/bin/alternatives
-  mkdir -p /var/lib/foundationdb/data
-  dpkg -i packages/foundationdb-clients*deb packages/foundationdb-server*deb || true
-  apt purge -y cmake mono-devel ninja-build libboost-all-dev liblz4-dev dos2unix
-  apt autoremove -y
-  cd ../../ && rm -rf foundationdb
 fi
 
 # clean up
