@@ -17,10 +17,7 @@
 # NOTE: These are intended to be built using the arguments as
 # described in ../build.sh. See that script for more details.
 
-# Support multi-platform builds with a single Dockerfile
-ARG containerarch=amd64
-
-FROM $containerarch/debian:stretch
+FROM debian:stretch
 
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js
