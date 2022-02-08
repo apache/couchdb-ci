@@ -46,7 +46,6 @@ DEBIANS="debian-stretch debian-buster debian-bullseye"
 UBUNTUS="ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-7 centos-8"
 ERLANGALL_BASE="debian-bullseye"
-BINTRAY_API="https://api.bintray.com"
 PASSED_BUILDARGS="$buildargs"
 
 
