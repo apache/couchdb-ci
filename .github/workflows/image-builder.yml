@@ -60,4 +60,4 @@ jobs:
             erlangversion=${{ github.event.inputs.erlangVersion }}
             elixirversion=${{ github.event.inputs.elixirVersion }}
           tags: |
-            ghcr.io/apache/couchdb-ci:${{ github.event.inputs.dockerfile }}-erlang-${{ github.event.inputs.erlangVersion }}
+            ghcr.io/${{ github.repository }}:${{ github.event.inputs.dockerfile }}-${{ github.event.inputs.erlangVersion }}
