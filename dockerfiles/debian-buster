@@ -18,9 +18,7 @@
 # described in ../build.sh. See that script for more details.
 
 # Support multi-platform builds with a single Dockerfile
-ARG containerarch=amd64
-
-FROM $containerarch/debian:buster
+FROM debian:buster
 
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js

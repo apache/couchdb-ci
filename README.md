@@ -31,6 +31,12 @@ These images are used by [Apache Jenkins CI](https://ci-couchdb.apache.org/blue/
 
 For those OSes that support Docker, we run builds inside of Docker containers. These containers are built using the `build.sh` command at the root level.
 
+## Authenticating to Docker Hub
+
+1.  You need a Docker Cloud account with access to the `apache` organization to upload new images. Ask the CouchDB PMC for assistance with this.
+2. `export DOCKER_ID_USER="username"`
+3. `docker login -u "username"` and enter your password.
+
 ## Building a "platform image"
 
 The platform images include all of the build dependencies necessary to build and full test CouchDB on a given OS/version/architecture combination.
@@ -59,31 +65,38 @@ the [kerl](https://github.com/kerl/kerl) build system, and installs them to
 `/usr/local/kerl` for activation before builds. This version is intended for use
 in standard CI runs, such as for pull requests.
 
-# Building a cross-architecture Docker image
+## Building a cross-architecture Docker image
 
-This only works from an `x86_64` build host.
-
-First, configure your machine with the correct dependencies to build multi-arch binaries:
-
-```
-docker run --privileged --rm tonistiigi/binfmt --install all
-```
-
-This is a one-time setup step. This docker container run will install the correct qemu static binaries necessary for running foreign architecture binaries on your host machine. It includes special magic to ensure `sudo` works correctly inside a container, too.
-
-Then, override the `CONTAINERARCH` environment variable when starting `build.sh`:
-
+We can use Docker's
+[Buildx](https://docs.docker.com/buildx/working-with-buildx/) plugin to generate
+multi-architecture container images with a single command invocation. Docker
+Desktop ships with buildx support, but you'll need to create a new builder to
+use it:
 
 ```
-CONTAINERARCH=aarch64 ./build.sh platform debian-stretch
+docker buildx create --use
 ```
+
+Then, add the `--platform` flag to spin up parallel builders for each desired
+architecture. For example:
+
+```
+buildargs="--platform linux/amd64,linux/arm64,linux/ppc64le --push" ./build.sh platform debian-bullseye
+```
+
+will build **and upload** a new multi-arch container image to the registory.
+Currently `docker images` can only accept single-platform images, so this is one
+downside of the simplified build approach. Omitting the `--push` option will
+just leave the build result in the build cache, which isn't terribly useful.
 
 ## Publishing a container
 
-1.  You need a Docker Cloud account with access to the `apache` organization. Ask the CouchDB PMC for assistance with this.
-2. `export DOCKER_ID_USER="username"`
-3. `docker login -u "username"` and enter your password.
-4. `./build.sh platform-upload <distro>-<version>` just as above.
+If you built a single-architecture container image and did not supply `--push`
+as a build arg to upload it automatically you can upload the image using
+
+```
+./build.sh platform-upload <distro>-<version>
+```
 
 ---
 

@@ -46,9 +46,6 @@ DEBIANS="debian-stretch debian-buster debian-bullseye"
 UBUNTUS="ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-7 centos-8"
 ERLANGALL_BASE="debian-bullseye"
-XPLAT_BASE="debian-buster"
-# XPLAT_ARCHES="arm64v8 ppc64le"
-XPLAT_ARCHES="arm64v8"
 BINTRAY_API="https://api.bintray.com"
 PASSED_BUILDARGS="$buildargs"
 
@@ -67,11 +64,6 @@ check-envs() {
   then
     buildargs="$buildargs --build-arg elixirversion=${ELIXIRVERSION} "
   fi
-  if [ ! -z "${CONTAINERARCH}" ]
-  then
-    buildargs="$buildargs --build-arg containerarch=${CONTAINERARCH} "
-    CONTAINERARCH="${CONTAINERARCH}-"
-  fi
 }
 
 split-os-ver() {
@@ -87,11 +79,11 @@ build-base-platform() {
   split-os-ver $1
   # invoke as build-base <plat>
   # base images never get JavaScript, nor Erlang
-  docker build -f dockerfiles/${os}-${version} \
+  docker buildx build -f dockerfiles/${os}-${version} \
       --build-arg js=nojs \
       --build-arg erlang=noerlang \
       $buildargs \
-      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-base \
+      --tag apache/couchdbci-${os}:${version}-base \
       ${SCRIPTPATH}
 }
 
@@ -122,10 +114,10 @@ build-platform() {
   find-erlang-version $1
   pull-os-image $1
   split-os-ver $1
-  docker build -f dockerfiles/${os}-${version} \
+  docker buildx build -f dockerfiles/${os}-${version} \
       $buildargs \
       --no-cache \
-      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION} \
+      --tag apache/couchdbci-${os}:${version}-erlang-${ERLANGVERSION} \
       ${SCRIPTPATH}
   unset ERLANGVERSION
 }
@@ -146,7 +138,7 @@ upload-platform() {
   find-erlang-version $1
   check-envs
   split-os-ver $1
-  docker push apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION}
+  docker push apache/couchdbci-${os}:${version}-erlang-${ERLANGVERSION}
 }
 
 build-test-couch() {
@@ -200,21 +192,11 @@ case "$1" in
     shift
     build-platform $1
     ;;
-  platform-foreign)
-    # makes only foreign arch platforms
-    shift
-    for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch build-platform $XPLAT_BASE
-    done
-    ;;
   platform-all)
     # build all platforms with JS and Erlang support
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       build-platform $plat $*
-    done
-    for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch build-platform $XPLAT_BASE
     done
     ERLANGVERSION=all build-platform $ERLANGALL_BASE
     ;;
@@ -226,9 +208,6 @@ case "$1" in
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       upload-platform $plat $*
-    done
-    for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch upload-platform $XPLAT_BASE $*
     done
     ERLANGVERSION=all upload-platform $ERLANGALL_BASE
     ;;
