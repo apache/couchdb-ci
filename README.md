@@ -10,20 +10,13 @@ It intends to cover a range of both operating systems (Linux, macOS, BSD, Window
 
 These images are used by [Apache Jenkins CI](https://ci-couchdb.apache.org/blue/organizations/jenkins/pipelines) to build CouchDB with every checkin to `main`, `3.x`, a release branch (*e.g.*, `2.3.0`), or an open Pull Request. CouchDB's CI build philosophy is to validate CouchDB against different Erlang versions with each commit to a Pull Request, and to validate CouchDB against different OSes and architectures on merged commits to `main`, `3.x`, and release branches. Where possible, Jenkins also auto-builds convenience binaries or packages. The eventual goal is that these auto-built binaries/packages/Docker images will be auto-pushed to our distribution repos for downstream consumption.
 
-# Supported Configurations (updated 2021-03-11)
+# Supported Configurations
 
-**OS / distro** | **Version** | **Erlang Versions** | **Architectures** | **Docker?**
-----------------|-------------|--------------------|------------------|--------------------
-**debian**      | stretch     | 19.3.6, 20.3.8.25  | `x86_64`, `arm64v8`        | :heavy_check_mark:
-**debian**      | buster      | 20.3.8.25          | `x86_64`, `arm64v8`                    | :heavy_check_mark:
-**ubuntu**      | bionic      | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
-**centos**      | 6           | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
-**centos**      | 7           | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
-**centos**      | 8           | 20.3.8.25          | `x86_64`         | :heavy_check_mark:
-**freebsd**     | 11.x        | *default*          | `x86_64`         | :x:
-**freebsd**     | 12.0        | *default*          | `x86_64`         | :x:
+See Docker Hub for the latest supported images:
 
-...with support now for _any_ arbitrary Erlang version!
+- https://hub.docker.com/r/apache/couchdbci-debian/tags
+- https://hub.docker.com/r/apache/couchdbci-ubuntu/tags
+- https://hub.docker.com/r/apache/couchdbci-centos/tags
 
 ---
 
