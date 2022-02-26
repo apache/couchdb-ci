@@ -33,7 +33,7 @@ For those OSes that support Docker, we run builds inside of Docker containers. T
 
 ## Authenticating to Docker Hub
 
-1.  You need a Docker Cloud account with access to the `apache` organization to upload new images. Ask the CouchDB PMC for assistance with this.
+1.  You need a Docker Cloud account with access to the `apache` organization to upload images. Ask the CouchDB PMC for assistance with this.
 2. `export DOCKER_ID_USER="username"`
 3. `docker login -u "username"` and enter your password.
 
@@ -65,7 +65,9 @@ the [kerl](https://github.com/kerl/kerl) build system, and installs them to
 `/usr/local/kerl` for activation before builds. This version is intended for use
 in standard CI runs, such as for pull requests.
 
-## Building a cross-architecture Docker image
+## Building images for other architectures
+
+### Multi-arch images with Docker Buildx
 
 We can use Docker's
 [Buildx](https://docs.docker.com/buildx/working-with-buildx/) plugin to generate
@@ -74,20 +76,37 @@ Desktop ships with buildx support, but you'll need to create a new builder to
 use it:
 
 ```
-docker buildx create --use
+docker buildx create --name apache-couchdb --use
 ```
 
-Then, add the `--platform` flag to spin up parallel builders for each desired
-architecture. For example:
+The `build.sh` script has `buildx-base` and `buildx-platform` targets that will
+will build **and upload** a new multi-arch container image to the registry. For
+example:
 
 ```
-buildargs="--platform linux/amd64,linux/arm64,linux/ppc64le --push" ./build.sh platform debian-bullseye
+./build.sh buildx-platform debian-bullseye
 ```
 
-will build **and upload** a new multi-arch container image to the registory.
-Currently `docker images` can only accept single-platform images, so this is one
-downside of the simplified build approach. Omitting the `--push` option will
-just leave the build result in the build cache, which isn't terribly useful.
+The `$BUILDX_PLATFORMS` environment variable can be used to override the default
+set of target platforms that will be supplied to the buildx builder.
+
+### Cross-building with $CONTAINERARCH
+
+Alternatively, we can build individual images for each architecture. This only works from an `x86_64` build host.
+
+First, configure your machine with the correct dependencies to build multi-arch binaries:
+
+```
+docker run --privileged --rm tonistiigi/binfmt --install all
+```
+
+This is a one-time setup step. This docker container run will install the correct qemu static binaries necessary for running foreign architecture binaries on your host machine. It includes special magic to ensure `sudo` works correctly inside a container, too.
+
+Then, override the `CONTAINERARCH` environment variable when starting `build.sh`:
+
+```
+CONTAINERARCH=arm64v8 ./build.sh platform debian-bullseye
+```
 
 ## Publishing a container
 
@@ -108,16 +127,24 @@ as a build arg to upload it automatically you can upload the image using
 ./build.sh <command> [OPTIONS]
 
 Recognized commands:
-  clean <plat>          Removes all images for <plat>.
-  clean-all             Removes all images for all platforms.
+  clean <plat>              Removes all images for <plat>.
+  clean-all                 Removes all images for all platforms.
 
-  platform <plat>       Builds the image for <plat> with Erlang & JS support.
-  platform-all          Builds all images with Erlang and JS support.
-  *platform-upload      Uploads the couchdbdev/*-erlang-* images to Docker Hub.
-  *platform-upload-all  Uploads all the couchdbdev/*-erlang-* images to Docker.
+  *buildx-base <plat>       Builds a multi-architecture base image.
+  *buildx-platform <plat>   Builds a multi-architecture image with Erlang & JS support.
 
-  couch <plat>          Builds and tests CouchDB for <plat>.
-  couch-all             Builds and tests CouchDB on all platforms.
+  base <plat>               Builds the image for <plat> without Erlang or JS support.
+  base-all                  Builds all images without Erlang or JS support.
+  *base-upload <plat>       Uploads the apache/couchdbci-{os} base images to Docker Hub.
+  *base-upload-all          Uploads all the apache/couchdbci base images to Docker Hub.
+
+  platform <plat>           Builds the image for <plat> with Erlang & JS support.
+  platform-all              Builds all images with Erlang and JS support.
+  *platform-upload <plat>   Uploads the apache/couchdbci-{os} images to Docker Hub.
+  *platform-upload-all      Uploads all the apache/couchdbci images to Docker Hub.
+
+  couch <plat>              Builds and tests CouchDB for <plat>.
+  couch-all                 Builds and tests CouchDB on all platforms.
 
   Commands marked with * require appropriate Docker Hub credentials.
 ```
