@@ -17,7 +17,9 @@
 # NOTE: These are intended to be built using the arguments as
 # described in ../build.sh. See that script for more details.
 
-FROM debian:bullseye
+ARG repository=debian
+
+FROM $repository:bullseye
 
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js

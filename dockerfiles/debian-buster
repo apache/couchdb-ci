@@ -17,8 +17,9 @@
 # NOTE: These are intended to be built using the arguments as
 # described in ../build.sh. See that script for more details.
 
-# Support multi-platform builds with a single Dockerfile
-FROM debian:buster
+ARG repository=debian
+
+FROM $repository:buster
 
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js

@@ -46,7 +46,10 @@ DEBIANS="debian-stretch debian-buster debian-bullseye"
 UBUNTUS="ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-7 centos-8"
 ERLANGALL_BASE="debian-bullseye"
+XPLAT_BASE="debian-bullseye"
+XPLAT_ARCHES="arm64v8 ppc64le"
 PASSED_BUILDARGS="$buildargs"
+BUILDX_PLATFORMS="linux/amd64,linux/arm64,linux/ppc64le"
 
 
 check-envs() {
@@ -63,6 +66,11 @@ check-envs() {
   then
     buildargs="$buildargs --build-arg elixirversion=${ELIXIRVERSION} "
   fi
+  if [ ! -z "${CONTAINERARCH}" ]
+  then
+    buildargs="$buildargs --build-arg repository=${CONTAINERARCH}/debian "
+    CONTAINERARCH="${CONTAINERARCH}-"
+  fi
 }
 
 split-os-ver() {
@@ -78,11 +86,26 @@ build-base-platform() {
   split-os-ver $1
   # invoke as build-base <plat>
   # base images never get JavaScript, nor Erlang
+  docker build -f dockerfiles/${os}-${version} \
+      --build-arg js=nojs \
+      --build-arg erlang=noerlang \
+      $buildargs \
+      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-base \
+      ${SCRIPTPATH}
+}
+
+buildx-base-platform() {
+  check-envs
+  split-os-ver $1
+  # invoke as build-base <plat>
+  # base images never get JavaScript, nor Erlang
   docker buildx build -f dockerfiles/${os}-${version} \
       --build-arg js=nojs \
       --build-arg erlang=noerlang \
       $buildargs \
+      --platform ${BUILDX_PLATFORMS} \
       --tag apache/couchdbci-${os}:${version}-base \
+      --push \
       ${SCRIPTPATH}
 }
 
@@ -113,10 +136,25 @@ build-platform() {
   find-erlang-version $1
   pull-os-image $1
   split-os-ver $1
+  docker build -f dockerfiles/${os}-${version} \
+      $buildargs \
+      --no-cache \
+      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION} \
+      ${SCRIPTPATH}
+  unset ERLANGVERSION
+}
+
+buildx-platform() {
+  check-envs
+  find-erlang-version $1
+  pull-os-image $1
+  split-os-ver $1
   docker buildx build -f dockerfiles/${os}-${version} \
       $buildargs \
       --no-cache \
+      --platform ${BUILDX_PLATFORMS} \
       --tag apache/couchdbci-${os}:${version}-erlang-${ERLANGVERSION} \
+      --push \
       ${SCRIPTPATH}
   unset ERLANGVERSION
 }
@@ -137,7 +175,7 @@ upload-platform() {
   find-erlang-version $1
   check-envs
   split-os-ver $1
-  docker push apache/couchdbci-${os}:${version}-erlang-${ERLANGVERSION}
+  docker push apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION}
 }
 
 build-test-couch() {
@@ -164,6 +202,11 @@ case "$1" in
       clean $plat
     done
     ;;
+  buildx-base)
+    # Build and upload multi-arch base image using Docker Buildx
+    shift
+    buildx-base-platform $1
+    ;;
   base)
     # Build base image for requested target platform
     shift
@@ -186,16 +229,31 @@ case "$1" in
       upload-base $plat $*
     done
     ;;
+  buildx-platform)
+    # Build and upload multi-arch platform with JS and Erlang support
+    shift
+    buildx-platform $1
+    ;;
   platform)
     # build platform with JS and Erlang support
     shift
     build-platform $1
+    ;;
+  platform-foreign)
+    # makes only foreign arch platforms
+    shift
+    for arch in $XPLAT_ARCHES; do
+      CONTAINERARCH=$arch build-platform $XPLAT_BASE
+    done
     ;;
   platform-all)
     # build all platforms with JS and Erlang support
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       build-platform $plat $*
+    done
+    for arch in $XPLAT_ARCHES; do
+      CONTAINERARCH=$arch build-platform $XPLAT_BASE
     done
     ERLANGVERSION=all build-platform $ERLANGALL_BASE
     ;;
@@ -207,6 +265,9 @@ case "$1" in
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
       upload-platform $plat $*
+    done
+    for arch in $XPLAT_ARCHES; do
+      CONTAINERARCH=$arch upload-platform $XPLAT_BASE $*
     done
     ERLANGVERSION=all upload-platform $ERLANGALL_BASE
     ;;
@@ -232,16 +293,24 @@ case "$1" in
 $0 <command> [OPTIONS]
 
 Recognized commands:
-  clean <plat>          Removes all images for <plat>.
-  clean-all             Removes all images for all platforms.
+  clean <plat>              Removes all images for <plat>.
+  clean-all                 Removes all images for all platforms.
 
-  platform <plat>       Builds the image for <plat> with Erlang & JS support.
-  platform-all          Builds all images with Erlang and JS support.
-  *platform-upload      Uploads the couchdbdev/*-erlang-* images to Docker Hub.
-  *platform-upload-all  Uploads all the couchdbdev/*-erlang-* images to Docker.
+  *buildx-base <plat>       Builds a multi-architecture base image.
+  *buildx-platform <plat>   Builds a multi-architecture image with Erlang & JS support.
 
-  couch <plat>          Builds and tests CouchDB for <plat>.
-  couch-all             Builds and tests CouchDB on all platforms.
+  base <plat>               Builds the image for <plat> without Erlang or JS support.
+  base-all                  Builds all images without Erlang or JS support.
+  *base-upload <plat>       Uploads the apache/couchdbci-{os} base images to Docker Hub.
+  *base-upload-all          Uploads all the apache/couchdbci base images to Docker Hub.
+
+  platform <plat>           Builds the image for <plat> with Erlang & JS support.
+  platform-all              Builds all images with Erlang and JS support.
+  *platform-upload <plat>   Uploads the apache/couchdbci-{os} images to Docker Hub.
+  *platform-upload-all      Uploads all the apache/couchdbci images to Docker Hub.
+
+  couch <plat>              Builds and tests CouchDB for <plat>.
+  couch-all                 Builds and tests CouchDB on all platforms.
 
   Commands marked with * require appropriate Docker Hub credentials.
 
