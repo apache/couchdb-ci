@@ -42,7 +42,7 @@ apt-get update && apt-get install --no-install-recommends -y lsb-release
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
-debians='(jessie|stretch|buster)'
+debians='(jessie|buster)'
 ubuntus='(bionic|focal)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 

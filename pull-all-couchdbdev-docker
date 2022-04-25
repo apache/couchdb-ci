@@ -4,7 +4,6 @@ DOCKER_ORG="apache"
 
 # These are the images that are currently being used, so don't `docker rmi` them on cleanup.
 KEEP_IMAGES=(
-couchdbci-debian:stretch-erlang-20.3.8.26-1
 couchdbci-debian:buster-erlang-20.3.8.26-1
 couchdbci-debian:arm64v8-buster-erlang-20.3.8.26-1
 couchdbci-debian:buster-erlang-all
@@ -17,7 +16,6 @@ couchdbci-debian:erlang-21
 couchdbci-debian:erlang-22
 couchdbci-debian:erlang-23
 couchdbci-debian:erlang-24
-couchdbci-debian:stretch-erlang-24.2
 couchdbci-debian:buster-erlang-24.2
 couchdbci-debian:bullseye-erlang-24.2
 couchdbci-centos:8-erlang-24.2
@@ -28,7 +26,7 @@ couchdbci-ubuntu:bionic-erlang-24.2
 
 # Base images are used for building old libmozjs, primarily.
 BASE_IMAGES=(
-couchdbci-debian:ppc64le-stretch-base
+couchdbci-debian:ppc64le-buster-base
 )
 # These images layer in the rest of the CouchDB build chain, and 1 or more Erlang versions.
 IMAGES=(
@@ -37,7 +35,6 @@ couchdbci-debian:ppc64le-buster-erlang-20.3.8.25-1
 couchdbci-centos:6-erlang-20.3.8.25-1
 couchdbci-centos:6-erlang-19.3.6
 couchdbci-centos:7-erlang-19.3.6
-couchdbci-debian:stretch-erlang-19.3.6
 )
 
 if [ "$(date +%u)" -ne "1" ]; then
