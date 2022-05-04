@@ -44,7 +44,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #    also https://endoflife.software/operating-systems/linux/centos
 DEBIANS="debian-stretch debian-buster debian-bullseye"
 UBUNTUS="ubuntu-bionic ubuntu-focal"
-CENTOSES="centos-7 centos-8"
+CENTOSES="centos-7 rockylinux-8"
 ERLANGALL_BASE="debian-bullseye"
 XPLAT_BASE="debian-bullseye"
 XPLAT_ARCHES="arm64v8 ppc64le"
