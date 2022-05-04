@@ -83,7 +83,7 @@ arms='(aarch64)'
 
 case "${OSTYPE}" in
   linux*)
-    redhats='(rhel|centos|fedora)'
+    redhats='(rhel|centos|fedora|rocky)'
     debians='(debian|ubuntu)'
     latest='(stretch|buster|bionic)'
 
