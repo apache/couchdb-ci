@@ -86,7 +86,7 @@ echo "Detected RedHat/Centos/Fedora version: ${VERSION_ID}   arch: ${ARCH}"
 
 # Enable EPEL
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
-# PowerTools for CentOS 8
+# PowerTools for Rocky 8
 if [[ ${VERSION_ID} -gt 7 ]]; then
   dnf install -y 'dnf-command(config-manager)'
   dnf config-manager --set-enabled powertools
@@ -107,28 +107,18 @@ yum upgrade -y
 
 # Install auxiliary packages
 yum groupinstall -y 'Development Tools'
-yum install -y git sudo wget which
 
-# Dependencies for make couch, except erlang
-yum install -y autoconf autoconf213 automake curl-devel libicu-devel libtool \
-    ncurses-devel nspr-devel zip readline-devel unzip \
-    perl
-
-# autoconf-archive
-if [[ ${VERSION_ID} -eq 6 ]]; then
-  yum install -y "http://springdale.math.ias.edu/data/puias/computational/6/x86_64/autoconf-archive-2015.02.24-1.sdl6.noarch.rpm"
-else
-  yum install -y autoconf-archive
-fi
-
-# package-building stuff
-yum install -y createrepo xfsprogs-devel rpmdevtools
+# Dependencies for make couch, except erlang and package building stuff.
+# help2man is for docs
+yum install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
+    libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
+    createrepo xfsprogs-devel rpmdevtools
 
 # Node.js
 pushd /tmp
 wget https://rpm.nodesource.com/setup_${NODEVERSION}.x
 set +e
-/bin/bash setup_${NODEVERSION}.x 
+/bin/bash setup_${NODEVERSION}.x
 if [ $? -ne 0 ]; then
   set -e
   # extracting the right version to dl is a pain :(
@@ -148,21 +138,8 @@ rm setup_${NODEVERSION}.x
 npm install npm@latest -g
 popd
 
-# documentation packages
-yum install -y help2man
-
 # python for testing and documentaiton
-if [[ ${VERSION_ID} -eq 6 ]]; then
-  yum install -y \
-    https://repo.ius.io/ius-release-el6.rpm \
-    https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-  yum install -y python35u
-  ln -s /usr/bin/python3.5 /usr/local/bin/python
-  wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
-  /usr/bin/python3.5 /tmp/get-pip.py
-  PIP=pip3
-  ln -s /usr/bin/python3.5 /usr/local/bin/python3
-elif [[ ${VERSION_ID} -eq 7 ]]; then
+if [[ ${VERSION_ID} -eq 7 ]]; then
   yum install -y python36 python36-pip python-virtualenv
   PIP=pip3.6
   ln -s /usr/bin/python3.6 /usr/local/bin/python3
