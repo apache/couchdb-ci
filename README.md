@@ -28,7 +28,7 @@ For those OSes that support Docker, we run builds inside of Docker containers. T
 
 1.  You need a Docker Cloud account with access to the `apache` organization to upload images. Ask the CouchDB PMC for assistance with this.
 2. `export DOCKER_ID_USER="username"`
-3. `docker login -u "username"` and enter your password.
+3. `docker login -u $username` and enter your password. (If using `podman` specify the registry `docker login -u $username docker.io`)
 
 ## Building a "platform image"
 
