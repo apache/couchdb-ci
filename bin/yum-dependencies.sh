@@ -112,7 +112,7 @@ yum groupinstall -y 'Development Tools'
 # help2man is for docs
 yum install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
     libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
-    createrepo xfsprogs-devel rpmdevtools
+    createrepo xfsprogs-devel rpmdevtools help2man
 
 # Node.js
 pushd /tmp
