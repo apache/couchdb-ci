@@ -99,12 +99,17 @@ buildx-base-platform() {
   split-os-ver $1
   # invoke as build-base <plat>
   # base images never get JavaScript, nor Erlang
+  if [ "$os" == "rockylinux" ]; then
+    repo="centos"
+  else
+    repo="$os"
+  fi
   docker buildx build -f dockerfiles/${os}-${version} \
       --build-arg js=nojs \
       --build-arg erlang=noerlang \
       $buildargs \
       --platform ${BUILDX_PLATFORMS} \
-      --tag apache/couchdbci-${os}:${version}-base \
+      --tag apache/couchdbci-${repo}:${version}-base \
       --push \
       ${SCRIPTPATH}
 }
@@ -149,11 +154,16 @@ buildx-platform() {
   find-erlang-version $1
   pull-os-image $1
   split-os-ver $1
+  if [ "$os" == "rockylinux" ]; then
+    repo="centos"
+  else
+    repo="$os"
+  fi
   docker buildx build -f dockerfiles/${os}-${version} \
       $buildargs \
       --no-cache \
       --platform ${BUILDX_PLATFORMS} \
-      --tag apache/couchdbci-${os}:${version}-erlang-${ERLANGVERSION} \
+      --tag apache/couchdbci-${repo}:${version}-erlang-${ERLANGVERSION} \
       --push \
       ${SCRIPTPATH}
   unset ERLANGVERSION
