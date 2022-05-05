@@ -42,7 +42,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #    https://ubuntu.com/about/release-cycle
 #    https://access.redhat.com/support/policy/updates/errata/ (same for CentOS)
 #    also https://endoflife.software/operating-systems/linux/centos
-DEBIANS="debian-stretch debian-buster debian-bullseye"
+DEBIANS="debian-buster debian-bullseye"
 UBUNTUS="ubuntu-bionic ubuntu-focal"
 CENTOSES="centos-7 rockylinux-8"
 ERLANGALL_BASE="debian-bullseye"

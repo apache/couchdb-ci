@@ -150,7 +150,7 @@ After building the image as above:
 docker run -it couchdbdev/<tag>
 ```
 
-where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-stretch-erlang-19.3.6`.
+where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bullseye-erlang-23.3.4.10`.
 
 ## Running the CouchDB build in a published container
 
