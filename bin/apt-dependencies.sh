@@ -43,7 +43,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
 debians='(jessie|buster)'
-ubuntus='(bionic|focal)'
+ubuntus='(bionic|focal|jammy)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
 # bionic Docker image seems to be missing /etc/timezone...
@@ -151,7 +151,7 @@ fi
 # js packages, as long as we're not told to skip them
 if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
-  if [ "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" -a "${ARCH}" != "s390x" ]; then
+  if [ "${VERSION_CODENAME}" != "jammy" -a "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" -a "${ARCH}" != "s390x" ]; then
     curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
     source /etc/os-release
     echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \
@@ -165,6 +165,9 @@ if [ "$1" != "nojs" ]; then
   fi
   if [ "${VERSION_CODENAME}" == "focal" ]; then
     apt-get install --no-install-recommends -y libmozjs-68-dev
+  fi
+  if [ "${VERSION_CODENAME}" == "jammy" ]; then
+    apt-get install --no-install-recommends -y libmozjs-78-dev libmozjs-91-dev
   fi
   if [ "${VERSION_CODENAME}" == "bullseye" ]; then
     apt-get install --no-install-recommends -y libmozjs-78-dev
