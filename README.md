@@ -49,7 +49,7 @@ On the other hand, some OSes won't run older Erlangs because of library changes,
 Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `ELIXIRVERSION` environment variables:
 
 ```
-NODEVERSION=8 ELIXIRVERSION=v1.6.1 ERLANGVERSION=17.5.3 ./build.sh platform debian-jessie
+NODEVERSION=14 ELIXIRVERSION=v1.13.4 ERLANGVERSION=24.3.4.2 ./build.sh platform debian-jessie
 ```
 
 The tool also recognizes a special `ERLANGVERSION=all` value for the `debian-buster`
@@ -150,7 +150,7 @@ After building the image as above:
 docker run -it couchdbdev/<tag>
 ```
 
-where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bullseye-erlang-23.3.4.10`.
+where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bullseye-erlang-23.3.4.15`.
 
 ## Running the CouchDB build in a published container
 
