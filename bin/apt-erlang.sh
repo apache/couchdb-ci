@@ -65,16 +65,11 @@ apt-get update || true
 if [ "${ERLANGVERSION}" = "default" ]
 then
   apt-get update && apt-get install --no-install-recommends -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
-elif [ "${ARCH}" = x86_64 ] && [ "${ERLANGVERSION}" != "all" ]
+elif [ "${ARCH}" = x86_64 ]
 then
   wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
   dpkg -i erlang-solutions_*_all.deb || true
   rm erlang-solutions_*_all.deb
-  # bionic is broken...
-  sed -i 's/debian  contrib/debian ${VERSION} contrib/' /etc/apt/sources.list.d/erlang-solutions.list || true
-  if [[ ${ERLANGVERSION} == "19.3.6" && ${VERSION} == "bionic" ]]; then
-    ERLANGVERSION=19.3.6.8
-  fi
   apt-get update || true
   apt-get install --no-install-recommends -y esl-erlang=1:${ERLANGVERSION} || true
 fi
