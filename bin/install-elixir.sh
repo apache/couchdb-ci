@@ -28,7 +28,7 @@
 set -e
 
 ELIXIR_PACKAGES=https://github.com/elixir-lang/elixir/releases/download
-ELIXIR_VSN=${ELIXIRVERSION:-v1.7.4}
+ELIXIR_VSN=${ELIXIRVERSION:-v1.13.4}
 
 # Check if running as root
 if [[ ${EUID} -ne 0 ]]; then
