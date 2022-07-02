@@ -56,54 +56,24 @@ else
   exit 1
 fi
 
-if [ "${ERLANGVERSION}" = "all" ]
-then
-  # Install using kerl
-  KERL="/usr/local/bin/kerl"
-  wget --directory-prefix=/usr/local/bin https://raw.githubusercontent.com/kerl/kerl/master/kerl
-  chmod a+x ${KERL}
-  cat << EOF > ~/kerlrc
-export KERL_BUILD_BACKEND=git
-unset KERL_BUILD_DOCS
-unset KERL_INSTALL_MANPAGES
-unset KERL_INSTALL_HTMLDOCS
-export KERL_CONFIGURE_OPTIONS="--without-javac --without-wx --without-odbc --without-debugger --without-observer --without-et  --without-cosEvent --without-cosEventDomain --without-cosFileTransfer --without-cosNotification --without-cosProperty --without-cosTime --without-cosTransactions --without-orber"
-EOF
-  echo "export KERL_BUILD_BACKEND=git" > ~/.kerlrc
-  mkdir -p /usr/local/kerl
-  KERLVERSIONS=$(echo ${KERLVERSIONS} | tr ',' ' ')
-  echo "Installing these Erlang versions using kerl: ${KERLVERSIONS}"
-  ${KERL} update releases >/dev/null
-  for ver in ${KERLVERSIONS}
-  do
-    ${KERL} build ${ver} ${ver}
-    ${KERL} install ${ver} /usr/local/kerl/${ver}
-    ${KERL} delete build ${ver}
-  done
-  ${KERL} list installations
-  rm -rf ~/.kerl/archives/*
-else
-  # Build from source tarball
-  # Pull down and checkout the requested Erlang version
-  git clone https://github.com/erlang/otp.git
-  cd otp
-  git checkout OTP-${ERLANGVERSION} -b local-OTP-${ERLANGVERSION}
 
-  # This command is a no-op as of Erlang 22
-  ./otp_build autoconf
+# Build from source tarball
+# Pull down and checkout the requested Erlang version
+git clone https://github.com/erlang/otp.git
+cd otp
+git checkout OTP-${ERLANGVERSION} -b local-OTP-${ERLANGVERSION}
 
-  # Configure Erlang - skip building things we don't want or need
-  ./otp_build configure --without-javac --without-wx --without-odbc \
-    --without-debugger --without-observer --without-et  --without-cosEvent \
-    --without-cosEventDomain --without-cosFileTransfer \
-    --without-cosNotification --without-cosProperty --without-cosTime \
-    --without-cosTransactions --without-orber
+# Configure Erlang - skip building things we don't want or need
+./configure --without-javac --without-wx --without-odbc \
+  --without-debugger --without-observer --without-et  --without-cosEvent \
+  --without-cosEventDomain --without-cosFileTransfer \
+  --without-cosNotification --without-cosProperty --without-cosTime \
+  --without-cosTransactions --without-orber
 
-  make -j $(nproc)
-  make install
-  cd -
-  rm -rf otp
-fi
+make -j $(nproc)
+make install
+cd -
+rm -rf otp
 
 if [[ ${ID} =~ ${redhats} ]]; then
     yum clean all
