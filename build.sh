@@ -49,8 +49,17 @@ ERLANGALL_BASE="debian-bullseye"
 XPLAT_BASE="debian-bullseye"
 XPLAT_ARCHES="arm64v8 ppc64le"
 PASSED_BUILDARGS="$buildargs"
-BUILDX_PLATFORMS="linux/amd64,linux/arm64,linux/ppc64le"
 
+BUILDX_PLATFORMS="linux/amd64,linux/arm64,linux/ppc64le"
+ERLANGMAJORVERSION=`echo $ERLANGVERSION | cut -d. -f 1`
+if [[ ${ERLANGMAJORVERSION} -ge 25 ]]; then
+    echo "*************************  WARNING ***************************"
+    echo "Currently, as of 2022-07-02, Erlang 25.0.2 segfaults building"
+    echo "the linux/arm64 image on linux/amd64 in QEMU. Because"
+    echo "of that, build only the linux/amd64 image."
+    echo "**************************************************************"
+    BUILDX_PLATFORMS="linux/amd64"
+fi
 
 check-envs() {
   buildargs=$PASSED_BUILDARGS
