@@ -27,8 +27,11 @@
 # stop on error
 set -e
 
-ELIXIR_PACKAGES=https://github.com/elixir-lang/elixir/releases/download
+
 ELIXIR_VSN=${ELIXIRVERSION:-v1.13.4}
+ERLANG_VSN=`erl -noshell -eval 'io:fwrite(erlang:system_info(otp_release)), halt().'`
+# See https://github.com/hexpm/bob
+URL=https://repo.hex.pm/builds/elixir/${ELIXIR_VSN}-otp-${ERLANG_VSN}.zip
 
 # Check if running as root
 if [[ ${EUID} -ne 0 ]]; then
@@ -47,11 +50,13 @@ function ensure_tool() {
 ensure_tool 'unzip' || { echo 'Please install `unzip`'; exit 1; }
 ensure_tool 'wget' || { echo 'Please install `wget`'; exit 1; }
 
-
-url=${ELIXIR_PACKAGES}/${ELIXIR_VSN}/Precompiled.zip
-echo "==> Downloading Elixir from ${url}"
-wget -q --max-redirect=1 -O elixir.zip ${url} \
-    || { echo '===> Cannot download Elixir from ${url}'; exit 1; }
+# Elixir release versions are pre-compiled on Erlang 22 which means
+# they won't be compatible with Erlang 25. Instead use https://github.com/hexpm/bob
+# to install Elixir versions pre-compiled for a specific major Erlang versions.
+#
+echo "==> Downloading Elixir from ${URL}"
+wget -q --max-redirect=1 -O elixir.zip ${URL} \
+    || { echo "===> Cannot download Elixir from ${URL}"; exit 1; }
 
 mkdir -p /usr/local/bin/
 unzip -qq elixir.zip -d /usr/local \
