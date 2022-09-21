@@ -63,12 +63,24 @@ git clone https://github.com/erlang/otp.git
 cd otp
 git checkout OTP-${ERLANGVERSION} -b local-OTP-${ERLANGVERSION}
 
+ERLANGMAJORVERSION=`echo $ERLANGVERSION | cut -d. -f 1`
+if [[ ${ERLANGMAJORVERSION} -ge 25 ]] && [[ ${ARCH} == "aarch64" ]]; then
+    echo "*************************  WARNING ***************************"
+    echo "Currently, as of 2022-07-02, Erlang 25.0.2 segfaults building"
+    echo "the linux/arm64 image on linux/amd64 in QEMU. Because"
+    echo "of that we disable JIT for arm64."
+    echo "**************************************************************"
+    DISABLE_JIT="--disable-jit"
+else
+    DISABLE_JIT=""
+fi
+
 # Configure Erlang - skip building things we don't want or need
 ./configure --without-javac --without-wx --without-odbc \
   --without-debugger --without-observer --without-et  --without-cosEvent \
   --without-cosEventDomain --without-cosFileTransfer \
   --without-cosNotification --without-cosProperty --without-cosTime \
-  --without-cosTransactions --without-orber
+  --without-cosTransactions --without-orber ${DISABLE_JIT}
 
 make -j $(nproc)
 make install
