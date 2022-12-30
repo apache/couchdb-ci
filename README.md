@@ -49,20 +49,14 @@ On the other hand, some OSes won't run older Erlangs because of library changes,
 Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `ELIXIRVERSION` environment variables:
 
 ```
-NODEVERSION=14 ELIXIRVERSION=v1.13.4 ERLANGVERSION=24.3.4.2 ./build.sh platform debian-jessie
+NODEVERSION=14 ELIXIRVERSION=v1.13.4 ERLANGVERSION=24.3.4.7 ./build.sh platform debian-jessie
 ```
-
-The tool also recognizes a special `ERLANGVERSION=all` value for the `debian-buster`
-platform. This builds the lowest, default, and highest versions of Erlang using
-the [kerl](https://github.com/kerl/kerl) build system, and installs them to
-`/usr/local/kerl` for activation before builds. This version is intended for use
-in standard CI runs, such as for pull requests.
 
 ## Building images for other architectures
 
 ### Multi-arch images with Docker Buildx
 
-We can use Docker's
+Use Docker's
 [Buildx](https://docs.docker.com/buildx/working-with-buildx/) plugin to generate
 multi-architecture container images with a single command invocation. Docker
 Desktop ships with buildx support, but you'll need to create a new builder to
@@ -83,36 +77,38 @@ example:
 The `$BUILDX_PLATFORMS` environment variable can be used to override the default
 set of target platforms that will be supplied to the buildx builder.
 
-### Cross-building with $CONTAINERARCH
-
-Alternatively, we can build individual images for each architecture. This only works from an `x86_64` build host.
-
-First, configure your machine with the correct dependencies to build multi-arch binaries:
-
-```
-docker run --privileged --rm tonistiigi/binfmt --install all
-```
-
-This is a one-time setup step. This docker container run will install the correct qemu static binaries necessary for running foreign architecture binaries on your host machine. It includes special magic to ensure `sudo` works correctly inside a container, too.
-
-Then, override the `CONTAINERARCH` environment variable when starting `build.sh`:
-
-```
-CONTAINERARCH=arm64v8 ./build.sh platform debian-bullseye
-```
-
-## Publishing a container
-
-If you built a single-architecture container image and did not supply `--push`
-as a build arg to upload it automatically you can upload the image using
-
-```
-./build.sh platform-upload <distro>-<version>
-```
-
----
-
 # Useful things you can do
+
+## Update images used for package releases with new Erlang versions
+
+```
+ERLANGVERSION=24.3.4.7 ./build.sh buildx-platform-release
+```
+
+This will build all the Debian and RHEL-clone OS images on x86-64 with that version of Erlang
+
+## Update images used for CI with new Erlang versions
+
+```
+ERLANGVERSION=24.3.4.7 ./build.sh buildx-platform debian-bullseye
+```
+
+This will update Debian Bullseye OS image for all architectures (x86,
+ppc64le, arm64) with that version of Erlang. Do this for the images
+which are used with non-x86 architectures.
+
+If the same image is used for release package building and CI, run
+this command after `buildx-platform-release` to ensure that the
+debian-bullseye will be a rebuilt as a multi-arch image. Otherwise,
+buildx-platform-release creates as x86 only.
+
+## Update Debian Bullseye image with 25.2
+
+```
+BUILDX_PLATFORMS=linux/amd64 ERLANGVERSION=25.2 ./build.sh buildx-platform debian-bullseye
+```
+
+In this case, since we're not using 25.2 for multi-arch testing, opt to build it only for x86.
 
 ## Full `build.sh` options
 
@@ -123,18 +119,8 @@ Recognized commands:
   clean <plat>              Removes all images for <plat>.
   clean-all                 Removes all images for all platforms.
 
-  *buildx-base <plat>       Builds a multi-architecture base image.
   *buildx-platform <plat>   Builds a multi-architecture image with Erlang & JS support.
-
-  base <plat>               Builds the image for <plat> without Erlang or JS support.
-  base-all                  Builds all images without Erlang or JS support.
-  *base-upload <plat>       Uploads the apache/couchdbci-{os} base images to Docker Hub.
-  *base-upload-all          Uploads all the apache/couchdbci base images to Docker Hub.
-
-  platform <plat>           Builds the image for <plat> with Erlang & JS support.
-  platform-all              Builds all images with Erlang and JS support.
-  *platform-upload <plat>   Uploads the apache/couchdbci-{os} images to Docker Hub.
-  *platform-upload-all      Uploads all the apache/couchdbci images to Docker Hub.
+  *buildx-platform-release <plat> Builds x86-64 images with default Erlang for all supported release OSes
 
   couch <plat>              Builds and tests CouchDB for <plat>.
   couch-all                 Builds and tests CouchDB on all platforms.

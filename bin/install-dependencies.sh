@@ -30,7 +30,7 @@ set -e
 
 # Defaults updated 2019-10-14
 NODEVERSION=${NODEVERSION:-14}
-ERLANGVERSION=${ERLANGVERSION:-23.3.4.15}
+ERLANGVERSION=${ERLANGVERSION:-24.3.4.7}
 ELIXIRVERSION=${ELIXIRVERSION:-v1.13.4}
 
 
@@ -96,18 +96,6 @@ case "${OSTYPE}" in
       fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'yum-'
     elif [[ ${ID} =~ ${debians} ]]; then
-
-      # Catching this early, so as to avoid user frustration
-      if [[ ${ERLANGVERSION%%.*} -le 19 ]] && [[ ${VERSION_CODENAME} =~ ${latest} ]]; then
-        if [[ $ARCH =~ $arms ]] && [[ ! ${SKIPERLANG} ]]; then
-          echo ""
-          echo "Recent versions of Linux (Stretch, Bionic, etc) provide a version of libssl"
-          echo "which is too new to complile earlier (<=19) versions of Erlang.  Please"
-          echo "either choose an earlier distro release or a more rencent version of Erlang."
-          echo ""
-          exit 1
-        fi
-      fi
 
       NODEVERSION=${NODEVERSION} ERLANGVERSION=${ERLANGVERSION} \
           ${SCRIPTPATH}/apt-dependencies.sh ${JSINSTALL}
