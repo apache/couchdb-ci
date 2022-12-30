@@ -84,49 +84,6 @@ split-os-ver() {
   version=${tokens[1]}
 }
 
-build-base-platform() {
-  check-envs
-  split-os-ver $1
-  # invoke as build-base <plat>
-  # base images never get JavaScript, nor Erlang
-  docker build -f dockerfiles/${os}-${version} \
-      --build-arg js=nojs \
-      --build-arg erlang=noerlang \
-      $buildargs \
-      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-base \
-      ${SCRIPTPATH}
-}
-
-buildx-base-platform() {
-  check-envs
-  split-os-ver $1
-  # invoke as build-base <plat>
-  # base images never get JavaScript, nor Erlang
-  if [ "$os" == "rockylinux" ]; then
-    repo="centos"
-  else
-    repo="$os"
-  fi
-  docker buildx build -f dockerfiles/${os}-${version} \
-      --build-arg js=nojs \
-      --build-arg erlang=noerlang \
-      $buildargs \
-      --platform ${BUILDX_PLATFORMS} \
-      --tag apache/couchdbci-${repo}:${version}-base \
-      --push \
-      ${SCRIPTPATH}
-}
-
-upload-base() {
-  if [[ ! ${DOCKER_ID_USER} ]]; then
-    echo "Please set your Docker credentials before using this command:"
-    echo "  export DOCKER_ID_USER=<username>"
-    echo "  docker login"
-    exit 1
-  fi
-  docker push couchdbdev/$1-base
-}
-
 find-erlang-version() {
   if [ -z "${ERLANGVERSION}" ]
   then
@@ -137,19 +94,6 @@ find-erlang-version() {
 pull-os-image() {
   image_name=$(echo $1 | tr "-" ":")
   docker pull $image_name
-}
-
-build-platform() {
-  check-envs
-  find-erlang-version $1
-  pull-os-image $1
-  split-os-ver $1
-  docker build -f dockerfiles/${os}-${version} \
-      $buildargs \
-      --no-cache \
-      --tag apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION} \
-      ${SCRIPTPATH}
-  unset ERLANGVERSION
 }
 
 buildx-platform() {
@@ -169,26 +113,12 @@ buildx-platform() {
       --tag apache/couchdbci-${repo}:${version}-erlang-${ERLANGVERSION} \
       --push \
       ${SCRIPTPATH}
-  unset ERLANGVERSION
 }
 
 clean() {
   check-envs
   split-os-ver $1
   docker rmi apache/couchdbci-${os} -f || true
-}
-
-upload-platform() {
-  if [[ ! ${DOCKER_ID_USER} ]]; then
-    echo "Please set your Docker credentials before using this command:"
-    echo "  export DOCKER_ID_USER=<username>"
-    echo "  docker login"
-    exit 1
-  fi
-  find-erlang-version $1
-  check-envs
-  split-os-ver $1
-  docker push apache/couchdbci-${os}:${CONTAINERARCH}${version}-erlang-${ERLANGVERSION}
 }
 
 build-test-couch() {
@@ -215,74 +145,18 @@ case "$1" in
       clean $plat
     done
     ;;
-  buildx-base)
-    # Build and upload multi-arch base image using Docker Buildx
-    shift
-    buildx-base-platform $1
-    ;;
-  base)
-    # Build base image for requested target platform
-    shift
-    build-base-platform $1
-    ;;
-  base-all)
-    # build all base images
-    shift
-    for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-      build-base-platform $plat $*
-    done
-    ;;
-  base-upload)
-    shift
-    upload-base $plat $*
-    ;;
-  base-upload-all)
-    shift
-    for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-      upload-base $plat $*
-    done
-    ;;
   buildx-platform)
     # Build and upload multi-arch platform with JS and Erlang support
     shift
     buildx-platform $1
     ;;
-  platform)
-    # build platform with JS and Erlang support
-    shift
-    build-platform $1
-    ;;
-  platform-foreign)
-    # makes only foreign arch platforms
-    shift
-    for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch build-platform $XPLAT_BASE
-    done
-    ;;
-  platform-all)
-    # build all platforms with JS and Erlang support
+  buildx-platform-release)
+    # Build and upload multi-arch platform with JS and Erlang support
+    # For all platforms
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-      build-platform $plat $*
+      BUILDX_PLATFORMS=linux/amd64 buildx-platform $plat
     done
-    for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch build-platform $XPLAT_BASE
-    done
-    ERLANGVERSION=all build-platform $ERLANGALL_BASE
-    ;;
-  platform-upload)
-    shift
-    upload-platform $plat $*
-    ;;
-  platform-upload-all)
-    shift
-    for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-      upload-platform $plat $*
-    done
-    for arch in $XPLAT_ARCHES; do
-      CONTAINERARCH=$arch upload-platform $XPLAT_BASE $*
-    done
-    ERLANGVERSION=all upload-platform $ERLANGALL_BASE
     ;;
   couch)
     # build and test CouchDB on <plat>
@@ -311,16 +185,6 @@ Recognized commands:
 
   *buildx-base <plat>       Builds a multi-architecture base image.
   *buildx-platform <plat>   Builds a multi-architecture image with Erlang & JS support.
-
-  base <plat>               Builds the image for <plat> without Erlang or JS support.
-  base-all                  Builds all images without Erlang or JS support.
-  *base-upload <plat>       Uploads the apache/couchdbci-{os} base images to Docker Hub.
-  *base-upload-all          Uploads all the apache/couchdbci base images to Docker Hub.
-
-  platform <plat>           Builds the image for <plat> with Erlang & JS support.
-  platform-all              Builds all images with Erlang and JS support.
-  *platform-upload <plat>   Uploads the apache/couchdbci-{os} images to Docker Hub.
-  *platform-upload-all      Uploads all the apache/couchdbci images to Docker Hub.
 
   couch <plat>              Builds and tests CouchDB for <plat>.
   couch-all                 Builds and tests CouchDB on all platforms.
