@@ -80,7 +80,7 @@ fi
   --without-debugger --without-observer --without-et  --without-cosEvent \
   --without-cosEventDomain --without-cosFileTransfer \
   --without-cosNotification --without-cosProperty --without-cosTime \
-  --without-cosTransactions --without-orber ${DISABLE_JIT}
+  --without-cosTransactions --without-orber --enable-fips ${DISABLE_JIT}
 
 make -j $(nproc)
 make install
