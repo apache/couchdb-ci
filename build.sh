@@ -51,13 +51,13 @@ UBUNTUS="ubuntu-bionic ubuntu-focal ubuntu-jammy"
 CENTOSES="centos-7 rockylinux-8"
 ERLANGALL_BASE="debian-bullseye"
 XPLAT_BASE="debian-bullseye"
-XPLAT_ARCHES="arm64v8 ppc64le"
+XPLAT_ARCHES="arm64v8 ppc64le s390x"
 PASSED_BUILDARGS="$buildargs"
 
 #  Allow overriding this list from the command line
 #  BUILDX_PLATFORMS=foo,bar ./build.sh ...
 #
-: "${BUILDX_PLATFORMS:=linux/amd64,linux/arm64,linux/ppc64le}"
+: "${BUILDX_PLATFORMS:=linux/amd64,linux/arm64,linux/ppc64le,linux/s390x}"
 
 check-envs() {
   buildargs=$PASSED_BUILDARGS
