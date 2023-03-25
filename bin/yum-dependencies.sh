@@ -169,16 +169,5 @@ else
   yum install -y libffi-devel
 fi
 
-# FoundationDB - but only for amd64 right now!!!!
-if [ "${ARCH}" == "x86_64" ]; then
-  wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-clients-6.3.23-1.el7.x86_64.rpm
-  wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-server-6.3.23-1.el7.x86_64.rpm
-  # Buggy FoundationDB packages require this workaround
-  rpm -i --nodeps ./foundationdb*rpm
-  pkill -f fdb || true
-  pkill -f foundation || true
-  rm -rf ./foundationdb*rpm
-fi
-
 # clean up
 yum clean all -y

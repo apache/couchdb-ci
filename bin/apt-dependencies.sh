@@ -180,15 +180,5 @@ fi
 
 # Erlang is installed by apt-erlang.sh
 
-# FoundationDB - but only for amd64 right now!!!!
-if [ "${ARCH}" == "x86_64" ]; then
-  wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-clients_6.3.23-1_amd64.deb
-  wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-server_6.3.23-1_amd64.deb
-  dpkg -i ./foundationdb*deb
-  pkill -f fdb || true
-  pkill -f foundation || true
-  rm -rf ./foundationdb*deb
-fi
-
 # clean up
 apt-get clean
