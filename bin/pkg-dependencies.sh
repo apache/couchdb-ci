@@ -56,8 +56,4 @@ else
   pkg install -y libffi autotools
 fi
 
-# FoundationDB
-pkg install -y foundationdb foundationdb-devel
-
 # Erlang is installed by pkg-erlang.sh
-
