@@ -32,6 +32,7 @@ set -e
 NODEVERSION=${NODEVERSION:-14}
 ERLANGVERSION=${ERLANGVERSION:-24.3.4.10}
 ELIXIRVERSION=${ELIXIRVERSION:-v1.13.4}
+JAVAVERSION=${JAVAVERSION:-11}
 
 
 # This works if we're not called through a symlink
@@ -50,6 +51,11 @@ fi
 
 if [[ $2 == "noerlang" ]]; then
   SKIPERLANG=1
+fi
+
+# install Java by default, unless told otherwise
+if [[ $3 == "nojava" ]]; then
+  SKIPJAVA=1
 fi
 
 # Check if running as root
@@ -94,6 +100,9 @@ case "${OSTYPE}" in
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/yum-erlang.sh
         ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
       fi
+      if [[ ! ${SKIPJAVA} ]]; then
+        JAVAVERSION=${JAVAVERSION} ${SCRIPTPATH}/install-java.sh
+      fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'yum-'
     elif [[ ${ID} =~ ${debians} ]]; then
 
@@ -102,6 +111,9 @@ case "${OSTYPE}" in
       if [[ ! ${SKIPERLANG} ]]; then
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/apt-erlang.sh
         ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
+      fi
+      if [[ ! ${SKIPJAVA} ]]; then
+        JAVAVERSION=${JAVAVERSION} ${SCRIPTPATH}/install-java.sh
       fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'apt-'
     else
@@ -119,6 +131,9 @@ case "${OSTYPE}" in
       ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/pkg-erlang.sh
       ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
       run_scripts ${EXTRA_SCRIPTS_DIR} 'pkg-'
+    fi
+    if [[ ! ${SKIPJAVA} ]]; then
+      JAVAVERSION=${JAVAVERSION} ${SCRIPTPATH}/install-java.sh
     fi
     ;;
   bsd*)

@@ -23,10 +23,13 @@ FROM rockylinux:8
 ARG js=js
 # Choose whether to install Erlang, default yes
 ARG erlang=erlang
+# Choose whether to install Java, default yes
+ARG java=java
 # Select version of Node, Erlang and Elixir to install
 ARG erlangversion=24.3.4.10
 ARG elixirversion=v1.13.4
 ARG nodeversion=14
+ARG javaversion=11
 
 # Create Jenkins user and group
 RUN groupadd --gid 910 jenkins; \
@@ -48,7 +51,8 @@ RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/local.conf
 RUN ERLANGVERSION=$erlangversion \
   ELIXIRVERSION=$elixirversion \
   NODEVERSION=$nodeversion \
-  /root/couchdb-ci/bin/install-dependencies.sh $js $erlang
+  JAVAVERSION=$javaversion \
+  /root/couchdb-ci/bin/install-dependencies.sh $js $erlang $java
 
 # Allow Jenkins to sudo
 RUN echo "jenkins ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/jenkins
