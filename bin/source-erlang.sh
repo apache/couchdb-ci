@@ -59,9 +59,14 @@ fi
 
 # Build from source tarball
 # Pull down and checkout the requested Erlang version
-git clone https://github.com/erlang/otp.git
-cd otp
-git checkout OTP-${ERLANGVERSION} -b local-OTP-${ERLANGVERSION}
+
+ERL_TOP=/tmp/build/otp_src_${ERLANGVERSION}
+mkdir -p $ERL_TOP
+cd /tmp/build
+wget --quiet https://github.com/erlang/otp/releases/download/OTP-${ERLANGVERSION}/otp_src_${ERLANGVERSION}.tar.gz || \
+    wget --quiet https://github.com/erlang/otp/archive/refs/tags/OTP-${ERLANGVERSION}.tar.gz
+tar -C $ERL_TOP --strip-components=1 -xf *${ERLANGVERSION}.tar.gz
+cd $ERL_TOP
 
 ERLANGMAJORVERSION=`echo $ERLANGVERSION | cut -d. -f 1`
 if [[ ${ERLANGMAJORVERSION} -ge 25 ]] && [[ ${ARCH} == "aarch64" ]]; then
