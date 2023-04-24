@@ -31,5 +31,5 @@ cd couchdb
 echo $(whoami)
 echo $(pwd)
 
-./configure --with-curl
+./configure --with-curl --enable-nouveau
 make check
