@@ -24,11 +24,6 @@ ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:11 $JAVA_HOME $JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-# Install Maven
-ENV MAVEN_HOME=/usr/share/maven
-COPY --from=maven:3-eclipse-temurin-11 $MAVEN_HOME $MAVEN_HOME
-ENV PATH="${MAVEN_HOME}/bin:${PATH}"
-
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js
 # Choose whether to install Erlang, default yes
