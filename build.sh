@@ -48,7 +48,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #
 DEBIANS="debian-buster debian-bullseye"
 UBUNTUS="ubuntu-bionic ubuntu-focal ubuntu-jammy"
-CENTOSES="centos-7 rockylinux-8 rockylinux-9"
+CENTOSES="centos-7 almalinux-8 almalinux-9"
 XPLAT_BASE="debian-bullseye"
 XPLAT_ARCHES="arm64v8 ppc64le s390x"
 PASSED_BUILDARGS="$buildargs"
@@ -104,7 +104,7 @@ buildx-platform() {
   find-erlang-version $1
   pull-os-image $1
   split-os-ver $1
-  if [ "$os" == "rockylinux" ]; then
+  if [ "$os" == "almalinux" ]; then
     repo="centos"
   else
     repo="$os"

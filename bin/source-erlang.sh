@@ -38,7 +38,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 . ${SCRIPTPATH}/detect-os.sh
 
-redhats='(rhel|centos|fedora|rocky)'
+redhats='(rhel|centos|fedora|almalinux)'
 debians='(debian|ubuntu)'
 
 echo "Erlang source build started @ $(date)"
