@@ -87,7 +87,7 @@ echo "Detected RedHat/Centos/Fedora version: ${VERSION_ID}   arch: ${ARCH}"
 # Enable EPEL
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
 # PowerTools for Rocky 8
-if [[ ${VERSION_ID} -gt 7 ]]; then
+if [[ ${VERSION_ID} -eq 8 ]]; then
   dnf install -y 'dnf-command(config-manager)'
   dnf config-manager --set-enabled powertools
   yum update -y
@@ -112,7 +112,12 @@ yum groupinstall -y 'Development Tools'
 # help2man is for docs
 yum install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
     libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
-    createrepo xfsprogs-devel rpmdevtools help2man
+    createrepo xfsprogs-devel rpmdevtools
+if [[ ${VERSION_ID} -eq 9 ]]; then
+  dnf --enablerepo=crb install -y help2man
+else
+  yum install -y help2man
+fi
 
 # Node.js
 pushd /tmp
@@ -143,14 +148,19 @@ if [[ ${VERSION_ID} -eq 7 ]]; then
   yum install -y python36 python36-pip python-virtualenv
   PIP=pip3.6
   ln -s /usr/bin/python3.6 /usr/local/bin/python3
-else
+elif [[ ${VERSION_ID} -eq 8 ]]; then
   yum install -y python3-pip python3-virtualenv
+  PIP=pip3
+else
+  yum install -y python3-pip
   PIP=pip3
 fi
 
-
 ${PIP} --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
     typing nose requests hypothesis==3.79.0
+if [[ ${VERSION_ID} -eq 9 ]]; then
+  ${PIP} --default-timeout=1000 install wheel virtualenv
+fi
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then
@@ -160,8 +170,10 @@ if [[ $1 != "nojs" ]]; then
     yum-config-manager --add-repo https://couchdb.apache.org/repo/couchdb.repo
     # install the JS packages
     yum install -y couch-js-devel
-  else
+  elif [[ ${VERSION_ID} -eq 8 ]]; then
     yum install -y mozjs60-devel
+  else
+    yum install -y mozjs78-devel
   fi
 else
   # install js build-time dependencies only

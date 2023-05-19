@@ -48,7 +48,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #
 DEBIANS="debian-buster debian-bullseye"
 UBUNTUS="ubuntu-bionic ubuntu-focal ubuntu-jammy"
-CENTOSES="centos-7 rockylinux-8"
+CENTOSES="centos-7 rockylinux-8 rockylinux-9"
 ERLANGALL_BASE="debian-bullseye"
 XPLAT_BASE="debian-bullseye"
 XPLAT_ARCHES="arm64v8 ppc64le s390x"
