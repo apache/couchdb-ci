@@ -86,7 +86,7 @@ echo "Detected RedHat/Centos/Fedora version: ${VERSION_ID}   arch: ${ARCH}"
 
 # Enable EPEL
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
-# PowerTools for Rocky 8
+# PowerTools for Alma 8
 if [[ ${VERSION_ID} -eq 8 ]]; then
   dnf install -y 'dnf-command(config-manager)'
   dnf config-manager --set-enabled powertools
