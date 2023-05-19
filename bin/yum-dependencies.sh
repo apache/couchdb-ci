@@ -92,10 +92,6 @@ if [[ ${VERSION_ID} -eq 8 ]]; then
   dnf config-manager --set-enabled powertools
   yum update -y
 fi
-# For CentOS Stream9
-if [[ ${VERSION_ID} -eq 9 ]]; then
-  update-crypto-policies --set DEFAULT:SHA1
-fi
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
 if [[ ${VERSION_ID} -ne 6 ]]; then
   # more for RHEL than CentOS...
@@ -116,7 +112,12 @@ yum groupinstall -y 'Development Tools'
 # help2man is for docs
 yum install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
     libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
-    createrepo xfsprogs-devel rpmdevtools help2man
+    createrepo xfsprogs-devel rpmdevtools
+if [[ ${VERSION_ID} -eq 9 ]]; then
+  dnf --enablerepo=crb install -y help2man
+else
+  yum install -y help2man
+fi
 
 # Node.js
 pushd /tmp
@@ -154,7 +155,6 @@ else
   yum install -y python3-pip
   PIP=pip3
 fi
-
 
 ${PIP} --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
     typing nose requests hypothesis==3.79.0
