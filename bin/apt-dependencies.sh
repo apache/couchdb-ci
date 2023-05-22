@@ -84,15 +84,12 @@ else
 fi
 
 # Node.js
-if [ "${ARCH}" == "ppc64le" -o "${ARCH}" == "s390x" ]; then
-  apt-get install --no-install-recommends -y nodejs npm
-else
-  wget https://deb.nodesource.com/setup_${NODEVERSION}.x
-  if /bin/bash setup_${NODEVERSION}.x; then
-    apt-get install --no-install-recommends -y nodejs
-  fi
-  rm setup_${NODEVERSION}.x
+wget https://deb.nodesource.com/setup_${NODEVERSION}.x
+if /bin/bash setup_${NODEVERSION}.x; then
+  apt-get install --no-install-recommends -y nodejs
 fi
+rm setup_${NODEVERSION}.x
+
 # maybe install node from scratch if pkg install failed...
 if [ -z "$(which node)" ]; then
   apt-get purge -y nodejs || true
@@ -120,8 +117,6 @@ EOF
   apt-get install --no-install-recommends -y ./nodejs*.deb
   rm nodejs-control nodejs*deb
 fi
-# update to latest npm
-npm install npm@latest -g --unsafe-perm
 
 # rest of python dependencies
 pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
