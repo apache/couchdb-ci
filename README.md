@@ -49,7 +49,7 @@ On the other hand, some OSes won't run older Erlangs because of library changes,
 Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `ELIXIRVERSION` environment variables:
 
 ```
-NODEVERSION=14 ELIXIRVERSION=v1.13.4 ERLANGVERSION=24.3.4.7 ./build.sh platform debian-jessie
+NODEVERSION=14 ELIXIRVERSION=v1.14.5 ERLANGVERSION=24.3.4.7 ./build.sh platform debian-jessie
 ```
 
 ## Building images for other architectures
