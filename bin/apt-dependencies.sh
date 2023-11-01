@@ -42,7 +42,7 @@ apt-get update && apt-get install --no-install-recommends -y lsb-release
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
-debians='(jessie|buster)'
+debians='(buster|bullseye|bookworm)'
 ubuntus='(bionic|focal|jammy)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
@@ -67,18 +67,17 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
     sudo wget zip unzip \
     build-essential ca-certificates libcurl4-openssl-dev \
     libicu-dev libnspr4-dev \
-    help2man python3-sphinx \
-    curl debhelper devscripts dh-exec dh-python equivs \
+    help2man curl debhelper devscripts dh-exec dh-python equivs \
     dialog equivs lintian libwww-perl quilt \
     reprepro rsync \
     vim-tiny screen procps dirmngr ssh-client
 
 
 # createrepo_c or createrepo, depending on packaging support
-if [ ${VERSION_CODENAME} == "bullseye" ]; then
+if [ "${VERSION_CODENAME}" == "bullseye" ] || [ "${VERSION_CODENAME}" == "bookworm" ]; then
   apt-get install --no-install-recommends -y createrepo-c || true
 else
-  # python 2 based; gone from focal / bullseye. look for createrepo_c eventually
+  # python 2 based; gone from focal / bullseye / bookworm. look for createrepo_c eventually
   # hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
   apt-get install --no-install-recommends -y createrepo || true
 fi
@@ -94,7 +93,7 @@ rm setup_${NODEVERSION}.x
 if [ -z "$(which node)" ]; then
   apt-get purge -y nodejs || true
   # extracting the right version to dl is a pain :(
-  if [ ${ARCH} == "x86_64" ]; then
+  if [ "${ARCH}" == "x86_64" ]; then
     NODEARCH=x64
   else
     NODEARCH=${ARCH}
@@ -119,20 +118,19 @@ EOF
 fi
 
 # rest of python dependencies
-pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+if [ "${VERSION_CODENAME}" == "bookworm" ]; then
+    # On Debian bookworm, need the --break-system-package to into to default system location
+    pip3 --default-timeout=10000 install --break-system-packages --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+else
+    pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+fi
 
 # relaxed lintian rules for CouchDB
 mkdir -p /usr/share/lintian/profiles/couchdb
 chmod 0755 /usr/share/lintian/profiles/couchdb
 if [[ ${VERSION_CODENAME} =~ ${debians} ]]; then
   cp ${SCRIPTPATH}/../files/debian.profile /usr/share/lintian/profiles/couchdb/main.profile
-  if [ ${VERSION_CODENAME} == "jessie" ]; then
-    # remove unknown lintian rule privacy-breach-uses-embedded-file
-    sed -i -e 's/, privacy-breach-uses-embedded-file//' /usr/share/lintian/profiles/couchdb/main.profile
-    # add rule to suppress python-script-but-no-python-dep
-    sed -i -e 's/Disable-Tags: /Disable-Tags: python-script-but-no-python-dep, /' /usr/share/lintian/profiles/couchdb/main.profile
-  fi
-elif [[ ${VERSION_CODENAME} =~ ${ubuntus} ]]; then
+elif [[ "${VERSION_CODENAME}" =~ ${ubuntus} ]]; then
   cp ${SCRIPTPATH}/../files/ubuntu.profile /usr/share/lintian/profiles/couchdb/main.profile
 else
   echo "Unrecognized Debian-like release: ${VERSION_CODENAME}! Skipping lintian work."
@@ -146,7 +144,11 @@ fi
 # js packages, as long as we're not told to skip them
 if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
-  if [ "${VERSION_CODENAME}" != "jammy" -a "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" -a "${ARCH}" != "s390x" ]; then
+  if [ "${VERSION_CODENAME}" != "jammy" ] && \
+     [ "${VERSION_CODENAME}" != "focal" ] && \
+     [ "${VERSION_CODENAME}" != "bullseye" ] && \
+     [ "${VERSION_CODENAME}" != "bookworm" ] && \
+     [ "${ARCH}" != "s390x" ]; then
     curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
     source /etc/os-release
     echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \
@@ -166,6 +168,9 @@ if [ "$1" != "nojs" ]; then
   fi
   if [ "${VERSION_CODENAME}" == "bullseye" ]; then
     apt-get install --no-install-recommends -y libmozjs-78-dev
+  fi
+  if [ "${VERSION_CODENAME}" == "bookworm" ]; then
+      apt-get install --no-install-recommends -y libmozjs-78-dev
   fi
 else
   # install js build-time dependencies only
