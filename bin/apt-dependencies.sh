@@ -75,10 +75,10 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
 
 
 # createrepo_c or createrepo, depending on packaging support
-if [ ${VERSION_CODENAME} == "bullseye" ]; then
+if [ ${VERSION_CODENAME} == "bullseye" -o ${VERSION_CODENAME} == "bookworm" ]; then
   apt-get install --no-install-recommends -y createrepo-c || true
 else
-  # python 2 based; gone from focal / bullseye. look for createrepo_c eventually
+  # python 2 based; gone from focal / bullseye / bookworm. look for createrepo_c eventually
   # hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
   apt-get install --no-install-recommends -y createrepo || true
 fi
@@ -146,7 +146,7 @@ fi
 # js packages, as long as we're not told to skip them
 if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
-  if [ "${VERSION_CODENAME}" != "jammy" -a "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" -a "${ARCH}" != "s390x" ]; then
+  if [ "${VERSION_CODENAME}" != "jammy" -a "${VERSION_CODENAME}" != "focal" -a "${VERSION_CODENAME}" != "bullseye" -a "${VERSION_CODENAME}" != "bookworm" -a "${ARCH}" != "s390x" ]; then
     curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
     source /etc/os-release
     echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \
@@ -164,7 +164,7 @@ if [ "$1" != "nojs" ]; then
   if [ "${VERSION_CODENAME}" == "jammy" ]; then
     apt-get install --no-install-recommends -y libmozjs-78-dev libmozjs-91-dev
   fi
-  if [ "${VERSION_CODENAME}" == "bullseye" ]; then
+  if [ "${VERSION_CODENAME}" == "bullseye" ] || [ "${VERSION_CODENAME}" == "bookworm" ]; then
     apt-get install --no-install-recommends -y libmozjs-78-dev
   fi
 else

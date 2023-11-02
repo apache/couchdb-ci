@@ -46,10 +46,10 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # When updating the images, consider updating pull-all-couchdbdev-docker
 # script as well
 #
-DEBIANS="debian-buster debian-bullseye"
+DEBIANS="debian-buster debian-bullseye debian-bookworm"
 UBUNTUS="ubuntu-bionic ubuntu-focal ubuntu-jammy"
 CENTOSES="centos-7 almalinux-8 almalinux-9"
-XPLAT_BASE="debian-bullseye"
+XPLAT_BASES="debian-bullseye debian-bookworm"
 XPLAT_ARCHES="arm64v8 ppc64le s390x"
 PASSED_BUILDARGS="$buildargs"
 
