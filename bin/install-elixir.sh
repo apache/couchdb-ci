@@ -28,7 +28,7 @@
 set -e
 
 
-ELIXIR_VSN=${ELIXIRVERSION:-v1.14.5}
+ELIXIR_VSN=${ELIXIRVERSION:-v1.15.7}
 ERLANG_VSN=`erl -noshell -eval 'io:fwrite(erlang:system_info(otp_release)), halt().'`
 # See https://github.com/hexpm/bob
 URL=https://repo.hex.pm/builds/elixir/${ELIXIR_VSN}-otp-${ERLANG_VSN}.zip

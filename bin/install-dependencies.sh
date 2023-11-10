@@ -31,7 +31,7 @@ set -e
 # Defaults updated 2023-03-20
 NODEVERSION=${NODEVERSION:-14}
 ERLANGVERSION=${ERLANGVERSION:-24.3.4.14}
-ELIXIRVERSION=${ELIXIRVERSION:-v1.14.5}
+ELIXIRVERSION=${ELIXIRVERSION:-v1.15.7}
 
 
 # This works if we're not called through a symlink
