@@ -49,6 +49,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DEBIANS="debian-buster debian-bullseye debian-bookworm"
 UBUNTUS="ubuntu-bionic ubuntu-focal ubuntu-jammy"
 CENTOSES="centos-7 almalinux-8 almalinux-9"
+
 XPLAT_BASE="debian-bullseye"
 XPLAT_ARCHES="arm64v8 ppc64le s390x"
 PASSED_BUILDARGS="$buildargs"
@@ -158,7 +159,14 @@ case "$1" in
     # For all platforms
     shift
     for plat in $DEBIANS $UBUNTUS $CENTOSES; do
-      BUILDX_PLATFORMS=linux/amd64 buildx-platform $plat
+      # Some platforms only get x86_64 builds
+      if [ "${plat}" == "debian-buster" ] || \
+         [ "${plat}" == "ubuntu-bionic" ] || \
+         [ "${plat}" == "centos-7" ]; then
+           BUILDX_PLATFORMS=linux/amd64 buildx-platform $plat
+       else
+           buildx-platform $plat
+       fi
     done
     ;;
   couch)
