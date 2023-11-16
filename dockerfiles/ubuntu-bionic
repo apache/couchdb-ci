@@ -24,6 +24,11 @@ ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:11 $JAVA_HOME $JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
+# These are needed for the Clouseau integration
+ENV CLOUSEAU_JAVA_HOME=/opt/java/openjdk8
+COPY --from=ibm-semeru-runtimes:open-8-jre /opt/java/openjdk $CLOUSEAU_JAVA_HOME
+ENV PATH=/usr/local/lib/erlang/bin:"${PATH}"
+
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js
 # Choose whether to install Erlang, default yes
