@@ -85,7 +85,6 @@ case "${OSTYPE}" in
   linux*)
     redhats='(rhel|centos|fedora|almalinux)'
     debians='(debian|ubuntu)'
-    latest='(stretch|buster|bionic)'
 
     if [[ ${ID} =~ ${redhats} ]]; then
       NODEVERSION=${NODEVERSION} \

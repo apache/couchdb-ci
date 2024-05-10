@@ -6,12 +6,9 @@ DOCKER_ORG="apache"
 KEEP_IMAGES=(
 couchdbci-debian:bullseye-erlang-25.3.2.12
 couchdbci-debian:bullseye-erlang-26.2.5
-couchdbci-debian:buster-erlang-24.3.4.17
 couchdbci-debian:bullseye-erlang-24.3.4.17
 couchdbci-centos:9-erlang-24.3.4.17
 couchdbci-centos:8-erlang-24.3.4.17
-couchdbci-centos:7-erlang-24.3.4.17
-couchdbci-ubuntu:bionic-erlang-24.3.4.17
 couchdbci-ubuntu:jammy-erlang-24.3.4.17
 couchdbci-ubuntu:focal-erlang-24.3.4.17
 )

@@ -42,11 +42,11 @@ apt-get update && apt-get install --no-install-recommends -y lsb-release
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
-debians='(buster|bullseye|bookworm)'
-ubuntus='(bionic|focal|jammy)'
+debians='(bullseye|bookworm)'
+ubuntus='(focal|jammy)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
-# bionic Docker image seems to be missing /etc/timezone...
+# ubuntu docker image seems to be missing /etc/timezone...
 if [ ! -f /etc/timezone ]; then
   rm -f /etc/localtime
   ln -snf /usr/share/zoneinfo/Etc/UTC /etc/localtime
@@ -157,9 +157,6 @@ if [ "$1" != "nojs" ]; then
     apt-get install --no-install-recommends -y couch-libmozjs185-dev
   fi
   # newer releases have newer libmozjs
-  if [ "${VERSION_CODENAME}" == "buster" ]; then
-    apt-get install --no-install-recommends -y libmozjs-60-dev
-  fi
   if [ "${VERSION_CODENAME}" == "focal" ]; then
     apt-get install --no-install-recommends -y libmozjs-68-dev
   fi
