@@ -4,13 +4,12 @@ DOCKER_ORG="apache"
 
 # These are the images that are currently being used, so don't `docker rmi` them on cleanup.
 KEEP_IMAGES=(
-couchdbci-debian:bullseye-erlang-25.3.2.12
-couchdbci-debian:bullseye-erlang-26.2.5
-couchdbci-debian:bullseye-erlang-24.3.4.17
-couchdbci-centos:9-erlang-24.3.4.17
-couchdbci-centos:8-erlang-24.3.4.17
-couchdbci-ubuntu:jammy-erlang-24.3.4.17
-couchdbci-ubuntu:focal-erlang-24.3.4.17
+couchdbci-debian:bookworm-erlang-25.3.2.12
+couchdbci-debian:bookworm-erlang-26.2.5
+couchdbci-centos:9-erlang-25.3.2.12
+couchdbci-centos:8-erlang-25.3.2.12
+couchdbci-ubuntu:jammy-erlang-25.3.2.12
+couchdbci-ubuntu:focal-erlang-25.3.2.12
 )
 
 for image in ${KEEP_IMAGES[*]}
