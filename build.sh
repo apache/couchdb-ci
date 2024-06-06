@@ -50,7 +50,7 @@ DEBIANS="debian-bullseye debian-bookworm"
 UBUNTUS="ubuntu-focal ubuntu-jammy"
 CENTOSES="almalinux-8 almalinux-9"
 
-XPLAT_BASE="debian-bullseye"
+XPLAT_BASE="debian-bookworm"
 XPLAT_ARCHES="arm64v8 ppc64le s390x"
 PASSED_BUILDARGS="$buildargs"
 
