@@ -49,7 +49,7 @@ On the other hand, some OSes won't run older Erlangs because of library changes,
 Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `ELIXIRVERSION` environment variables:
 
 ```
-NODEVERSION=18 ELIXIRVERSION=v1.15.7 ERLANGVERSION=25.3.2.12 ./build.sh platform debian-bullseye
+NODEVERSION=18 ELIXIRVERSION=v1.17.2 ERLANGVERSION=25.3.2.13 ./build.sh platform debian-bullseye
 ```
 
 ## Building images for other architectures
@@ -71,7 +71,7 @@ will build **and upload** a new multi-arch container image to the registry. For
 example:
 
 ```
-./build.sh buildx-platform debian-bullseye
+./build.sh buildx-platform debian-bookworm
 ```
 
 The `$BUILDX_PLATFORMS` environment variable can be used to override the default
@@ -90,7 +90,7 @@ This will build all the Debian and RHEL-clone OS images on x86-64 with that vers
 ## Update images used for CI with new Erlang versions
 
 ```
-ERLANGVERSION=24.3.4.7 ./build.sh buildx-platform debian-bullseye
+ERLANGVERSION=24.3.4.7 ./build.sh buildx-platform debian-bookworm
 ```
 
 This will update Debian Bullseye OS image for all architectures (x86,
@@ -105,7 +105,7 @@ buildx-platform-release creates as x86 only.
 ## Update Debian Bullseye image with 25.2
 
 ```
-BUILDX_PLATFORMS=linux/amd64 ERLANGVERSION=25.2 ./build.sh buildx-platform debian-bullseye
+BUILDX_PLATFORMS=linux/amd64 ERLANGVERSION=25.2 ./build.sh buildx-platform debian-bookworm
 ```
 
 In this case, since we're not using 25.2 for multi-arch testing, opt to build it only for x86.
@@ -136,7 +136,7 @@ After building the image as above:
 docker run -it couchdbdev/<tag>
 ```
 
-where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bullseye-erlang-23.3.4.17`.
+where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bookworm-erlang-25.3.2.13`.
 
 ## Running the CouchDB build in a published container
 
