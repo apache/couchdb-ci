@@ -19,10 +19,7 @@
 
 FROM almalinux:8
 
-# Install Java
-ENV JAVA_HOME=/opt/java/openjdk
-COPY --from=eclipse-temurin:11 $JAVA_HOME $JAVA_HOME
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
+# Java 21 installed via RPM: java-21-openjdk-devel
 
 # These are needed for the Clouseau integration
 ENV CLOUSEAU_JAVA_HOME=/opt/java/openjdk8
