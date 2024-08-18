@@ -112,7 +112,7 @@ yum groupinstall -y 'Development Tools'
 # help2man is for docs
 yum install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
     libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
-    createrepo xfsprogs-devel rpmdevtools
+    createrepo xfsprogs-devel java-21-openjdk-devel rpmdevtools
 if [[ ${VERSION_ID} -eq 9 ]]; then
   dnf --enablerepo=crb install -y help2man
 else
@@ -180,6 +180,10 @@ else
   # we can't add the CouchDB repo here because the plat may not exist yet
   yum install -y libffi-devel
 fi
+
+# remove openjdk8 and jna, java 21 is installed and should be the default
+# and clouseau installs it's own JRE 8 in /opt via a docker layer
+yum remove -y java-1.8.0-openjdk-headless jna
 
 # clean up
 yum clean all -y
