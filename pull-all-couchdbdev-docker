@@ -8,6 +8,7 @@ couchdbci-debian:bookworm-erlang-25.3.2.13
 couchdbci-debian:bookworm-erlang-26.2.5.2
 couchdbci-centos:9-erlang-25.3.2.13
 couchdbci-centos:8-erlang-25.3.2.13
+couchdbci-ubuntu:noble-erlang-25.3.2.13
 couchdbci-ubuntu:jammy-erlang-25.3.2.13
 couchdbci-ubuntu:focal-erlang-25.3.2.13
 )
