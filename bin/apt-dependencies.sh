@@ -43,7 +43,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
 debians='(bullseye|bookworm)'
-ubuntus='(focal|jammy)'
+ubuntus='(focal|jammy|noble)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
 # ubuntu docker image seems to be missing /etc/timezone...
@@ -74,7 +74,7 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
 
 
 # createrepo_c or createrepo, depending on packaging support
-if [ "${VERSION_CODENAME}" == "bullseye" ] || [ "${VERSION_CODENAME}" == "bookworm" ]; then
+if [ "${VERSION_CODENAME}" == "noble" ] || [ "${VERSION_CODENAME}" == "bullseye" ] || [ "${VERSION_CODENAME}" == "bookworm" ]; then
   apt-get install --no-install-recommends -y createrepo-c || true
 else
   # python 2 based; gone from focal / bullseye / bookworm. look for createrepo_c eventually
@@ -82,28 +82,33 @@ else
   apt-get install --no-install-recommends -y createrepo || true
 fi
 
-# Node.js
-wget https://deb.nodesource.com/setup_${NODEVERSION}.x
-if /bin/bash setup_${NODEVERSION}.x; then
-  apt-get install --no-install-recommends -y nodejs
-fi
-rm setup_${NODEVERSION}.x
+# Node.js (ubuntu noble has version 18, otherwise build a package)
 
-# maybe install node from scratch if pkg install failed...
-if [ -z "$(which node)" ]; then
-  apt-get purge -y nodejs || true
-  # extracting the right version to dl is a pain :(
-  if [ "${ARCH}" == "x86_64" ]; then
-    NODEARCH=x64
-  else
-    NODEARCH=${ARCH}
-  fi
-  node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${NODEARCH}.tar.gz | cut -d ' ' -f 3)"
-  wget https://nodejs.org/dist/latest-v${NODEVERSION}.x/${node_filename}
-  tar --directory=/usr --strip-components=1 -xzf ${node_filename}
-  rm ${node_filename}
-  # fake a package install
-  cat << EOF > nodejs-control
+if [ "${VERSION_CODENAME}" == "noble" ] && [ "${NODEVERSION}" == "18" ]; then
+    echo "--- Ubuntu Noble (24.04) has NodeJS 18 so we just install it from there"
+    apt-get install --no-install-recommends -y nodejs
+else
+    wget https://deb.nodesource.com/setup_${NODEVERSION}.x
+    if /bin/bash setup_${NODEVERSION}.x; then
+      apt-get install --no-install-recommends -y nodejs
+    fi
+    rm setup_${NODEVERSION}.x
+
+    # maybe install node from scratch if pkg install failed...
+    if [ -z "$(which node)" ]; then
+      apt-get purge -y nodejs || true
+      # extracting the right version to dl is a pain :(
+      if [ "${ARCH}" == "x86_64" ]; then
+        NODEARCH=x64
+      else
+        NODEARCH=${ARCH}
+      fi
+      node_filename="$(curl -s https://nodejs.org/dist/latest-v${NODEVERSION}.x/SHASUMS256.txt | grep linux-${NODEARCH}.tar.gz | cut -d ' ' -f 3)"
+      wget https://nodejs.org/dist/latest-v${NODEVERSION}.x/${node_filename}
+      tar --directory=/usr --strip-components=1 -xzf ${node_filename}
+      rm ${node_filename}
+      # fake a package install
+      cat << EOF > nodejs-control
 Section: misc
 Priority: optional
 Standards-Version: 3.9.2
@@ -112,15 +117,16 @@ Provides: nodejs
 Version: ${NODEVERSION}.99.99
 Description: Fake nodejs package to appease package builder
 EOF
-  equivs-build nodejs-control
-  apt-get install --no-install-recommends -y ./nodejs*.deb
-  rm nodejs-control nodejs*deb
+      equivs-build nodejs-control
+      apt-get install --no-install-recommends -y ./nodejs*.deb
+      rm nodejs-control nodejs*deb
+    fi
 fi
 
 # rest of python dependencies
-if [ "${VERSION_CODENAME}" == "bookworm" ]; then
-    # On Debian bookworm, need the --break-system-package to into to default system location
-    pip3 --default-timeout=10000 install --break-system-packages --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+if [ "${VERSION_CODENAME}" == "bookworm" -o "${VERSION_CODENAME}" == "noble" ]; then
+    # On Debian bookworm and Ubuntu noble, need the --break-system-package to into to default system location
+    apt-get -y --no-install-recommends install sphinx-rtd-theme-common python3-nose python3-requests python3-hypothesis
 else
     pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
 fi
@@ -144,7 +150,8 @@ fi
 # js packages, as long as we're not told to skip them
 if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
-  if [ "${VERSION_CODENAME}" != "jammy" ] && \
+  if [ "${VERSION_CODENAME}" != "noble" ] && \
+     [ "${VERSION_CODENAME}" != "jammy" ] && \
      [ "${VERSION_CODENAME}" != "focal" ] && \
      [ "${VERSION_CODENAME}" != "bullseye" ] && \
      [ "${VERSION_CODENAME}" != "bookworm" ] && \
@@ -157,6 +164,9 @@ if [ "$1" != "nojs" ]; then
     apt-get install --no-install-recommends -y couch-libmozjs185-dev
   fi
   # newer releases have newer libmozjs
+  if [ "${VERSION_CODENAME}" == "noble" ]; then
+    apt-get install --no-install-recommends -y libmozjs-102-dev libmozjs-115-dev
+  fi
   if [ "${VERSION_CODENAME}" == "focal" ]; then
     apt-get install --no-install-recommends -y libmozjs-68-dev
   fi
