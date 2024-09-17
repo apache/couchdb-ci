@@ -63,3 +63,12 @@ unzip -qq elixir.zip -d /usr/local \
     ||  { echo "===> Cannot unpack elixir.zip"; exit 1; }
 
 rm elixir.zip
+
+
+# Install hex otherwise some Makefile operations like "@mix clean" won't work.
+# They expect ./configure to have run and installed hex, but sometimes
+# it may be called without a preceding configure call, for instance when
+# building packages from a dist tarball. So we ensure it has hex there already.
+echo "===> Installing Hex"
+MIX_HOME=/home/jenkins/.mix /usr/local/bin/mix local.hex --force
+chown -R jenkins:jenkins /home/jenkins
