@@ -70,9 +70,5 @@ rm elixir.zip
 # it may be called without a preceding configure call, for instance when
 # building packages from a dist tarball. So we ensure it has hex there already.
 echo "===> Installing Hex"
-MIX_HOME=/home/jenkins/.mix /usr/local/bin/mix local.hex --force
-if id jenkins >/dev/null 2>&1; then
-  chown -R jenkins:jenkins /home/jenkins
-else
-  echo 'no jenkins user'
-fi
+MIX_HOME=${HOME}.mix /usr/local/bin/mix local.hex --force
+chown -R $(whoami):$(whoami) ${HOME}
