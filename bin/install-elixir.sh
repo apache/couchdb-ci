@@ -70,5 +70,5 @@ rm elixir.zip
 # it may be called without a preceding configure call, for instance when
 # building packages from a dist tarball. So we ensure it has hex there already.
 echo "===> Installing Hex"
-MIX_HOME=${HOME}.mix /usr/local/bin/mix local.hex --force
+MIX_HOME=${HOME}/.mix /usr/local/bin/mix local.hex --force
 chown -R $(whoami):$(whoami) ${HOME}
