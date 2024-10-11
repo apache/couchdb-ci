@@ -80,23 +80,12 @@ else
     DISABLE_JIT=""
 fi
 
-if [[ ${ERLANGMAJORVERSION} -gt 25 ]]; then
-    echo "*************************  WARNING ***************************"
-    echo "As of 2024-07-11 Erlang 26.2.5* fails access any crypto functions"
-    echo "on OSes with OpenSSL 3.0.x (Debian Bookworm, at least) if the "
-    echo "--enable-fips flag is enabled. See: github.com/erlang/otp/issues/8562"
-    echo "**************************************************************"
-    ENABLE_FIPS=""
-else
-    ENABLE_FIPS="--enable-fips"
-fi
-
 # Configure Erlang - skip building things we don't want or need
 ./configure \
   --without-javac --without-wx --without-odbc \
   --without-debugger --without-observer --without-et  \
   --without-diameter --without-megaco --without-tftp \
-  --without-ftp \
+  --without-ftp --enable-fips \
   ${ENABLE_FIPS} ${DISABLE_JIT}
 
 make -j $(nproc)
