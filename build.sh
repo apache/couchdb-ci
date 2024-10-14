@@ -50,8 +50,6 @@ DEBIANS="debian-bullseye debian-bookworm"
 UBUNTUS="ubuntu-focal ubuntu-jammy"
 CENTOSES="almalinux-8 almalinux-9"
 
-XPLAT_BASE="debian-bookworm"
-XPLAT_ARCHES="arm64v8 ppc64le s390x"
 PASSED_BUILDARGS="$buildargs"
 
 #  Allow overriding this list from the command line
@@ -100,6 +98,16 @@ pull-os-image() {
   docker pull $image_name
 }
 
+set-platforms() {
+   if [ "$1" == "debian-bullseye" ]; then
+       # Debian LTSs apparently start dropping random arches with time
+       echo "!!! reducing list of arches for $1 !!!"
+       actual_buildx_platforms="linux/amd64,linux/arm64"
+   else
+       actual_buildx_platforms=${BUILDX_PLATFORMS}
+   fi
+}
+
 buildx-platform() {
   check-envs
   find-erlang-version $1
@@ -110,10 +118,11 @@ buildx-platform() {
   else
     repo="$os"
   fi
+  set-platforms $1
   docker buildx build -f dockerfiles/${os}-${version} \
       $buildargs \
       --no-cache \
-      --platform ${BUILDX_PLATFORMS} \
+      --platform ${actual_buildx_platforms} \
       --tag apache/couchdbci-${repo}:${version}-erlang-${ERLANGVERSION} \
       --push \
       ${SCRIPTPATH}
