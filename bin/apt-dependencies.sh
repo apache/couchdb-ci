@@ -69,24 +69,21 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
     libicu-dev libnspr4-dev \
     help2man curl debhelper devscripts dh-exec dh-python equivs \
     dialog equivs lintian libwww-perl quilt \
-    reprepro rsync \
+    reprepro fakeroot rsync \
     vim-tiny screen procps dirmngr ssh-client
 
 
-# createrepo_c or createrepo, depending on packaging support
-if [ "${VERSION_CODENAME}" == "noble" ] || [ "${VERSION_CODENAME}" == "bullseye" ] || [ "${VERSION_CODENAME}" == "bookworm" ]; then
-  apt-get install --no-install-recommends -y createrepo-c || true
-else
-  # python 2 based; gone from focal / bullseye / bookworm. look for createrepo_c eventually
-  # hopefully via: https://github.com/rpm-software-management/createrepo_c/issues/145
-  apt-get install --no-install-recommends -y createrepo || true
-fi
+# createrepo_c is optional, all distros have it except focal
+# once focal is dropped can just added to the list above
+#
+apt-get install --no-install-recommends -y createrepo-c || true
+
 
 # Node.js (ubuntu noble has version 18, otherwise build a package)
 
 if [ "${VERSION_CODENAME}" == "noble" ] && [ "${NODEVERSION}" == "18" ]; then
     echo "--- Ubuntu Noble (24.04) has NodeJS 18 so we just install it from there"
-    apt-get install --no-install-recommends -y nodejs
+    apt-get install --no-install-recommends -y nodejs npm
 else
     wget https://deb.nodesource.com/setup_${NODEVERSION}.x
     if /bin/bash setup_${NODEVERSION}.x; then
