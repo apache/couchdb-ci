@@ -49,7 +49,7 @@ On the other hand, some OSes won't run older Erlangs because of library changes,
 Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `ELIXIRVERSION` environment variables:
 
 ```
-NODEVERSION=18 ELIXIRVERSION=v1.17.2 ERLANGVERSION=25.3.2.15 ./build.sh platform debian-bullseye
+NODEVERSION=20 ELIXIRVERSION=v1.17.3 ERLANGVERSION=25.3.2.18 ./build.sh platform debian-bookworm
 ```
 
 ## Building images for other architectures
@@ -58,13 +58,63 @@ NODEVERSION=18 ELIXIRVERSION=v1.17.2 ERLANGVERSION=25.3.2.15 ./build.sh platform
 
 Use Docker's
 [Buildx](https://docs.docker.com/buildx/working-with-buildx/) plugin to generate
-multi-architecture container images with a single command invocation. Docker
-Desktop ships with buildx support, but you'll need to create a new builder to
-use it:
+multi-architecture container images with a single command invocation.
+
+Multi-arch images can be built locally, with archtectures emulated
+with qemu, or using remote workers, if we have ssh acccess to hosts
+running on each of the supported architectures. Aside from the initial
+setup the rest of the commands are exactly the same.
+
+##### Local setup
 
 ```
 docker buildx create --name apache-couchdb --use
 ```
+
+##### Remote setup
+
+This requires your ssh key to be installed on the remote workers. See
+the `couchdb-infra-cm` repo for the list of current keys.
+
+To use shorter names for the servers can include the `ssh.cfg` file
+from `couchdb-infra-cm` in your `ssh_config`.
+
+Ensure ssh connection to each build server works. There maybe be a
+different user for each one (root, ubuntu, linux1, etc), the `ssh.cfg`
+file, if you're using that already handles that transparently.
+
+If the user is not root, ensure the user can run `docker ps`. For instance:
+```
+sudo usermod -aG docker linux1
+```
+
+Test that `docker ps` run for each server:
+
+```
+ssh linux1 docker ps
+ssh ubuntu-nc-arm64-12 docker ps
+ssh ubuntu docker ps
+ssh ubuntu-fra1-10 docker ps
+```
+
+Setup the `multiarch` xbuild context:
+
+```
+docker buildx rm multiarch  || true
+docker buildx create --name multiarch --driver docker-container --platform linux/arm64 ssh://ubuntu-nc-arm64-12
+docker buildx create --append --name multiarch --driver docker-container --platform linux/amd64 ssh://ubuntu-fra1-10
+docker buildx create --append --name multiarch --driver docker-container --platform linux/s390x ssh://linux1
+docker buildx create --append --name multiarch --driver docker-container --platform linux/ppc64le ssh://ubuntu
+```
+
+Before building, set `docker buildx` to `use` the new context as the new default.
+When done, set to `default`, or whatever it was before:
+
+```
+docker buildx use multiarch
+```
+
+#### Building
 
 The `build.sh` script has `buildx-base` and `buildx-platform` targets that will
 will build **and upload** a new multi-arch container image to the registry. For

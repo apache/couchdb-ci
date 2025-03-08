@@ -84,29 +84,29 @@ echo "Detected RedHat/Centos/Fedora version: ${VERSION_ID}   arch: ${ARCH}"
 
 # TODO: Do the Right Things(tm) for Fedora
 
+dnf update -y
+
 # Enable EPEL
-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
+dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
 # PowerTools for Alma 8
 if [[ ${VERSION_ID} -eq 8 ]]; then
   dnf install -y 'dnf-command(config-manager)'
   dnf config-manager --set-enabled powertools
-  yum update -y
+  dnf update -y
 fi
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
-if [[ ${VERSION_ID} -ne 6 ]]; then
-  # more for RHEL than CentOS...
-  yum install subscription-manager -y
-  subscription-manager repos \
-    --enable "rhel-*-optional-rpms" \
-    --enable "rhel-*-extras-rpms" \
-  >/dev/null 2>&1 || true
-fi
+# more for RHEL than CentOS...
+dnf install subscription-manager -y
+subscription-manager repos \
+  --enable "rhel-*-optional-rpms" \
+  --enable "rhel-*-extras-rpms" \
+ >/dev/null 2>&1 || true
 
 # Upgrade all packages
-yum upgrade -y
+dnf upgrade -y
 
 # Install auxiliary packages
-yum groupinstall -y 'Development Tools'
+dnf groupinstall -y 'Development Tools'
 
 # Dependencies for make couch, except erlang and package building stuff.
 # help2man is for docs
@@ -116,7 +116,7 @@ yum install -y sudo git wget which autoconf autoconf-archive automake curl-devel
 if [[ ${VERSION_ID} -eq 9 ]]; then
   dnf --enablerepo=crb install -y help2man
 else
-  yum install -y help2man
+  dnf install -y help2man
 fi
 
 # Node.js
@@ -137,22 +137,18 @@ if [ $? -ne 0 ]; then
   fake-rpm nodejs ${NODEVERSION}.0.0
 else
   set -e
-  yum install -y nodejs
+  dnf install -y nodejs
 fi
 rm setup_${NODEVERSION}.x
 npm install npm@latest -g
 popd
 
 # python for testing and documentaiton
-if [[ ${VERSION_ID} -eq 7 ]]; then
-  yum install -y python36 python36-pip python-virtualenv
-  PIP=pip3.6
-  ln -s /usr/bin/python3.6 /usr/local/bin/python3
-elif [[ ${VERSION_ID} -eq 8 ]]; then
-  yum install -y python3-pip python3-virtualenv
+if [[ ${VERSION_ID} -eq 8 ]]; then
+  dnf install -y python3-pip python3-virtualenv
   PIP=pip3
 else
-  yum install -y python3-pip
+  dnf install -y python3-pip
   PIP=pip3
 fi
 
@@ -166,24 +162,24 @@ fi
 if [[ $1 != "nojs" ]]; then
   if [[ ${VERSION_ID} -lt 8 ]]; then
   # config the CouchDB repo & install the JS packages
-    yum install -y yum-utils
+    dnf install -y yum-utils
     yum-config-manager --add-repo https://couchdb.apache.org/repo/couchdb.repo
     # install the JS packages
-    yum install -y couch-js-devel
+    dnf install -y couch-js-devel
   elif [[ ${VERSION_ID} -eq 8 ]]; then
-    yum install -y mozjs60-devel
+    dnf install -y mozjs60-devel
   else
-    yum install -y mozjs78-devel
+    dnf install -y mozjs78-devel
   fi
 else
   # install js build-time dependencies only
   # we can't add the CouchDB repo here because the plat may not exist yet
-  yum install -y libffi-devel
+  dnf install -y libffi-devel
 fi
 
 # remove openjdk8 and jna, java 21 is installed and should be the default
 # and clouseau installs it's own JRE 8 in /opt via a docker layer
-yum remove -y java-1.8.0-openjdk-headless jna
+dnf remove -y java-1.8.0-openjdk-headless jna
 
 # clean up
-yum clean all -y
+dnf clean all -y
