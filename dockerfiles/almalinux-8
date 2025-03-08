@@ -32,8 +32,8 @@ ARG js=js
 ARG erlang=erlang
 # Select version of Node, Erlang and Elixir to install
 ARG erlangversion=25.3.2.15
-ARG elixirversion=v1.17.2
-ARG nodeversion=18
+ARG elixirversion=v1.17.3
+ARG nodeversion=20
 
 # Create Jenkins user and group
 RUN groupadd --gid 910 jenkins; \

@@ -65,20 +65,12 @@ apt-get update || true
 if [ "${ERLANGVERSION}" = "default" ]
 then
   apt-get update && apt-get install --no-install-recommends -y erlang-nox erlang-dev erlang erlang-eunit erlang-dialyzer
-elif [ "${ARCH}" = x86_64 ]
-then
-  wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb
-  dpkg -i erlang-solutions_*_all.deb || true
-  rm erlang-solutions_*_all.deb
-  apt-get update || true
-  apt-get install --no-install-recommends -y esl-erlang=1:${ERLANGVERSION} || true
 fi
 
 # fallback to source install if all else fails
 if [ ! -x /usr/bin/erl -a ! -x /usr/local/bin/erl ]
 then
-  # remove any trailing -### in version used for erlang solutions packages
-  apt-get purge -y erlang-solutions && apt-get update
+  apt-get update
   export ERLANGVERSION=$(echo ${ERLANGVERSION} | cut -d- -f 1)
   ${SCRIPTPATH}/source-erlang.sh
   for pkg in \

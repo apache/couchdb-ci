@@ -78,17 +78,10 @@ EOF
 # TODO: Do the Right Things(tm) for Fedora
 if [[ ${ERLANGVERSION} == "default" ]]; then
   yum install -y erlang
-elif [ ${ARCH} == x86_64 ]; then
-  wget https://packages.erlang-solutions.com/erlang-solutions-2.0-1.noarch.rpm
-  rpm -Uvh erlang-solutions-2.0-1.noarch.rpm
-  yum install -y esl-erlang-${ERLANGVERSION} || true
-  rm erlang-solutions-2.0-1.noarch.rpm
 fi
 
 # fallback to source install if all else fails
 if [ ! -x /usr/bin/erl -a ! -x /usr/local/bin/erl ]; then
-  # remove any trailing -### in version used for erlang solutions packages
-  yum remove -y erlang-solutions
   export ERLANGVERSION=$(echo ${ERLANGVERSION} | cut -d- -f 1)
   ${SCRIPTPATH}/source-erlang.sh
   fake-rpm esl-erlang $(date "+%Y%m%d%H%M%S")
