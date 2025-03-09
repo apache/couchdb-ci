@@ -186,7 +186,7 @@ After building the image as above:
 docker run -it couchdbdev/<tag>
 ```
 
-where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bookworm-erlang-25.3.2.15`.
+where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bookworm-erlang-25.3.2.18`.
 
 ## Running the CouchDB build in a published container
 
