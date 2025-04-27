@@ -36,7 +36,7 @@ ARG js=js
 # Choose whether to install Erlang, default yes
 ARG erlang=erlang
 # Select version of Node, Erlang and Elixir
-ARG erlangversion=25.3.2.18
+ARG erlangversion=26.2.5.11
 ARG elixirversion=v1.17.3
 ARG nodeversion=20
 
