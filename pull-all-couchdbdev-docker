@@ -7,14 +7,8 @@ KEEP_IMAGES=(
 couchdbci-debian:bookworm-erlang-25.3.2.20
 couchdbci-debian:bookworm-erlang-26.2.5.11
 couchdbci-debian:bookworm-erlang:27.3.3
-couchdbci-centos:9-erlang-25.3.2.20
-couchdbci-centos:8-erlang-25.3.2.20
 couchdbci-centos:9-erlang-26.2.5.11
 couchdbci-centos:8-erlang-26.2.5.11
-couchdbci-ubuntu:noble-erlang-25.3.2.20
-couchdbci-ubuntu:jammy-erlang-25.3.2.20
-couchdbci-ubuntu:focal-erlang-25.3.2.20
-couchdbci-ubuntu:focal-erlang-25.3.2.20
 couchdbci-ubuntu:noble-erlang-26.2.5.11
 couchdbci-ubuntu:jammy-erlang-26.2.5.11
 couchdbci-ubuntu:focal-erlang-26.2.5.11
