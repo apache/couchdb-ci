@@ -88,7 +88,7 @@ dnf update -y
 
 # Enable EPEL
 dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${VERSION_ID}.noarch.rpm || true
-# PowerTools for Alma 8
+# PowerTools for Alma 8 and python 3.12
 if [[ ${VERSION_ID} -eq 8 ]]; then
   dnf install -y 'dnf-command(config-manager)'
   dnf config-manager --set-enabled powertools
@@ -110,14 +110,20 @@ dnf groupinstall -y 'Development Tools'
 
 # Dependencies for make couch, except erlang and package building stuff.
 # help2man is for docs
-yum install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
+dnf install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
     libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
     createrepo xfsprogs-devel java-21-openjdk-devel rpmdevtools
 if [[ ${VERSION_ID} -eq 9 ]]; then
   dnf --enablerepo=crb install -y help2man
-else
+elif [[ ${VERSION_ID} -eq 8 ]]; then
   dnf install -y help2man
 fi
+
+dnf install -y python3.12 python3.12-pip python3.12-wheel
+alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 99
+alternatives --set python3 /usr/bin/python3.12
+alternatives --install /usr/bin/pip3 pip3 /usr/bin/pip3.12 99
+alternatives --set pip3 /usr/bin/pip3.12
 
 # Node.js
 pushd /tmp
@@ -143,20 +149,6 @@ rm setup_${NODEVERSION}.x
 npm install npm@latest -g
 popd
 
-# python for testing and documentaiton
-if [[ ${VERSION_ID} -eq 8 ]]; then
-  dnf install -y python3-pip python3-virtualenv
-  PIP=pip3
-else
-  dnf install -y python3-pip
-  PIP=pip3
-fi
-
-${PIP} --default-timeout=1000 install docutils==0.13.1 sphinx==1.5.3 sphinx_rtd_theme \
-    typing nose requests hypothesis==3.79.0
-if [[ ${VERSION_ID} -eq 9 ]]; then
-  ${PIP} --default-timeout=1000 install wheel virtualenv
-fi
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then
