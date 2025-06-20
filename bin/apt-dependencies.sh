@@ -37,13 +37,13 @@ if [ ${EUID} -ne 0 ]; then
 fi
 
 # install lsb-release
-apt-get update && apt-get install --no-install-recommends -y lsb-release
+apt-get update && apt-get install -y lsb-release
 
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
 debians='(bullseye|bookworm)'
-ubuntus='(focal|jammy|noble)'
+ubuntus='(jammy|noble)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
 # ubuntu docker image seems to be missing /etc/timezone...
@@ -70,14 +70,7 @@ apt-get install --no-install-recommends -y apt-transport-https curl git pkg-conf
     help2man curl debhelper devscripts dh-exec dh-python equivs \
     dialog equivs lintian libwww-perl quilt \
     reprepro fakeroot rsync \
-    vim-tiny screen procps dirmngr ssh-client
-
-
-# createrepo_c is optional, all distros have it except focal
-# once focal is dropped can just added to the list above
-#
-apt-get install --no-install-recommends -y createrepo-c || true
-
+    vim-tiny screen procps dirmngr ssh-client createrepo-c time
 
 # Node.js (ubuntu noble has version 18, otherwise build a package)
 
@@ -149,7 +142,6 @@ if [ "$1" != "nojs" ]; then
   # older releases don't have libmozjs60+, and we provide 1.8.5
   if [ "${VERSION_CODENAME}" != "noble" ] && \
      [ "${VERSION_CODENAME}" != "jammy" ] && \
-     [ "${VERSION_CODENAME}" != "focal" ] && \
      [ "${VERSION_CODENAME}" != "bullseye" ] && \
      [ "${VERSION_CODENAME}" != "bookworm" ] && \
      [ "${ARCH}" != "s390x" ]; then
@@ -163,9 +155,6 @@ if [ "$1" != "nojs" ]; then
   # newer releases have newer libmozjs
   if [ "${VERSION_CODENAME}" == "noble" ]; then
     apt-get install --no-install-recommends -y libmozjs-102-dev libmozjs-115-dev
-  fi
-  if [ "${VERSION_CODENAME}" == "focal" ]; then
-    apt-get install --no-install-recommends -y libmozjs-68-dev
   fi
   if [ "${VERSION_CODENAME}" == "jammy" ]; then
     apt-get install --no-install-recommends -y libmozjs-78-dev libmozjs-91-dev
