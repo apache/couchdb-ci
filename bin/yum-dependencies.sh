@@ -112,7 +112,7 @@ dnf groupinstall -y 'Development Tools'
 # help2man is for docs
 dnf install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
     libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
-    createrepo xfsprogs-devel java-21-openjdk-devel rpmdevtools
+    createrepo xfsprogs-devel java-21-openjdk-devel rpmdevtools time
 if [[ ${VERSION_ID} -eq 9 ]]; then
   dnf --enablerepo=crb install -y help2man
 elif [[ ${VERSION_ID} -eq 8 ]]; then

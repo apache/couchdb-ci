@@ -37,7 +37,7 @@ ARG js=js
 ARG erlang=erlang
 # Select version of Node, Erlang and Elixir
 ARG erlangversion=26.2.5.11
-ARG elixirversion=v1.17.3
+ARG elixirversion=v1.18.4
 ARG nodeversion=20
 
 # Create Jenkins user and group
