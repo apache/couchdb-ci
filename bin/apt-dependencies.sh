@@ -42,7 +42,7 @@ apt-get update && apt-get install -y lsb-release
 SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPTPATH}/detect-arch.sh >/dev/null
 . ${SCRIPTPATH}/detect-os.sh >/dev/null
-debians='(bullseye|bookworm)'
+debians='(bullseye|bookworm|trixie)'
 ubuntus='(jammy|noble)'
 echo "Detected Ubuntu/Debian version: ${VERSION_CODENAME}   arch: ${ARCH}"
 
@@ -114,11 +114,13 @@ EOF
 fi
 
 # rest of python dependencies
-if [ "${VERSION_CODENAME}" == "bookworm" -o "${VERSION_CODENAME}" == "noble" ]; then
-    # On Debian bookworm and Ubuntu noble, need the --break-system-package to into to default system location
-    apt-get -y --no-install-recommends install sphinx-rtd-theme-common python3-nose python3-requests python3-hypothesis
+# Since Debian bookworm and Ubuntu noble, to install python packages as system packages, add the "python3-"prefix
+if [ "${VERSION_CODENAME}" == "bookworm" ] || [ "${VERSION_CODENAME}" == "noble" ]; then
+    apt-get -y --no-install-recommends install python3-nose python3-requests python3-hypothesis
+elif [ "${VERSION_CODENAME}" == "trixie" ]; then
+    apt-get -y --no-install-recommends install python3-nose2 python3-requests python3-hypothesis
 else
-    pip3 --default-timeout=10000 install --upgrade sphinx_rtd_theme nose requests hypothesis==3.79.0
+    pip3 --default-timeout=10000 install --upgrade nose requests hypothesis==3.79.0
 fi
 
 # relaxed lintian rules for CouchDB
@@ -144,6 +146,7 @@ if [ "$1" != "nojs" ]; then
      [ "${VERSION_CODENAME}" != "jammy" ] && \
      [ "${VERSION_CODENAME}" != "bullseye" ] && \
      [ "${VERSION_CODENAME}" != "bookworm" ] && \
+     [ "${VERSION_CODENAME}" != "trixie" ] && \
      [ "${ARCH}" != "s390x" ]; then
     curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1
     source /etc/os-release
@@ -164,6 +167,9 @@ if [ "$1" != "nojs" ]; then
   fi
   if [ "${VERSION_CODENAME}" == "bookworm" ]; then
       apt-get install --no-install-recommends -y libmozjs-78-dev
+  fi
+  if [ "${VERSION_CODENAME}" == "trixie" ]; then
+        apt-get install --no-install-recommends -y libmozjs-128-dev
   fi
 else
   # install js build-time dependencies only
