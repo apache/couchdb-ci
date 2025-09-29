@@ -33,6 +33,9 @@ NODEVERSION=${NODEVERSION:-20}
 ERLANGVERSION=${ERLANGVERSION:-26.2.5.15}
 ELIXIRVERSION=${ELIXIRVERSION:-v1.18.4}
 
+# Java JDKs needed
+CLOUSEAU_JDK_VERSION="8"
+NOUVEAU_JDK_VERSION="21"
 
 # This works if we're not called through a symlink
 # otherwise, see https://stackoverflow.com/questions/59895/
@@ -95,9 +98,15 @@ case "${OSTYPE}" in
       fi
       run_scripts ${EXTRA_SCRIPTS_DIR} 'yum-'
     elif [[ ${ID} =~ ${debians} ]]; then
-
       NODEVERSION=${NODEVERSION} ERLANGVERSION=${ERLANGVERSION} \
           ${SCRIPTPATH}/apt-dependencies.sh ${JSINSTALL}
+
+      # Install JDKs
+      apt-get update
+      apt-get install -y temurin-${CLOUSEAU_JDK_VERSION}-jdk temurin-${NOUVEAU_JDK_VERSION}-jdk
+      export JAVA_HOME=$(update-java-alternatives -l | grep "${NOUVEAU_JDK_VERSION}" | awk '{print $3}')
+      export CLOUSEAU_JAVA_HOME=$(update-java-alternatives -l | grep "${CLOUSEAU_JDK_VERSION}" | awk '{print $3}')
+
       if [[ ! ${SKIPERLANG} ]]; then
         ERLANGVERSION=${ERLANGVERSION} ${SCRIPTPATH}/apt-erlang.sh
         ELIXIRVERSION=${ELIXIRVERSION} ${SCRIPTPATH}/install-elixir.sh
