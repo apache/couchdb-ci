@@ -170,7 +170,6 @@ else
 fi
 
 # remove openjdk8 and jna, java 21 is installed and should be the default
-# and clouseau installs it's own JRE 8 in /opt via a docker layer
 dnf remove -y java-1.8.0-openjdk-headless jna
 
 # clean up
