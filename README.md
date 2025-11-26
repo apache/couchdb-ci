@@ -49,7 +49,7 @@ On the other hand, some OSes won't run older Erlangs because of library changes,
 Just specify on the command line any of the `ERLANGVERSION`, `NODEVERSION`, or `ELIXIRVERSION` environment variables:
 
 ```
-NODEVERSION=20 ELIXIRVERSION=v1.18.4 ERLANGVERSION=26.2.5.13 ./build.sh platform debian-bookworm
+NODEVERSION=20 ELIXIRVERSION=v1.18.4 ERLANGVERSION=26.2.5.17 ./build.sh platform debian-bookworm
 ```
 
 ## Building images for other architectures
@@ -186,7 +186,7 @@ After building the image as above:
 docker run -it couchdbdev/<tag>
 ```
 
-where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bookworm-erlang-26.2.5.11`.
+where `<tag>` is of the format `<distro>-<version>-<type>`, such as `debian-bookworm-erlang-26.2.5.17`.
 
 ## Running the CouchDB build in a published container
 

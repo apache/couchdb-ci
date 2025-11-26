@@ -33,7 +33,7 @@ fi
 # Upgrade all packages
 pkg upgrade -y
 
-pkg install -y gmake help2man openssl icu curl git bash unzip \
+pkg install -y gmake openssl icu curl git bash unzip \
     autoconf automake libtool node12 npm-node12 lang/python3 \
     py37-sphinx py37-pip
 
