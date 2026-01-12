@@ -12,6 +12,7 @@ couchdbci-debian:bullseye-erlang:26.2.5.16
 couchdbci-debian:trixie-erlang:26.2.5.16
 couchdbci-ubuntu:noble-erlang-26.2.5.16
 couchdbci-ubuntu:jammy-erlang-26.2.5.16
+couchdbci-centos:10-erlang-26.2.5.16
 couchdbci-centos:9-erlang-26.2.5.16
 couchdbci-centos:8-erlang-26.2.5.16
 )

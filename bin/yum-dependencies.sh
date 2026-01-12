@@ -152,17 +152,12 @@ popd
 
 # js packages, as long as we're not told to skip them
 if [[ $1 != "nojs" ]]; then
-  if [[ ${VERSION_ID} -lt 8 ]]; then
-  # config the CouchDB repo & install the JS packages
-    dnf install -y yum-utils
-    yum-config-manager --add-repo https://couchdb.apache.org/repo/couchdb.repo
-    # install the JS packages
-    dnf install -y couch-js-devel
-  elif [[ ${VERSION_ID} -eq 8 ]]; then
+  if [[ ${VERSION_ID} -eq 8 ]]; then
     dnf install -y mozjs60-devel
-  else
+  elif [[ ${VERSION_ID} -eq 9 ]]; then
     dnf install -y mozjs78-devel
   fi
+  # For 10 and up skip install mozjs, we'll use quickjs instead
 else
   # install js build-time dependencies only
   # we can't add the CouchDB repo here because the plat may not exist yet
