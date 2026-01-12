@@ -48,7 +48,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #
 DEBIANS="debian-bullseye debian-bookworm debian-trixie"
 UBUNTUS="ubuntu-jammy ubuntu-noble"
-CENTOSES="almalinux-8 almalinux-9"
+CENTOSES="almalinux-8 almalinux-9 almalinux-10"
 
 PASSED_BUILDARGS="$buildargs"
 
