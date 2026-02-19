@@ -109,15 +109,9 @@ dnf upgrade -y
 dnf groupinstall -y 'Development Tools'
 
 # Dependencies for make couch, except erlang and package building stuff.
-# help2man is for docs
-dnf install -y sudo git wget which autoconf autoconf-archive automake curl-devel libicu-devel \
+dnf install -y sudo git wget which autoconf autoconf-archive automake libicu-devel \
     libtool ncurses-devel nspr-devel zip readline-devel unzip perl \
-    createrepo xfsprogs-devel java-21-openjdk-devel rpmdevtools time
-if [[ ${VERSION_ID} -eq 9 ]]; then
-  dnf --enablerepo=crb install -y help2man
-elif [[ ${VERSION_ID} -eq 8 ]]; then
-  dnf install -y help2man
-fi
+    createrepo java-21-openjdk-devel rpmdevtools time
 
 dnf install -y python3.12 python3.12-pip python3.12-wheel
 alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 99
