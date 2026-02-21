@@ -21,11 +21,6 @@ FROM almalinux:8
 
 # Java 21 installed via RPM: java-21-openjdk-devel
 
-# These are needed for the Clouseau integration
-# This is the same as for Nouveau for the moment, but perhaps it is better to
-# keep it separate as there is no guarantee that they will be bumped at the
-# same pace.
-ENV CLOUSEAU_JAVA_HOME="${JAVA_HOME}"
 ENV PATH=/usr/local/lib/erlang/bin:"${PATH}"
 
 # Choose whether to install SpiderMonkey 1.8.5, default yes

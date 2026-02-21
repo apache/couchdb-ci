@@ -82,6 +82,7 @@ fi
 
 # Configure Erlang - skip building things we don't want or need
 ./configure \
+  --enable-builtin-zlib \
   --without-javac --without-wx --without-odbc \
   --without-debugger --without-observer --without-et  \
   --without-diameter --without-megaco --without-tftp \
