@@ -3,7 +3,8 @@
 DOCKER_ORG="apache"
 
 # These are the images that are currently being used, so don't `docker rmi` them on cleanup.
-KEEP_IMAGES=(
+
+PULL_IMAGES=(
 couchdbci-debian:bookworm-erlang:28.3.2
 couchdbci-debian:bookworm-erlang:27.3.4.8
 couchdbci-debian:bookworm-erlang-26.2.5.17
@@ -16,7 +17,16 @@ couchdbci-centos:9-erlang-26.2.5.17
 couchdbci-centos:8-erlang-26.2.5.17
 )
 
-for image in ${KEEP_IMAGES[*]}
+# The buildkit one is from docker buildx so that the vm can be used as
+# architecture-specific builders. We don't pull this one it's added as
+# part of multiarch --bootstrap via ssh
+
+KEEP_IMAGES=(
+  "${PULL_IMAGES[@]}"
+  buildkit:buildx-stable-1
+)
+
+for image in ${PULL_IMAGES[*]}
 do
     echo docker pull ${DOCKER_ORG}/${image}
     docker pull ${DOCKER_ORG}/${image}
