@@ -2,7 +2,11 @@
 
 DOCKER_ORG="apache"
 
-# These are the images that are currently being used, so don't `docker rmi` them on cleanup.
+# These are the images that are currently being used. Make sure we pull them to
+# prefill the local docker images so CI runs a bit quicker. The buildkit image
+# is from docker buildx so that the worker nodes can be used as part of docker
+# buildx multiarch setup. It should match what `docker buildx inspect multiarch
+# --bootstrap` pulls.
 
 PULL_IMAGES=(
 couchdbci-debian:bookworm-erlang:28.3.2
@@ -15,26 +19,12 @@ couchdbci-ubuntu:jammy-erlang-26.2.5.17
 couchdbci-centos:10-erlang-26.2.5.17
 couchdbci-centos:9-erlang-26.2.5.17
 couchdbci-centos:8-erlang-26.2.5.17
+moby/buildkit:buildx-stable-1
 )
 
-# The buildkit one is from docker buildx so that the vm can be used as
-# architecture-specific builders. We don't pull this one it's added as
-# part of multiarch --bootstrap via ssh
-
-KEEP_IMAGES=(
-  "${PULL_IMAGES[@]}"
-  buildkit:buildx-stable-1
-)
-
+docker system prune -af --filter "until=720h"
 for image in ${PULL_IMAGES[*]}
 do
     echo docker pull ${DOCKER_ORG}/${image}
     docker pull ${DOCKER_ORG}/${image}
-    # We don't want to delete the current working set of images.
-    if ! printf '%s\n' "${KEEP_IMAGES[@]}" | grep -q -P "^${image}$"; then
-        echo docker rmi ${DOCKER_ORG}/$image
-        docker rmi ${DOCKER_ORG}/$image
-    fi
 done
-
-docker system prune -f
