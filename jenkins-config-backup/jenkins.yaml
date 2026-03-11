@@ -1,0 +1,964 @@
+configuration-as-code: {
+  }
+credentials:
+  folder: {
+    }
+  operationsCenter: {
+    }
+  providerImpl: {
+    }
+  system:
+    domainCredentials:
+    - credentials:
+      - string:
+          description: "Admin access to ASF Github repo hooks"
+          id: "jenkins-cm1-pr-hooks"
+          scope: GLOBAL
+          secret: "...redacted..."
+      domain: {
+        }
+  user: {
+    }
+jenkins:
+  authorizationStrategy: "cloudBeesRoleBasedAccessControl"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  disabledAdministrativeMonitors:
+  - "hudson.node_monitors.MonitorMarkedNodeOffline"
+  - "com.cloudbees.jenkins.plugins.administrative_monitors.BlueOceanMonitor2"
+  - "com.cloudbees.jenkins.plugins.administrative_monitors.MavenIntegrationPluginMonitor"
+  - "com.cloudbees.jenkins.plugins.administrative_monitors.TomcatMonitor"
+  - "OldData"
+  - "com.cloudbees.jenkins.plugins.administrative_monitors.unsupported_plugin.WikiTextMonitor"
+  - "hudson.util.DoubleLaunchChecker"
+  - "jenkins.security.csp.impl.CspRecommendation"
+  - "com.cloudbees.analytics.gatherer.SegmentQueueOverwhelmedMonitor"
+  - "com.cloudbees.jenkins.plugins.administrative_monitors.BlueOceanMonitor"
+  - "com.cloudbees.jenkins.plugins.assurance.SecurityWarningsWatch"
+  labelAtoms:
+  - name: "asfminidebian"
+  - name: "built-in"
+  - name: "couchdb-freebsd-arm64"
+  - name: "couchdb-freebsd-x86"
+  - name: "couchdb-macos-arm64"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-01"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-02"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-03"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-04"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-05"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-06"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-07"
+  - name: "couchdb-worker-x86-64-ubuntu-dal-1-08"
+  - name: "docker"
+  - name: "docker-arm64"
+  - name: "freebsd-arm64"
+  - name: "freebsd-x86_64"
+  - name: "linux1"
+  - name: "macos"
+  - name: "ppc64le"
+  - name: "s390x"
+  - name: "ubuntu"
+  - name: "ubuntu-fra1-10"
+  - name: "ubuntu-fsn-1-09"
+  - name: "ubuntu-nc-arm64-12"
+  - name: "ubuntu-nc-x86-11"
+  - name: "win"
+  - name: "win2022"
+  log: {
+    }
+  markupFormatter:
+    rawHtml:
+      disableSyntaxHighlighting: false
+  mode: NORMAL
+  noUsageStatistics: true
+  nodeMonitors:
+  - "architecture"
+  - "clock"
+  - diskSpace:
+      freeSpaceThreshold: "1GB"
+      freeSpaceWarningThreshold: "2GB"
+  - "swapSpace"
+  - tmpSpace:
+      freeSpaceThreshold: "1GB"
+      freeSpaceWarningThreshold: "2GB"
+  - "responseTime"
+  nodes:
+  - permanent:
+      labelString: "docker-arm64"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "asfminidebian"
+      nodeDescription: "Ubuntu Debian ARM64 VM. Donated by Jan."
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "freebsd-arm64"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-freebsd-arm64"
+      nodeDescription: "FreeBSD Build Node"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "freebsd-x86_64"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-freebsd-x86"
+      nodeDescription: "FreeBSD Build Node"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "CC"
+            value: "clang"
+          - key: "CPP"
+            value: "clang++"
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "macos"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-macos-arm64"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "PATH+HOMEBREW_BIN"
+            value: "/opt/homebrew/bin"
+          - key: "PATH+HOMEBREW_SBIN"
+            value: "/opt/homebrew/sbin"
+      remoteFS: "/Users/jenkins2"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-01"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-02"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-03"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-04"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-05"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-06"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-07"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "couchdb-worker-x86-64-ubuntu-dal-1-08"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "s390x"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      mode: EXCLUSIVE
+      name: "linux1"
+      nodeDescription: "Z Linux s390x"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "ppc64le"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "ubuntu"
+      nodeDescription: "PPC64LE (Power)"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "ubuntu-fra1-10"
+      nodeDescription: "Ubuntu x86_64. Donated by Digital Ocean"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "ubuntu-fsn-1-09"
+      nodeDescription: "Ubuntu x86_64. Donated by Jan"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker-arm64"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "ubuntu-nc-arm64-12"
+      nodeDescription: "Ubuntu arm64. Donated by Netcup."
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "docker"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: false
+            internalDir: "remoting"
+      name: "ubuntu-nc-x86-11"
+      nodeDescription: "Ubuntu x86_64. Donated by Netcup."
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  - permanent:
+      labelString: "win"
+      launcher:
+        inbound:
+          workDirSettings:
+            disabled: false
+            failIfWorkDirIsMissing: true
+            internalDir: "remoting"
+      mode: EXCLUSIVE
+      name: "win2022"
+      nodeProperties:
+      - envVars:
+          env:
+          - key: "MAVEN_OPTS"
+            value: ""
+      remoteFS: "C:\\tools\\jenkins-agent\\"
+      retentionStrategy: "always"
+  numExecutors: 0
+  primaryView:
+    all:
+      name: "all"
+  projectNamingStrategy: "standard"
+  quietPeriod: 5
+  remotingSecurity:
+    enabled: true
+  scmCheckoutRetryCount: 0
+  securityRealm: "operationsCenter"
+  slaveAgentPort: 50000
+  systemMessage: |-
+    <a href="http://www.apache.org/"><img src="https://www.apache.org/images/asf_logo_wide_2016.png" /></a>
+    <p>
+    This is a public build and test server for <a href="http://projects.apache.org/">projects</a> of the
+    <a href="http://www.apache.org/">Apache Software Foundation</a>. All times on this server are UTC.
+    </p>
+    <p>
+    See the <a href="https://cwiki.apache.org/confluence/display/INFRA/Jenkins">Jenkins wiki page</a> for more information
+    about this service.
+    </p>
+    <p>Information about each client controller, including node labels can be found <a href="https://cwiki.apache.org/confluence/display/INFRA/ASF+Cloudbees+Operations+Center">Here</a></p>
+    <p style='font-weight:bold;text-align:center'>NOTE: All Jenkins Controllers are scheduled for plugin upgrades and a safe restart
+      every 1st Sunday of the month.</p>
+  updateCenter:
+    sites:
+    - id: "core-cm-offline"
+      url: "file:/home/jenkins/tools/tomcat/apache-tomcat-10.1.50/webapps/ROOT/WEB-INF/plugins/update-center.json"
+    - id: "cap-core-cm"
+      url: "https://jenkins-updates.cloudbees.com/update-center/envelope-core-cm/update-center.json"
+  views:
+  - all:
+      name: "all"
+  viewsTabBar: "standard"
+beekeeper:
+  enabled: true
+  securityWarnings:
+    enabledForCore: true
+    enabledForPlugins: true
+  upgrades:
+    autoDowngradePlugins: false
+    autoUpgradePlugins: true
+license:
+  certificate: "...redacted..."
+  key: "...redacted..."
+support:
+  automatedBundleConfiguration:
+    componentIds:
+    - "SegmentClientEventsComponent"
+    - "CloudBeesAssuranceSupport"
+    - "CascScmRetrieverSupport"
+    - "CloudBeesCasCUpdateLogBundlesSupport"
+    - "AgentsConfigFile"
+    - "ConfigFileComponent"
+    - "OtherConfigFilesComponent"
+    - "AboutBrowser"
+    - "AboutJenkins"
+    - "AboutUser"
+    - "AdministrativeMonitors"
+    - "BuildQueue"
+    - "CustomLogs"
+    - "DumpExportTable"
+    - "EnvironmentVariables"
+    - "FileDescriptorLimit"
+    - "GCLogs"
+    - "HeapUsageHistogram"
+    - "ItemsContent"
+    - "AgentsJVMProcessSystemMetricsContents"
+    - "MasterJVMProcessSystemMetricsContents"
+    - "JenkinsLogs"
+    - "LoadStats"
+    - "LoggerManager"
+    - "Metrics"
+    - "NetworkInterfaces"
+    - "NodeExecutors"
+    - "NodeMonitors"
+    - "OtherLogs"
+    - "ProxyConfiguration"
+    - "ReverseProxy"
+    - "RootCAs"
+    - "RunningBuilds"
+    - "SlaveCommandStatistics"
+    - "SlaveLaunchLogs"
+    - "SlaveLogs"
+    - "AgentsSystemConfiguration"
+    - "MasterSystemConfiguration"
+    - "SystemProperties"
+    - "TaskLogs"
+    - "ThreadDumps"
+    - "UpdateCenter"
+    - "UserCount"
+    - "SlowRequestComponent"
+    - "SlowRequestThreadDumpsComponent"
+    - "ShutdownComponent"
+    - "StartupComponent"
+    - "HighLoadComponent"
+    - "DeadlockRequestComponent"
+    - "OperationsCenterSupportComponent"
+    - "UserActivityComponent"
+    - "PipelineInternalCalls"
+    - "PipelineTimings"
+    - "PipelineThreadDump"
+    enabled: true
+    period: 1
+globalCredentialsConfiguration:
+  configuration:
+    providerFilter: "none"
+    typeFilter: "none"
+appearance:
+  consoleUrlProvider: {
+    }
+  pipelineGraphView:
+    showGraphOnBuildPage: false
+    showGraphOnJobPage: false
+    showStageDurations: false
+    showStageNames: false
+  prism:
+    theme: PRISM
+security:
+  anonymizeSupportBundle:
+    enabled: false
+  apiToken:
+    creationOfLegacyTokenEnabled: false
+    tokenGenerationOnCreationEnabled: false
+    usageStatisticsEnabled: true
+  apiTokenProperty: {
+    }
+  contentSecurityPolicy:
+    enforce: false
+  cps:
+    hideSandbox: false
+  crumb: {
+    }
+  gitHooks:
+    allowedOnAgents: false
+    allowedOnController: false
+  gitHostKeyVerificationConfiguration:
+    sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
+  operationsCenterSecurityInfo: {
+    }
+  prism:
+    protectSourceCodeByPermission: false
+  queueItemAuthenticator: {
+    }
+  sSHD:
+    port: -1
+  scriptApproval:
+    approvedScriptHashes:
+    - "017d0db438428731cd600b6ebda805065433520f"
+    - "0583c5a085f38ff3b1ddd5de755952700f914c07"
+    - "1fe2a96b934459c27b025bff5e5bf9ec000ef381"
+    - "314de9326bf4606a5275a1d3f116d446f0471e9b"
+    - "48126fb9724f32d3e1afb1cb4ce72a0889134dd3"
+    - "639c21f8c675b1f55597a815c6519ed72b7917ad"
+    - "7d0ec331043289e728ad47680386042d43766d93"
+    - "8d7dffa0fa077b4018bc76f8b3ebd7bc48459fcc"
+    - "a78cc9c5f6fee2ca1fa03dce3b43503e7c57e5dd"
+    - "ad84649250e60d2a1ff6dd112e48aa556e82e3cd"
+    - "c17143c88ad09378dbd0a7980e8472136aa0a6ad"
+    - "c82d4a7e5ced620b4fc145a54b4a3bc8e6bc5d83"
+    - "ccd23a74df0c6fdfef512c9d086977a77e0022e4"
+    - "e1395200eda9e5e0089775cad3d99d29b7032daa"
+    - "ee7d1ca969e5906b9bb51f08cdc5cdcb29ad72df"
+    - "fbcbad05f0620332f64abae08788612d140703d3"
+    - "fca3e2dae16894945401bddf7c73d9a545fd61a0"
+    forceSandbox: false
+unclassified:
+  administrativeMonitorsConfiguration: {
+    }
+  artifactManager: {
+    }
+  blobStorePublisher: {
+    }
+  buildDiscarders:
+    configuredBuildDiscarders:
+    - "jobBuildDiscarder"
+  buildTimestamp:
+    enableBuildTimestamp: true
+    pattern: "yyyy-MM-dd HH:mm:ss z"
+    timezone: "Etc/UTC"
+  bundleUpdateTiming:
+    automaticReload: false
+    automaticRestart: false
+    rejectWarnings: false
+    reloadAlwaysOnRestart: false
+    skipNewVersions: false
+  casCGlobalConfig: {
+    }
+  cascItemsConfiguration:
+    variableInterpolationEnabledForAdmin: false
+    variableInterpolationEnabledForNonAdmin: false
+  cloudBeesSCMReporting:
+    enabled: true
+  cloudbeesPlatform: {
+    }
+  computerRetentionCheckInterval: {
+    }
+  configuration: {
+    }
+  defaultDisplayUrlProvider: {
+    }
+  defaultFolderConfiguration:
+    healthMetrics:
+    - worstChildHealthMetric:
+        recursive: true
+    - "averageChildHealthMetric"
+    - jobStatusHealthMetric:
+        countVirginJobs: false
+        failure: true
+        success: true
+        unbuilt: true
+        unstable: true
+    - "projectEnabledHealthMetric"
+  defaultView: {
+    }
+  envVarsFilter: {
+    }
+  experimentalPlugins:
+    enabled: false
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
+  gitHubConfiguration:
+    apiRateLimitChecker: ThrottleForNormalize
+  gitHubPluginConfig:
+    configs:
+    - credentialsId: "jenkins-cm1-pr-hooks"
+      name: "ASF Github"
+    hookUrl: "https://ci-couchdb.apache.org/github-webhook/"
+  globalConfigFiles: {
+    }
+  globalConfigurationImpl: {
+    }
+  globalDefaultFlowDurabilityLevel:
+    durabilityHint: PERFORMANCE_OPTIMIZED
+  globalLibraries: {
+    }
+  globalUntrustedLibraries: {
+    }
+  headerLabel: {
+    }
+  headerSupportRequestLink: {
+    }
+  junitTestResultStorage:
+    storage: "file"
+  location:
+    adminAddress: "Apache Jenkins Server <jenkins@builds.apache.org>"
+    url: "https://ci-couchdb.apache.org/"
+  mailer:
+    charset: "UTF-8"
+    defaultSuffix: "@apache.org"
+    smtpHost: "localhost"
+    smtpPort: "25"
+    useSsl: false
+    useTls: false
+  metricsAccessKey: {
+    }
+  myView: {
+    }
+  nodeProperties: {
+    }
+  operationsCenterRootAction:
+    connectionDetails: "...redacted..."
+  pipeline-model-docker:
+    registry: {
+      }
+  plugin: {
+    }
+  pollSCM:
+    pollingThreadCount: 10
+  projectNamingStrategy: {
+    }
+  provisioningLimitConfiguration: {
+    }
+  proxyConfigurationManager: {
+    }
+  quietPeriod: {
+    }
+  quietStartConfiguration:
+    activated: false
+  resourceRoot: {
+    }
+  scmGit:
+    addGitTagAction: false
+    allowSecondFetch: false
+    createAccountBasedOnEmail: false
+    disableGitToolChooser: false
+    hideCredentials: false
+    showEntireCommitSummaryInChanges: false
+    useExistingAccountWithSameEmail: false
+  scmRetryCount: {
+    }
+  shell: {
+    }
+  sshPublisher: {
+    }
+  timestamper:
+    allPipelines: false
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+  usageStatistics: {
+    }
+  usageStatisticsCloudBees:
+    disabledJenkinsUsageStatistics: true
+    usageStatisticsCollected: true
+  validationVisualization:
+    quiet: false
+  viewsTabBar: {
+    }
+  workspaceCache:
+    cacheManager: "none"
+tool:
+  cloudbeesPluginUsageAnalyzer:
+    enabled: true
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+  jdk:
+    installations:
+    - home: "/home/jenkins/tools/java/latest1.8"
+      name: "jdk_1.8_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest1.8"
+      name: "jdk_1.8_latest_windows"
+    - home: "/home/jenkins/tools/java/latest11"
+      name: "jdk_11_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest11"
+      name: "jdk_11_latest_windows"
+    - home: "/home/jenkins/tools/java/latest17"
+      name: "jdk_17_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest17"
+      name: "jdk_17_latest_windows"
+    - home: "/home/jenkins/tools/java/latest19"
+      name: "jdk_19_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest19"
+      name: "jdk_19_latest_windows"
+    - home: "/home/jenkins/tools/java/latest20"
+      name: "jdk_20_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest20"
+      name: "jdk_20_latest_windows"
+    - home: "/home/jenkins/tools/java/latest21"
+      name: "jdk_21_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest21"
+      name: "jdk_21_latest_windows"
+    - home: "/home/jenkins/tools/java/latest22"
+      name: "jdk_22_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest22"
+      name: "jdk_22_latest_windows"
+    - home: "/home/jenkins/tools/java/latest23"
+      name: "jdk_23_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest23"
+      name: "jdk_23_latest_windows"
+    - home: "/home/jenkins/tools/java/latest24"
+      name: "jdk_24_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest24"
+      name: "jdk_24_latest_windows"
+    - home: "/home/jenkins/tools/java/latest25"
+      name: "jdk_25_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest25"
+      name: "jdk_25_latest_windows"
+    - home: "/home/jenkins/tools/java/latest26"
+      name: "jdk_26_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest26"
+      name: "jdk_26_latest_windows"
+    - home: "/home/jenkins/tools/java/latest27"
+      name: "jdk_27_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest27"
+      name: "jdk_27_latest_windows"
+    - home: "/home/jenkins/tools/java/oraclejdk-1.8.0-291"
+      name: "oracle_jdk_1.8.0_291"
+    - home: "F:\\jenkins\\tools\\java\\oraclejdk-1.8.0-291"
+      name: "oracle_jdk_1.8.0_291_windows"
+    - home: "/home/jenkins/tools/java/oraclejdk-11.0.12"
+      name: "oracle_jdk_11.0.12"
+    - home: "F:\\jenkins\\tools\\java\\oraclejdk-11.0.12"
+      name: "oracle_jdk_11.0.12_windows"
+    - home: "/home/jenkins/tools/java/oraclejdk-17.0.1"
+      name: "oracle_jdk_17.0.1"
+    - home: "F:\\jenkins\\tools\\java\\oraclejdk-17.0.1"
+      name: "oracle_jdk_17.0.1_windows"
+    - home: "/home/jenkins/tools/java/openjdk-22-ea+20"
+      name: "openjdk_22_ea_20"
+    - home: "F:\\jenkins\\tools\\java\\openjdk-22-ea+20"
+      name: "openjdk_22_ea_20_windows"
+    - home: "/home/jenkins/tools/java/openjdk-23-ea+7"
+      name: "openjdk_23_ea_7"
+    - home: "F:\\jenkins\\tools\\java\\openjdk-23-ea+7"
+      name: "openjdk_23_ea_7_windows"
+    - home: "/home/jenkins/tools/java/openjdk-24-ea+2"
+      name: "openjdk_24_ea_2"
+    - home: "F:\\jenkins\\tools\\java\\openjdk-24-ea+2"
+      name: "openjdk_24_ea_2_windows"
+    - home: "/home/jenkins/tools/java/openjdk-25-ea+16"
+      name: "openjdk_25_ea_16"
+    - home: "F:\\jenkins\\tools\\java\\openjdk-25-ea+16"
+      name: "openjdk_25_ea_16_windows"
+    - home: "/home/jenkins/tools/java/openjdk-26-ea+2"
+      name: "openjdk_26_ea_2"
+    - home: "F:\\jenkins\\tools\\java\\openjdk-26-ea+2"
+      name: "openjdk_26_ea_2_windows"
+    - home: "/home/jenkins/tools/java/openjdk-27-ea+1"
+      name: "openjdk_27_ea_1"
+    - home: "F:\\jenkins\\tools\\java\\openjdk-27-ea+1"
+      name: "openjdk_27_ea_1_windows"
+    - home: "/home/jenkins/tools/java/adoptium_jdk_8u362_b09"
+      name: "adoptium_jdk_8u362_b09"
+    - home: "F:\\jenkins\\tools\\java\\adoptium_jdk_8u362_b09"
+      name: "adoptium_jdk_8u362_b09_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-11.0.24+8"
+      name: "adoptium_jdk_11.0.24_8"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-11.0.24+8"
+      name: "adoptium_jdk_11.0.24_8_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-19.0.2+7"
+      name: "adoptium_jdk_19.0.2_7"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-19.0.2+7"
+      name: "adoptium_jdk_19.0.2_7_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-20+36"
+      name: "adoptium_jdk_20_36"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-20+36"
+      name: "adoptium_jdk_20_36_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-21.0.4+7"
+      name: "adoptium_jdk_21.0.4_7"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-21.0.4+7"
+      name: "adoptium_jdk_21.0.4_7_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-23.0.1+11"
+      name: "adoptium_jdk_23.0.1_11"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-23.0.1+11"
+      name: "adoptium_jdk_23.0.1_11_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-23.0.2+7"
+      name: "adoptium_jdk_23.0.2_7"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-23.0.2+7"
+      name: "adoptium_jdk_23.0.2_7_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-24.0.1+9"
+      name: "adoptium_jdk_24.0.1_9"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-24.0.1+9"
+      name: "adoptium_jdk_24.0.1_9_windows"
+    - home: "/home/jenkins/tools/java/adoptium-jdk-25.0.1+8"
+      name: "adoptium_jdk_25.0.1_8"
+    - home: "F:\\jenkins\\tools\\java\\adoptium-jdk-25.0.1+8"
+      name: "adoptium_jdk_25.0.1_8_windows"
+    - home: "/home/jenkins/tools/java/ibm-semeru-8u362-b09_openj9-0.36.0"
+      name: "ibm-semeru-8u362-b09"
+    - home: "F:\\jenkins\\tools\\java\\ibm-semeru-8u362-b09_openj9-0.36.0"
+      name: "ibm-semeru-8u362-b09_windows"
+    - home: "/home/jenkins/tools/java/ibm-semeru-20.0.1_9_openj9-0.39.0"
+      name: "ibm_semeru_20.0.1_9"
+    - home: "F:\\jenkins\\tools\\java\\ibm-semeru-20.0.1_9_openj9-0.39.0"
+      name: "ibm_semeru_20.0.1_9_windows"
+    - home: "/home/jenkins/tools/java/ibm-semeru-21.0.2_13_openj9-0.43.0"
+      name: "ibm_semeru_21.0.2_13"
+    - home: "F:\\jenkins\\tools\\java\\ibm-semeru-21.0.2_13_openj9-0.43.0"
+      name: "ibm_semeru_21.0.2_13_windows"
+  maven:
+    installations:
+    - home: "/home/jenkins/tools/maven/latest"
+      name: "maven_latest"
+    - home: "F:\\jenkins\\tools\\maven\\latest"
+      name: "maven_latest_windows"
+    - home: "/home/jenkins/tools/maven/latest2"
+      name: "maven_2_latest"
+    - home: "F:\\jenkins\\tools\\maven\\latest2"
+      name: "maven_2_latest_windows"
+    - home: "/home/jenkins/tools/maven/latest3"
+      name: "maven_3_latest"
+    - home: "F:\\jenkins\\tools\\maven\\latest3"
+      name: "maven_3_latest_windows"
+    - home: "/home/jenkins/tools/maven/latest4"
+      name: "maven_4_latest"
+    - home: "F:\\jenkins\\tools\\maven\\latest4"
+      name: "maven_4_latest_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-2.2.1"
+      name: "maven_2.2.1"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-2.2.1"
+      name: "maven_2.2.1_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.0.5"
+      name: "maven_3.0.5"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.0.5"
+      name: "maven_3.0.5_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.2.5"
+      name: "maven_3.2.5"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.2.5"
+      name: "maven_3.2.5_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.3.9"
+      name: "maven_3.3.9"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.3.9"
+      name: "maven_3.3.9_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.5.4"
+      name: "maven_3.5.4"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.5.4"
+      name: "maven_3.5.4_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.6.3"
+      name: "maven_3.6.3"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.6.3"
+      name: "maven_3.6.3_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.8.7"
+      name: "maven_3.8.7"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.8.7"
+      name: "maven_3.8.7_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.8.8"
+      name: "maven_3.8.8"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.8.8"
+      name: "maven_3.8.8_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.9.2"
+      name: "maven_3.9.2"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.9.2"
+      name: "maven_3.9.2_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.9.3"
+      name: "maven_3.9.3"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.9.3"
+      name: "maven_3.9.3_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.9.5"
+      name: "maven_3.9.5"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.9.5"
+      name: "maven_3.9.5_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.9.6"
+      name: "maven_3.9.6"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.9.6"
+      name: "maven_3.9.6_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.9.8"
+      name: "maven_3.9.8"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.9.8"
+      name: "maven_3.9.8_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.9.9"
+      name: "maven_3.9.9"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.9.9"
+      name: "maven_3.9.9_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-3.9.11"
+      name: "maven_3.9.11"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-3.9.11"
+      name: "maven_3.9.11_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-4.0.0-beta-3"
+      name: "maven_4.0.0_beta_3"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-4.0.0-beta-3"
+      name: "maven_4.0.0_beta_3_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-4.0.0-rc-2"
+      name: "maven_4.0.0_rc_2"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-4.0.0-rc-2"
+      name: "maven_4.0.0_rc_2_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-4.0.0-rc-3"
+      name: "maven_4.0.0_rc_3"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-4.0.0-rc-3"
+      name: "maven_4.0.0_rc_3_windows"
+    - home: "/home/jenkins/tools/maven/apache-maven-4.0.0-rc-5"
+      name: "maven_4.0.0_rc_5"
+    - home: "F:\\jenkins\\tools\\maven\\apache-maven-4.0.0-rc-5"
+      name: "maven_4.0.0_rc_5_windows"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+  pipelineMaven:
+    globalTraceability: false
+    triggerDownstreamUponResultAborted: false
+    triggerDownstreamUponResultFailure: false
+    triggerDownstreamUponResultNotBuilt: false
+    triggerDownstreamUponResultSuccess: true
+    triggerDownstreamUponResultUnstable: false
