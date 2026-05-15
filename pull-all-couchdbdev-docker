@@ -12,6 +12,7 @@ apache/couchdbci-debian:bookworm-erlang:27.3.4.8
 apache/couchdbci-debian:bookworm-erlang-26.2.5.20
 apache/couchdbci-debian:bullseye-erlang:26.2.5.20
 apache/couchdbci-debian:trixie-erlang:26.2.5.20
+apache/couchdbci-ubuntu:resolute-erlang-26.2.5.20
 apache/couchdbci-ubuntu:noble-erlang-26.2.5.20
 apache/couchdbci-ubuntu:jammy-erlang-26.2.5.20
 apache/couchdbci-centos:10-erlang-26.2.5.20
