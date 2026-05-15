@@ -110,7 +110,7 @@ fi
 # Since Debian bookworm and Ubuntu noble, to install python packages as system packages, add the "python3-"prefix
 if [ "${VERSION_CODENAME}" == "bookworm" ] || [ "${VERSION_CODENAME}" == "noble" ]; then
     apt-get -y --no-install-recommends install python3-nose python3-requests python3-hypothesis
-elif [ "${VERSION_CODENAME}" == "trixie" ]; then
+elif [ "${VERSION_CODENAME}" == "trixie" ] || [ "${VERSION_CODENAME}" == "resolute" ]; then
     apt-get -y --no-install-recommends install python3-nose2 python3-requests python3-hypothesis
 else
     pip3 --default-timeout=10000 install --upgrade nose requests hypothesis==3.79.0
@@ -135,6 +135,9 @@ fi
 # js packages, as long as we're not told to skip them
 if [ "$1" != "nojs" ]; then
   # newer releases have newer libmozjs
+  if [ "${VERSION_CODENAME}" == "resolute" ]; then
+      apt-get install --no-install-recommends -y libmozjs-128-dev
+  fi
   if [ "${VERSION_CODENAME}" == "noble" ]; then
     apt-get install --no-install-recommends -y libmozjs-102-dev libmozjs-115-dev
   fi
