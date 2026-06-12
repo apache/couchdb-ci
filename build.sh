@@ -163,7 +163,7 @@ case "$1" in
     shift
     buildx-platform $1
     ;;
-  buildx-platform-release)
+  buildx-platform-all)
     # Build and upload multi-arch platform with JS and Erlang support
     # For all platforms
     shift
@@ -196,8 +196,8 @@ Recognized commands:
   clean <plat>              Removes all images for <plat>.
   clean-all                 Removes all images for all platforms.
 
-  *buildx-base <plat>       Builds a multi-architecture base image.
-  *buildx-platform <plat>   Builds a multi-architecture image with Erlang & JS support.
+  *buildx-platform <plat>   Builds a multi-architecture image with Erlang & JS support for <plat>.
+  *buildx-platform-all      Builds a multi-architecture image with Erlang & JS support for all platforms.
 
   couch <plat>              Builds and tests CouchDB for <plat>.
   couch-all                 Builds and tests CouchDB on all platforms.
