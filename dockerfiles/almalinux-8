@@ -23,12 +23,15 @@ FROM almalinux:8
 
 ENV PATH=/usr/local/lib/erlang/bin:"${PATH}"
 
+# set UTF-8 as default locale
+ENV LANG=C.UTF-8
+
 # Choose whether to install SpiderMonkey 1.8.5, default yes
 ARG js=js
 # Choose whether to install Erlang, default yes
 ARG erlang=erlang
 # Select version of Node, Erlang and Elixir to install
-ARG erlangversion=26.2.5.20
+ARG erlangversion=27.3.4.13
 ARG elixirversion=v1.18.4
 ARG nodeversion=24
 
