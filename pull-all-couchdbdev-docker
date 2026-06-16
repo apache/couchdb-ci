@@ -7,17 +7,17 @@
 # --bootstrap` pulls.
 
 PULL_IMAGES=(
-apache/couchdbci-debian:bookworm-erlang:28.3.2
-apache/couchdbci-debian:bookworm-erlang:27.3.4.8
-apache/couchdbci-debian:bookworm-erlang-26.2.5.20
-apache/couchdbci-debian:bullseye-erlang:26.2.5.20
-apache/couchdbci-debian:trixie-erlang:26.2.5.20
-apache/couchdbci-ubuntu:resolute-erlang-26.2.5.20
-apache/couchdbci-ubuntu:noble-erlang-26.2.5.20
-apache/couchdbci-ubuntu:jammy-erlang-26.2.5.20
-apache/couchdbci-centos:10-erlang-26.2.5.20
-apache/couchdbci-centos:9-erlang-26.2.5.20
-apache/couchdbci-centos:8-erlang-26.2.5.20
+apache/couchdbci-debian:bookworm-erlang:29.0.2
+apache/couchdbci-debian:bookworm-erlang:28.5.0.2
+apache/couchdbci-debian:bookworm-erlang-27.3.4.13
+apache/couchdbci-debian:bullseye-erlang:27.3.4.13
+apache/couchdbci-debian:trixie-erlang:27.3.4.13
+apache/couchdbci-ubuntu:resolute-erlang-27.3.4.13
+apache/couchdbci-ubuntu:noble-erlang-27.3.4.13
+apache/couchdbci-ubuntu:jammy-erlang-27.3.4.13
+apache/couchdbci-centos:10-erlang-27.3.4.13
+apache/couchdbci-centos:9-erlang-27.3.4.13
+apache/couchdbci-centos:8-erlang-27.3.4.13
 moby/buildkit:buildx-stable-1
 )
 

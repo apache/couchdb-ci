@@ -26,6 +26,9 @@ ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:21 $JAVA_HOME $JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
+# set UTF-8 as default locale
+ENV LANG=C.UTF-8
+
 # These are needed for the Clouseau integration
 # This is the same as for Nouveau for the moment, but perhaps it is better to
 # keep it separate as there is no guarantee that they will be bumped at the
@@ -38,7 +41,7 @@ ARG js=js
 # Choose whether to install Erlang, default yes
 ARG erlang=erlang
 # Select version of Node, Erlang and Elixir
-ARG erlangversion=26.2.5.20
+ARG erlangversion=27.3.4.13
 ARG elixirversion=v1.18.4
 ARG nodeversion=24
 
