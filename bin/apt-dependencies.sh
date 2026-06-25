@@ -136,7 +136,7 @@ fi
 if [ "$1" != "nojs" ]; then
   # newer releases have newer libmozjs
   if [ "${VERSION_CODENAME}" == "resolute" ]; then
-      apt-get install --no-install-recommends -y libmozjs-128-dev
+      apt-get install --no-install-recommends -y libmozjs-128-dev libmozjs-140-dev
   fi
   if [ "${VERSION_CODENAME}" == "noble" ]; then
     apt-get install --no-install-recommends -y libmozjs-102-dev libmozjs-115-dev
