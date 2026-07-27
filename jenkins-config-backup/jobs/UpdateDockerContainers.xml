@@ -1,0 +1,52 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1571.vb_423c255d6d9">
+  <actions/>
+  <description>This Pipeline job runs on all Docker-capable nodes.&#xd;
+&#xd;
+It ensures all of the necessary Docker images for CI work&#xd;
+are downloaded and functional on every machine.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>-1</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+        <removeLastBuild>false</removeLastBuild>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty>
+      <hint>PERFORMANCE_OPTIMIZED</hint>
+    </org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.TimerTrigger>
+          <spec>TZ=UTC
+H H(3-8) * * 7</spec>
+        </hudson.triggers.TimerTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@4255.vd9c37f80fd8a_">
+    <script>def nodes = [:]
+
+(nodesByLabel(&apos;docker&apos;) + nodesByLabel(&apos;s390x&apos;) + nodesByLabel(&apos;ppc64le&apos;)).each {
+  nodes[it] = { -&gt;
+    node(it) {
+      stage(&quot;docker-prune-refresh@${it}&quot;) {
+        sh &apos;&apos;&apos;
+            wget -N https://raw.githubusercontent.com/apache/couchdb-ci/main/pull-all-couchdbdev-docker
+            bash ./pull-all-couchdbdev-docker
+        &apos;&apos;&apos;
+      }
+    }
+  }
+}
+
+parallel nodes</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
