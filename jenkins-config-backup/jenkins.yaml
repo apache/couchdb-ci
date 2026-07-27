@@ -10,11 +10,13 @@ credentials:
   system:
     domainCredentials:
     - credentials:
-      - string:
-          description: "Admin access to ASF Github repo hooks"
-          id: "jenkins-cm1-pr-hooks"
+      - usernamePassword:
+          description: "dockerhub_creds (original one was blown away so had to recreate\
+            \ using own dockerhub token)"
+          id: "dockerhub_creds"
+          password: "...redacted..."
           scope: GLOBAL
-          secret: "...redacted..."
+          username: "...redacted..."
       domain: {
         }
   user: {
@@ -26,17 +28,9 @@ jenkins:
       excludeClientIPFromCrumb: false
   disableRememberMe: false
   disabledAdministrativeMonitors:
-  - "hudson.node_monitors.MonitorMarkedNodeOffline"
   - "com.cloudbees.jenkins.plugins.administrative_monitors.BlueOceanMonitor2"
-  - "com.cloudbees.jenkins.plugins.administrative_monitors.MavenIntegrationPluginMonitor"
   - "com.cloudbees.jenkins.plugins.administrative_monitors.TomcatMonitor"
-  - "OldData"
-  - "com.cloudbees.jenkins.plugins.administrative_monitors.unsupported_plugin.WikiTextMonitor"
-  - "hudson.util.DoubleLaunchChecker"
   - "jenkins.security.csp.impl.CspRecommendation"
-  - "com.cloudbees.analytics.gatherer.SegmentQueueOverwhelmedMonitor"
-  - "com.cloudbees.jenkins.plugins.administrative_monitors.BlueOceanMonitor"
-  - "com.cloudbees.jenkins.plugins.assurance.SecurityWarningsWatch"
   labelAtoms:
   - name: "asfminidebian"
   - name: "built-in"
@@ -57,10 +51,10 @@ jenkins:
   - name: "freebsd-x86_64"
   - name: "linux1"
   - name: "macos"
-  - name: "ppc64le"
-  - name: "s390x"
+  - name: "ppc64le_own"
+  - name: "s390x_own"
   - name: "ubuntu"
-  - name: "ubuntu-fra1-10"
+  - name: "ubuntu-c-4-nyc3-01"
   - name: "ubuntu-fsn-1-09"
   - name: "ubuntu-nc-arm64-12"
   - name: "ubuntu-nc-x86-11"
@@ -72,17 +66,16 @@ jenkins:
     rawHtml:
       disableSyntaxHighlighting: false
   mode: NORMAL
-  noUsageStatistics: true
   nodeMonitors:
   - "architecture"
   - "clock"
   - diskSpace:
-      freeSpaceThreshold: "1GB"
-      freeSpaceWarningThreshold: "2GB"
+      freeSpaceThreshold: "1GiB"
+      freeSpaceWarningThreshold: "2GiB"
   - "swapSpace"
   - tmpSpace:
-      freeSpaceThreshold: "1GB"
-      freeSpaceWarningThreshold: "2GB"
+      freeSpaceThreshold: "1GiB"
+      freeSpaceWarningThreshold: "2GiB"
   - "responseTime"
   nodes:
   - permanent:
@@ -95,11 +88,6 @@ jenkins:
             internalDir: "remoting"
       name: "asfminidebian"
       nodeDescription: "Ubuntu Debian ARM64 VM. Donated by Jan."
-      nodeProperties:
-      - envVars:
-          env:
-          - key: "MAVEN_OPTS"
-            value: ""
       remoteFS: "/home/jenkins"
       retentionStrategy: "always"
   - permanent:
@@ -111,12 +99,7 @@ jenkins:
             failIfWorkDirIsMissing: false
             internalDir: "remoting"
       name: "couchdb-freebsd-arm64"
-      nodeDescription: "FreeBSD Build Node"
-      nodeProperties:
-      - envVars:
-          env:
-          - key: "MAVEN_OPTS"
-            value: ""
+      nodeDescription: "FreeBSD Build Node on a06.cabal5.net"
       remoteFS: "/home/jenkins"
       retentionStrategy: "always"
   - permanent:
@@ -136,8 +119,6 @@ jenkins:
             value: "clang"
           - key: "CPP"
             value: "clang++"
-          - key: "MAVEN_OPTS"
-            value: ""
       remoteFS: "/home/jenkins"
       retentionStrategy: "always"
   - permanent:
@@ -263,11 +244,6 @@ jenkins:
             failIfWorkDirIsMissing: false
             internalDir: "remoting"
       name: "couchdb-worker-x86-64-ubuntu-dal-1-07"
-      nodeProperties:
-      - envVars:
-          env:
-          - key: "MAVEN_OPTS"
-            value: ""
       remoteFS: "/home/jenkins"
       retentionStrategy: "always"
   - permanent:
@@ -287,7 +263,7 @@ jenkins:
       remoteFS: "/home/jenkins"
       retentionStrategy: "always"
   - permanent:
-      labelString: "s390x"
+      labelString: "s390x_own"
       launcher:
         inbound:
           workDirSettings:
@@ -305,7 +281,7 @@ jenkins:
       remoteFS: "/home/jenkins"
       retentionStrategy: "always"
   - permanent:
-      labelString: "ppc64le"
+      labelString: "ppc64le_own"
       launcher:
         inbound:
           workDirSettings:
@@ -329,7 +305,7 @@ jenkins:
             disabled: false
             failIfWorkDirIsMissing: false
             internalDir: "remoting"
-      name: "ubuntu-fra1-10"
+      name: "ubuntu-c-4-nyc3-01"
       nodeDescription: "Ubuntu x86_64. Donated by Digital Ocean"
       nodeProperties:
       - envVars:
@@ -348,11 +324,6 @@ jenkins:
             internalDir: "remoting"
       name: "ubuntu-fsn-1-09"
       nodeDescription: "Ubuntu x86_64. Donated by Jan"
-      nodeProperties:
-      - envVars:
-          env:
-          - key: "MAVEN_OPTS"
-            value: ""
       remoteFS: "/home/jenkins"
       retentionStrategy: "always"
   - permanent:
@@ -395,16 +366,23 @@ jenkins:
         inbound:
           workDirSettings:
             disabled: false
-            failIfWorkDirIsMissing: true
+            failIfWorkDirIsMissing: false
             internalDir: "remoting"
-      mode: EXCLUSIVE
       name: "win2022"
+      nodeDescription: "Windows Server 2022. Donated by Neighbourhoodie. Hosted by\
+        \ Alfahosting."
       nodeProperties:
-      - envVars:
-          env:
-          - key: "MAVEN_OPTS"
-            value: ""
-      remoteFS: "C:\\tools\\jenkins-agent\\"
+      - owners:
+          onFirstLaunchFailure: false
+          onLaunchFailure: false
+          onOffline: true
+          onOnline: true
+          onTemporaryOfflineApplied: false
+          onTemporaryOfflineRemoved: false
+          owners: |-
+            ronny@apache.org
+            vatamane@apache.org
+      remoteFS: "C:\\tools\\jenkins-agent"
       retentionStrategy: "always"
   numExecutors: 0
   primaryView:
@@ -443,8 +421,8 @@ jenkins:
 beekeeper:
   enabled: true
   securityWarnings:
-    enabledForCore: true
-    enabledForPlugins: true
+    enabledForCore: false
+    enabledForPlugins: false
   upgrades:
     autoDowngradePlugins: false
     autoUpgradePlugins: true
@@ -553,24 +531,6 @@ security:
   sSHD:
     port: -1
   scriptApproval:
-    approvedScriptHashes:
-    - "017d0db438428731cd600b6ebda805065433520f"
-    - "0583c5a085f38ff3b1ddd5de755952700f914c07"
-    - "1fe2a96b934459c27b025bff5e5bf9ec000ef381"
-    - "314de9326bf4606a5275a1d3f116d446f0471e9b"
-    - "48126fb9724f32d3e1afb1cb4ce72a0889134dd3"
-    - "639c21f8c675b1f55597a815c6519ed72b7917ad"
-    - "7d0ec331043289e728ad47680386042d43766d93"
-    - "8d7dffa0fa077b4018bc76f8b3ebd7bc48459fcc"
-    - "a78cc9c5f6fee2ca1fa03dce3b43503e7c57e5dd"
-    - "ad84649250e60d2a1ff6dd112e48aa556e82e3cd"
-    - "c17143c88ad09378dbd0a7980e8472136aa0a6ad"
-    - "c82d4a7e5ced620b4fc145a54b4a3bc8e6bc5d83"
-    - "ccd23a74df0c6fdfef512c9d086977a77e0022e4"
-    - "e1395200eda9e5e0089775cad3d99d29b7032daa"
-    - "ee7d1ca969e5906b9bb51f08cdc5cdcb29ad72df"
-    - "fbcbad05f0620332f64abae08788612d140703d3"
-    - "fca3e2dae16894945401bddf7c73d9a545fd61a0"
     forceSandbox: false
 unclassified:
   administrativeMonitorsConfiguration: {
@@ -599,6 +559,12 @@ unclassified:
     variableInterpolationEnabledForNonAdmin: false
   cloudBeesSCMReporting:
     enabled: true
+  cloudbeesPipelineExplorer:
+    autoPollingEnabled: true
+    autoPollingIntervalSeconds: 10
+    enabled: true
+    pluggableStorageEnabled: false
+    searchMaxIndexSize: 1000
   cloudbeesPlatform: {
     }
   computerRetentionCheckInterval: {
@@ -607,18 +573,8 @@ unclassified:
     }
   defaultDisplayUrlProvider: {
     }
-  defaultFolderConfiguration:
-    healthMetrics:
-    - worstChildHealthMetric:
-        recursive: true
-    - "averageChildHealthMetric"
-    - jobStatusHealthMetric:
-        countVirginJobs: false
-        failure: true
-        success: true
-        unbuilt: true
-        unstable: true
-    - "projectEnabledHealthMetric"
+  defaultFolderConfiguration: {
+    }
   defaultView: {
     }
   envVarsFilter: {
@@ -631,16 +587,13 @@ unclassified:
   gitHubConfiguration:
     apiRateLimitChecker: ThrottleForNormalize
   gitHubPluginConfig:
-    configs:
-    - credentialsId: "jenkins-cm1-pr-hooks"
-      name: "ASF Github"
     hookUrl: "https://ci-couchdb.apache.org/github-webhook/"
   globalConfigFiles: {
     }
   globalConfigurationImpl: {
     }
-  globalDefaultFlowDurabilityLevel:
-    durabilityHint: PERFORMANCE_OPTIMIZED
+  globalDefaultFlowDurabilityLevel: {
+    }
   globalLibraries: {
     }
   globalUntrustedLibraries: {
@@ -774,6 +727,10 @@ tool:
       name: "jdk_27_latest"
     - home: "F:\\jenkins\\tools\\java\\latest27"
       name: "jdk_27_latest_windows"
+    - home: "/home/jenkins/tools/java/latest28"
+      name: "jdk_28_latest"
+    - home: "F:\\jenkins\\tools\\java\\latest28"
+      name: "jdk_28_latest_windows"
     - home: "/home/jenkins/tools/java/oraclejdk-1.8.0-291"
       name: "oracle_jdk_1.8.0_291"
     - home: "F:\\jenkins\\tools\\java\\oraclejdk-1.8.0-291"
@@ -810,6 +767,10 @@ tool:
       name: "openjdk_27_ea_1"
     - home: "F:\\jenkins\\tools\\java\\openjdk-27-ea+1"
       name: "openjdk_27_ea_1_windows"
+    - home: "/home/jenkins/tools/java/openjdk-28-ea+6"
+      name: "openjdk_28_ea_6"
+    - home: "F:\\jenkins\\tools\\java\\openjdk-28-ea+6"
+      name: "openjdk_28_ea_6_windows"
     - home: "/home/jenkins/tools/java/adoptium_jdk_8u362_b09"
       name: "adoptium_jdk_8u362_b09"
     - home: "F:\\jenkins\\tools\\java\\adoptium_jdk_8u362_b09"
@@ -858,6 +819,10 @@ tool:
       name: "ibm_semeru_21.0.2_13"
     - home: "F:\\jenkins\\tools\\java\\ibm-semeru-21.0.2_13_openj9-0.43.0"
       name: "ibm_semeru_21.0.2_13_windows"
+    - home: "/home/jenkins/tools/java/ibm-semeru-21.0.9+10-openj9-0.56.0"
+      name: "ibm_semeru_21.0.9_10"
+    - home: "F:\\jenkins\\tools\\java\\ibm-semeru-21.0.9+10-openj9-0.56.0"
+      name: "ibm_semeru_21.0.9_10_windows"
   maven:
     installations:
     - home: "/home/jenkins/tools/maven/latest"
@@ -962,3 +927,4 @@ tool:
     triggerDownstreamUponResultNotBuilt: false
     triggerDownstreamUponResultSuccess: true
     triggerDownstreamUponResultUnstable: false
+
