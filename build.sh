@@ -46,7 +46,7 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # When updating the images, consider updating pull-all-couchdbdev-docker
 # script as well
 #
-DEBIANS="debian-bullseye debian-bookworm debian-trixie"
+DEBIANS="debian-bookworm debian-trixie"
 UBUNTUS="ubuntu-jammy ubuntu-noble ubuntu-resolute"
 CENTOSES="almalinux-8 almalinux-9 almalinux-10"
 
@@ -55,7 +55,7 @@ PASSED_BUILDARGS="$buildargs"
 #  Allow overriding this list from the command line
 #  BUILDX_PLATFORMS=foo,bar ./build.sh ...
 #
-: "${BUILDX_PLATFORMS:=linux/amd64,linux/arm64,linux/ppc64le,linux/s390x}"
+: "${BUILDX_PLATFORMS:=linux/amd64,linux/arm64,linux/ppc64le}"
 
 check-envs() {
   buildargs=$PASSED_BUILDARGS
@@ -99,7 +99,7 @@ pull-os-image() {
 }
 
 set-platforms() {
-   if [ "$1" == "debian-bullseye" ]; then
+   if [ "$1" == "debian-bookworm" ]; then
        # Debian LTSs apparently start dropping random arches with time
        echo "!!! reducing list of arches for $1 !!!"
        actual_buildx_platforms="linux/amd64,linux/arm64"
