@@ -55,7 +55,7 @@ PASSED_BUILDARGS="$buildargs"
 #  Allow overriding this list from the command line
 #  BUILDX_PLATFORMS=foo,bar ./build.sh ...
 #
-: "${BUILDX_PLATFORMS:=linux/amd64,linux/arm64,linux/ppc64le}"
+: "${BUILDX_PLATFORMS:=linux/amd64,linux/arm64}"
 
 check-envs() {
   buildargs=$PASSED_BUILDARGS
